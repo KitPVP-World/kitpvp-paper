@@ -24,7 +24,6 @@ dependency-reduced-pom.xml
 .*.sw[a-p]
 
 # various other potential build files
-build/
 bin/
 dist/
 manifest.mf
@@ -46,8 +45,10 @@ out/
 # other stuff
 run/
 
-forktest-server
-forktest-api
+kitpvpslime-server
+kitpvpslime-api
+./core/
+./api/
 paper-api-generator
 
 !gradle/wrapper/gradle-wrapper.jar

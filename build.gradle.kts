@@ -3,6 +3,8 @@ import io.papermc.paperweight.util.Git
 plugins {
     java
     `maven-publish`
+    id("org.kordamp.gradle.profiles") version "0.47.0" // required by aswm - keep version sync
+    id("com.gradleup.shadow") version "8.3.0" apply false
 
     // In general, keep this version in sync with upstream. Sometimes a newer version than upstream might work, but an older version is extremely likely to break.
     id("io.papermc.paperweight.patcher") version "1.7.1"
@@ -49,10 +51,12 @@ subprojects {
     repositories {
         mavenCentral()
         maven(paperMavenPublicUrl)
+        maven("https://repo.infernalsuite.com/repository/maven-snapshots/")
+        maven("https://repo.rapture.pw/repository/maven-releases/")
     }
 }
 
-val paperDir = layout.projectDirectory.dir("work/Paper")
+val paperDir = layout.projectDirectory.dir("work/AdvancedSlimePaper")
 val initSubmodules by tasks.registering {
     outputs.upToDateWhen { false }
     doLast {
@@ -61,13 +65,13 @@ val initSubmodules by tasks.registering {
 }
 
 paperweight {
-    serverProject = project(":forktest-server")
+    serverProject = project(":kitpvpslime-server")
 
     remapRepo = paperMavenPublicUrl
     decompileRepo = paperMavenPublicUrl
 
     upstreams {
-        register("paper") {
+        register("slimeworldmanager") {
             upstreamDataTask {
                 dependsOn(initSubmodules)
                 projectDir = paperDir
@@ -75,21 +79,30 @@ paperweight {
 
             patchTasks {
                 register("api") {
-                    upstreamDir = paperDir.dir("Paper-API")
+                    upstreamDir = paperDir.dir("slimeworldmanager-api")
                     patchDir = layout.projectDirectory.dir("patches/api")
-                    outputDir = layout.projectDirectory.dir("forktest-api")
+                    outputDir = layout.projectDirectory.dir("kitpvpslime-api")
                 }
+
                 register("server") {
-                    upstreamDir = paperDir.dir("Paper-Server")
+                    upstreamDir = paperDir.dir("slimeworldmanager-server")
                     patchDir = layout.projectDirectory.dir("patches/server")
-                    outputDir = layout.projectDirectory.dir("forktest-server")
+                    outputDir = layout.projectDirectory.dir("kitpvpslime-server")
                     importMcDev = true
                 }
-                register("generatedApi") {
+
+                register("core") {
                     isBareDirectory = true
-                    upstreamDir = paperDir.dir("paper-api-generator/generated")
-                    patchDir = layout.projectDirectory.dir("patches/generatedApi")
-                    outputDir = layout.projectDirectory.dir("paper-api-generator/generated")
+                    upstreamDir = paperDir.dir("core")
+                    patchDir = layout.projectDirectory.dir("patches/core")
+                    outputDir = layout.projectDirectory.dir("core")
+                }
+
+                register("aswmApi") {
+                    isBareDirectory = true
+                    upstreamDir = paperDir.dir("api")
+                    patchDir = layout.projectDirectory.dir("patches/aswmApi")
+                    outputDir = layout.projectDirectory.dir("api")
                 }
             }
         }
@@ -101,22 +114,22 @@ paperweight {
 //
 
 tasks.generateDevelopmentBundle {
-    apiCoordinates = "com.example.paperfork:forktest-api"
+    apiCoordinates = "world.kitpvp.kitpvpslime:kitpvp-slime-api"
     libraryRepositories = listOf(
         "https://repo.maven.apache.org/maven2/",
         paperMavenPublicUrl,
-        // "https://my.repo/", // This should be a repo hosting your API (in this example, 'com.example.paperfork:forktest-api')
+        "https://maven.kitpvp.world/", // This should be a repo hosting your API (in this example, 'world.kitpvp.kitpvpslime:kitpvpslime-api')
     )
 }
 
 allprojects {
     // Publishing API:
-    // ./gradlew :ForkTest-API:publish[ToMavenLocal]
+    // ./gradlew :kitpvpslime-api:publish[ToMavenLocal]
     publishing {
         repositories {
             maven {
-                name = "myRepoSnapshots"
-                url = uri("https://my.repo/")
+                name = "kitpvp"
+                url = uri("https://maven.kitpvp.world/")
                 // See Gradle docs for how to provide credentials to PasswordCredentials
                 // https://docs.gradle.org/current/samples/sample_publishing_credentials.html
                 credentials(PasswordCredentials::class)

@@ -1,6 +1,7 @@
-# ForkTest - A Paper fork, using paperweight
+# KitPvP Slime - A AdvancedSlimePaper fork with kitpvp patches
+Changes related to async performance and security within arena worlds
 
-This is an example project, showcasing how to setup a fork of Paper (or any other fork using paperweight), using paperweight.
+## Paperweight
 
 The files of most interest are
 - build.gradle.kts
@@ -15,7 +16,7 @@ It's also a good idea to use the same version of the Gradle wrapper as upstream.
 ```
 Paperweight tasks
 -----------------
-applyApiPatches
+yxapplyApiPatches
 applyPatches
 applyServerPatches
 cleanCache - Delete the project setup cache and task outputs.
@@ -32,10 +33,3 @@ runDev - Spin up a non-relocated Mojang-mapped test server
 runReobf - Spin up a test server from the reobfJar output jar
 runShadow - Spin up a test server from the shadowJar archiveFile
 ```
-
-## Branches
-
-Each branch of this project represents an example:
-
- - [`main` is the standard example](https://github.com/PaperMC/paperweight-examples/tree/main)
- - [`submodules` shows how paperweight can be applied on a fork using the more traditional git submodule system](https://github.com/PaperMC/paperweight-examples/tree/submodules)
