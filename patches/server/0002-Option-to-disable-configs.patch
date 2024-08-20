@@ -1,0 +1,177 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: NotStevy <notstevy@ultrabuildmc.de>
+Date: Tue, 20 Aug 2024 18:23:48 +0200
+Subject: [PATCH] Option to disable configs
+
+
+diff --git a/src/main/java/com/infernalsuite/aswm/SlimeNMSBridgeImpl.java b/src/main/java/com/infernalsuite/aswm/SlimeNMSBridgeImpl.java
+index 87b6ee19fd165bde2db3a57545c58251dc6bad22..32a74b7ea55f507b865fbef8f5c03bc7ff7d59a5 100644
+--- a/src/main/java/com/infernalsuite/aswm/SlimeNMSBridgeImpl.java
++++ b/src/main/java/com/infernalsuite/aswm/SlimeNMSBridgeImpl.java
+@@ -38,6 +38,8 @@ import org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer;
+ import org.bukkit.craftbukkit.persistence.CraftPersistentDataTypeRegistry;
+ import org.bukkit.persistence.PersistentDataContainer;
+ import org.jetbrains.annotations.Nullable;
++import world.kitpvp.aswm.*;
++import world.kitpvp.aswm.api.*;
+ 
+ import java.io.IOException;
+ import java.util.Locale;
+@@ -139,6 +141,7 @@ public class SlimeNMSBridgeImpl implements SlimeNMSBridge {
+     public void setDefaultWorlds(SlimeWorld normalWorld, SlimeWorld netherWorld, SlimeWorld endWorld) {
+         if (normalWorld != null) {
+             normalWorld.getPropertyMap().setValue(SlimeProperties.ENVIRONMENT, World.Environment.NORMAL.toString().toLowerCase());
++            normalWorld.getPropertyMap().setValue(DuelSlimeProperties.USE_DEFAULT_CONFIG, false); // kitpvp - useDefaultConfig
+             defaultWorld = normalWorld;
+         }
+ 
+@@ -256,4 +259,4 @@ public class SlimeNMSBridgeImpl implements SlimeNMSBridge {
+         return data;
+     }
+ 
+-}
+\ No newline at end of file
++}
+diff --git a/src/main/java/com/infernalsuite/aswm/level/SlimeLevelInstance.java b/src/main/java/com/infernalsuite/aswm/level/SlimeLevelInstance.java
+index 187336ecaa4262e3f081a88702031b17c6037091..9e45d04a9d924822e60fcbd5997a87140f74d87f 100644
+--- a/src/main/java/com/infernalsuite/aswm/level/SlimeLevelInstance.java
++++ b/src/main/java/com/infernalsuite/aswm/level/SlimeLevelInstance.java
+@@ -34,6 +34,7 @@ import org.bukkit.Bukkit;
+ import org.bukkit.event.world.WorldSaveEvent;
+ import org.jetbrains.annotations.Nullable;
+ import org.spigotmc.AsyncCatcher;
++import world.kitpvp.aswm.api.DuelSlimeProperties;
+ 
+ import java.io.IOException;
+ import java.nio.file.Files;
+@@ -80,7 +81,8 @@ public class SlimeLevelInstance extends ServerLevel {
+                 CUSTOM_LEVEL_STORAGE.createAccess(slimeBootstrap.initial().getName() + UUID.randomUUID(), dimensionKey),
+                 primaryLevelData, worldKey, worldDimension,
+                 MinecraftServer.getServer().progressListenerFactory.create(11), false, null, 0,
+-                Collections.emptyList(), true, environment, null, null);
++                Collections.emptyList(), true, environment, null, null,
++                slimeBootstrap.initial().getPropertyMap().getValue(DuelSlimeProperties.USE_DEFAULT_CONFIG)); // kitpvp - useDefaultConfig
+         this.slimeInstance = new SlimeInMemoryWorld(slimeBootstrap, this);
+ 
+ 
+@@ -205,4 +207,4 @@ public class SlimeLevelInstance extends ServerLevel {
+     //        this.slimeInstance.unload(chunk);
+     //        super.unload(chunk);
+     //    }
+-}
+\ No newline at end of file
++}
+diff --git a/src/main/java/net/minecraft/server/level/ServerLevel.java b/src/main/java/net/minecraft/server/level/ServerLevel.java
+index 5aae3c7692a6e4bc04b843878da063f6d2a5c7f2..748fc501b451768efa326bf4c8ef0a9c3036e510 100644
+--- a/src/main/java/net/minecraft/server/level/ServerLevel.java
++++ b/src/main/java/net/minecraft/server/level/ServerLevel.java
+@@ -144,7 +144,6 @@ import net.minecraft.world.level.entity.EntityTickList;
+ import net.minecraft.world.level.entity.EntityTypeTest;
+ import net.minecraft.world.level.entity.LevelCallback;
+ import net.minecraft.world.level.entity.LevelEntityGetter;
+-import net.minecraft.world.level.entity.PersistentEntitySectionManager;
+ import net.minecraft.world.level.gameevent.DynamicGameEventListener;
+ import net.minecraft.world.level.gameevent.GameEvent;
+ import net.minecraft.world.level.gameevent.GameEventDispatcher;
+@@ -504,14 +503,19 @@ public class ServerLevel extends Level implements WorldGenLevel, ca.spottedleaf.
+     }
+ 
+     public com.infernalsuite.aswm.level.SlimeInMemoryWorld slimeInstance;
+-
++    // kitpvp - useDefaultConfig start
+     public ServerLevel(com.infernalsuite.aswm.level.SlimeBootstrap bootstrap, MinecraftServer minecraftserver, Executor executor, LevelStorageSource.LevelStorageAccess convertable_conversionsession, PrimaryLevelData iworlddataserver, ResourceKey<Level> resourcekey, LevelStem worlddimension, ChunkProgressListener worldloadlistener, boolean flag, @Nullable RandomSequences randomsequences, long i, List<CustomSpawner> list, boolean flag1, org.bukkit.World.Environment env, org.bukkit.generator.ChunkGenerator gen, org.bukkit.generator.BiomeProvider biomeProvider) {
++        this(bootstrap, minecraftserver, executor, convertable_conversionsession, iworlddataserver, resourcekey, worlddimension, worldloadlistener, flag, randomsequences, i, list, flag1, env, gen, biomeProvider, false);
++    }
++
++    public ServerLevel(com.infernalsuite.aswm.level.SlimeBootstrap bootstrap, MinecraftServer minecraftserver, Executor executor, LevelStorageSource.LevelStorageAccess convertable_conversionsession, PrimaryLevelData iworlddataserver, ResourceKey<Level> resourcekey, LevelStem worlddimension, ChunkProgressListener worldloadlistener, boolean flag, @Nullable RandomSequences randomsequences, long i, List<CustomSpawner> list, boolean flag1, org.bukkit.World.Environment env, org.bukkit.generator.ChunkGenerator gen, org.bukkit.generator.BiomeProvider biomeProvider, final boolean useDefaultConfig) {
++        // kitpvp end
+         // ASWM END
+         // IRegistryCustom.Dimension iregistrycustom_dimension = minecraftserver.registryAccess(); // CraftBukkit - decompile error
+         // Holder holder = worlddimension.type(); // CraftBukkit - decompile error
+ 
+         // Objects.requireNonNull(minecraftserver); // CraftBukkit - decompile error
+-        super(iworlddataserver, resourcekey, minecraftserver.registryAccess(), worlddimension.type(), minecraftserver::getProfiler, false, flag, i, minecraftserver.getMaxChainedNeighborUpdates(), gen, biomeProvider, env, spigotConfig -> minecraftserver.paperConfigurations.createWorldConfig(io.papermc.paper.configuration.PaperConfigurations.createWorldContextMap(convertable_conversionsession.levelDirectory.path(), iworlddataserver.getLevelName(), resourcekey.location(), spigotConfig, minecraftserver.registryAccess(), iworlddataserver.getGameRules())), executor); // Paper - create paper world configs; Async-Anti-Xray: Pass executor
++        super(iworlddataserver, resourcekey, minecraftserver.registryAccess(), worlddimension.type(), minecraftserver::getProfiler, false, flag, i, minecraftserver.getMaxChainedNeighborUpdates(), gen, biomeProvider, env, spigotConfig -> minecraftserver.paperConfigurations.createWorldConfig(io.papermc.paper.configuration.PaperConfigurations.createWorldContextMap(convertable_conversionsession.levelDirectory.path(), iworlddataserver.getLevelName(), resourcekey.location(), spigotConfig, minecraftserver.registryAccess(), iworlddataserver.getGameRules())), executor, useDefaultConfig); // Paper - create paper world configs; Async-Anti-Xray: Pass executor - kitpvp useDefaultConfig
+         this.pvpMode = minecraftserver.isPvpAllowed();
+         this.convertable = convertable_conversionsession;
+         this.uuid = WorldUUID.getUUID(convertable_conversionsession.levelDirectory.path().toFile());
+diff --git a/src/main/java/net/minecraft/world/level/Level.java b/src/main/java/net/minecraft/world/level/Level.java
+index e2a0487089eb5a7bdc1433e4c75f69d8e9f9d5f9..865c0be9285b364977644827cb44eedb3f99f416 100644
+--- a/src/main/java/net/minecraft/world/level/Level.java
++++ b/src/main/java/net/minecraft/world/level/Level.java
+@@ -10,9 +10,9 @@ import java.util.function.Consumer;
+ import java.util.function.Predicate;
+ import java.util.function.Supplier;
+ import javax.annotation.Nullable;
++
+ import net.minecraft.CrashReport;
+ import net.minecraft.CrashReportCategory;
+-import net.minecraft.ReportedException;
+ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Direction;
+ import net.minecraft.core.Holder;
+@@ -25,14 +25,13 @@ import net.minecraft.core.registries.Registries;
+ import net.minecraft.network.protocol.Packet;
+ import net.minecraft.resources.ResourceKey;
+ import net.minecraft.resources.ResourceLocation;
+-import io.papermc.paper.util.MCUtil;
+ import net.minecraft.server.MinecraftServer;
++import net.minecraft.server.dedicated.DedicatedServer;
+ import net.minecraft.server.level.FullChunkStatus;
+ import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.sounds.SoundEvent;
+ import net.minecraft.sounds.SoundEvents;
+ import net.minecraft.sounds.SoundSource;
+-import net.minecraft.util.AbortableIterationConsumer;
+ import net.minecraft.util.Mth;
+ import net.minecraft.util.RandomSource;
+ import net.minecraft.util.StringRepresentable;
+@@ -42,8 +41,6 @@ import net.minecraft.world.TickRateManager;
+ import net.minecraft.world.damagesource.DamageSource;
+ import net.minecraft.world.damagesource.DamageSources;
+ import net.minecraft.world.entity.Entity;
+-import net.minecraft.world.entity.boss.EnderDragonPart;
+-import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+ import net.minecraft.world.entity.item.ItemEntity;
+ import net.minecraft.world.entity.player.Player;
+ import net.minecraft.world.item.ItemStack;
+@@ -684,9 +681,16 @@ public abstract class Level implements LevelAccessor, AutoCloseable, ca.spottedl
+     }
+     // Paper end - optimise random ticking
+ 
+-    protected Level(WritableLevelData worlddatamutable, ResourceKey<Level> resourcekey, RegistryAccess iregistrycustom, Holder<DimensionType> holder, Supplier<ProfilerFiller> supplier, boolean flag, boolean flag1, long i, int j, org.bukkit.generator.ChunkGenerator gen, org.bukkit.generator.BiomeProvider biomeProvider, org.bukkit.World.Environment env, java.util.function.Function<org.spigotmc.SpigotWorldConfig, io.papermc.paper.configuration.WorldConfiguration> paperWorldConfigCreator, java.util.concurrent.Executor executor) { // Paper - create paper world config & Anti-Xray
+-        this.spigotConfig = new org.spigotmc.SpigotWorldConfig(((net.minecraft.world.level.storage.PrimaryLevelData) worlddatamutable).getLevelName()); // Spigot
+-        this.paperConfig = paperWorldConfigCreator.apply(this.spigotConfig); // Paper - create paper world config
++    // kitpvp - useDefaultConfiguration start
++    protected Level(WritableLevelData worlddatamutable, ResourceKey<Level> resourcekey, RegistryAccess iregistrycustom, Holder<DimensionType> holder, Supplier<ProfilerFiller> supplier, boolean flag, boolean flag1, long i, int j, org.bukkit.generator.ChunkGenerator gen, org.bukkit.generator.BiomeProvider biomeProvider, org.bukkit.World.Environment env, java.util.function.Function<org.spigotmc.SpigotWorldConfig, io.papermc.paper.configuration.WorldConfiguration> paperWorldConfigCreator, java.util.concurrent.Executor executor, boolean useDefaultConfig) { // Paper - create paper world config & Anti-Xray
++        if(useDefaultConfig) {
++            this.spigotConfig = DedicatedServer.getServer().overworld().spigotConfig;
++            this.paperConfig = DedicatedServer.getServer().overworld().paperConfig();
++        } else {
++            this.spigotConfig = new org.spigotmc.SpigotWorldConfig(((net.minecraft.world.level.storage.PrimaryLevelData) worlddatamutable).getLevelName()); // Spigot
++            this.paperConfig = paperWorldConfigCreator.apply(this.spigotConfig); // Paper - create paper world config
++        }
++        // kitpvp end
+         this.generator = gen;
+         this.world = new CraftWorld((ServerLevel) this, gen, biomeProvider, env);
+ 
+diff --git a/src/main/java/world/kitpvp/aswm/DuelSlimeWorlds.java b/src/main/java/world/kitpvp/aswm/DuelSlimeWorlds.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..711c27ecb3a08095e915c4f78f72e5ed6ff5c38a
+--- /dev/null
++++ b/src/main/java/world/kitpvp/aswm/DuelSlimeWorlds.java
+@@ -0,0 +1,14 @@
++package world.kitpvp.aswm;
++
++import com.infernalsuite.aswm.level.SlimeLevelInstance;
++import net.minecraft.world.level.Level;
++import world.kitpvp.aswm.api.DuelSlimeProperties;
++
++public class DuelSlimeWorlds {
++    public static boolean useDefaultConfig(Level serverLevel) {
++        if(serverLevel instanceof SlimeLevelInstance slime)
++            return slime.slimeInstance.getPropertyMap().getValue(DuelSlimeProperties.USE_DEFAULT_CONFIG);
++        else
++            return true;
++    }
++}

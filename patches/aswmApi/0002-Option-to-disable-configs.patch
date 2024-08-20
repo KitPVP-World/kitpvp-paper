@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: NotStevy <notstevy@ultrabuildmc.de>
+Date: Tue, 20 Aug 2024 18:23:12 +0200
+Subject: [PATCH] Option to disable configs
+
+
+diff --git a/src/main/java/world/kitpvp/aswm/api/DuelSlimeProperties.java b/src/main/java/world/kitpvp/aswm/api/DuelSlimeProperties.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..bca85de1dce283e82e458e40980ed7381103c3ac
+--- /dev/null
++++ b/src/main/java/world/kitpvp/aswm/api/DuelSlimeProperties.java
+@@ -0,0 +1,10 @@
++package world.kitpvp.aswm.api;
++
++import com.infernalsuite.aswm.api.world.properties.SlimeProperty;
++import com.infernalsuite.aswm.api.world.properties.type.SlimePropertyBoolean;
++import org.jetbrains.annotations.ApiStatus;
++
++public class DuelSlimeProperties {
++    @ApiStatus.Experimental
++    public static final SlimeProperty<Boolean> USE_DEFAULT_CONFIG = new SlimePropertyBoolean("useDefaultConfig", false);
++}
