@@ -9,7 +9,8 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.7.0"
 }
 
-rootProject.name = "kitpvpslime"
+rootProject.name = "kitpvp-slime"
 
 include("kitpvpslime-api", "kitpvpslime-server")
 include("api", "core")
+include("test-plugin")

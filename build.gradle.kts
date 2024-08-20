@@ -104,6 +104,13 @@ paperweight {
                     patchDir = layout.projectDirectory.dir("patches/aswmApi")
                     outputDir = layout.projectDirectory.dir("api")
                 }
+
+                register("generatedApi") {
+                    isBareDirectory.set(true)
+                    upstreamDir = paperDir.dir("paper-api-generator/generated")
+                    patchDir = layout.projectDirectory.dir("patches/generatedApi")
+                    outputDir = layout.projectDirectory.dir("paper-api-generator/generated")
+                }
             }
         }
     }

@@ -47,8 +47,8 @@ run/
 
 kitpvpslime-server
 kitpvpslime-api
-core/
-api/
+core
+api
 !patches/api
 !patches/core
 paper-api-generator
