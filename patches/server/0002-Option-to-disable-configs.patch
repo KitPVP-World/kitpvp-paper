@@ -154,13 +154,13 @@ index e2a0487089eb5a7bdc1433e4c75f69d8e9f9d5f9..865c0be9285b364977644827cb44eedb
          this.generator = gen;
          this.world = new CraftWorld((ServerLevel) this, gen, biomeProvider, env);
  
-diff --git a/src/main/java/world/kitpvp/aswm/DuelSlimeWorlds.java b/src/main/java/world/kitpvp/aswm/DuelSlimeWorlds.java
+diff --git a/src/main/java/world/kitpvp/paper/aswm/DuelSlimeWorlds.java b/src/main/java/world/kitpvp/paper/aswm/DuelSlimeWorlds.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..023983dd021f286e5ae00876c416c93a88d213b4
+index 0000000000000000000000000000000000000000..da1d47fd3e3a9d7f7a47ce9ae7a3be02feba76a1
 --- /dev/null
-+++ b/src/main/java/world/kitpvp/aswm/DuelSlimeWorlds.java
++++ b/src/main/java/world/kitpvp/paper/aswm/DuelSlimeWorlds.java
 @@ -0,0 +1,14 @@
-+package world.kitpvp.aswm;
++package world.kitpvp.paper.aswm;
 +
 +import com.infernalsuite.aswm.level.SlimeLevelInstance;
 +import net.minecraft.world.level.Level;
