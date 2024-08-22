@@ -4,13 +4,13 @@ Date: Tue, 20 Aug 2024 18:23:12 +0200
 Subject: [PATCH] Option to disable configs
 
 
-diff --git a/src/main/java/world/kitpvp/aswm/api/DuelSlimeProperties.java b/src/main/java/world/kitpvp/aswm/api/DuelSlimeProperties.java
+diff --git a/src/main/java/world/kitpvp/paper/api/aswm/DuelSlimeProperties.java b/src/main/java/world/kitpvp/paper/api/aswm/DuelSlimeProperties.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..bca85de1dce283e82e458e40980ed7381103c3ac
+index 0000000000000000000000000000000000000000..0212cd983ba18f441ea7532af13b048519efc724
 --- /dev/null
-+++ b/src/main/java/world/kitpvp/aswm/api/DuelSlimeProperties.java
++++ b/src/main/java/world/kitpvp/paper/api/aswm/DuelSlimeProperties.java
 @@ -0,0 +1,10 @@
-+package world.kitpvp.aswm.api;
++package world.kitpvp.paper.api.aswm;
 +
 +import com.infernalsuite.aswm.api.world.properties.SlimeProperty;
 +import com.infernalsuite.aswm.api.world.properties.type.SlimePropertyBoolean;

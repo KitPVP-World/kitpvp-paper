@@ -5,19 +5,18 @@ Subject: [PATCH] Option to disable configs
 
 
 diff --git a/src/main/java/com/infernalsuite/aswm/SlimeNMSBridgeImpl.java b/src/main/java/com/infernalsuite/aswm/SlimeNMSBridgeImpl.java
-index 87b6ee19fd165bde2db3a57545c58251dc6bad22..32a74b7ea55f507b865fbef8f5c03bc7ff7d59a5 100644
+index 87b6ee19fd165bde2db3a57545c58251dc6bad22..dc116db37dccabe726ba780fc8ba6c58bef2985c 100644
 --- a/src/main/java/com/infernalsuite/aswm/SlimeNMSBridgeImpl.java
 +++ b/src/main/java/com/infernalsuite/aswm/SlimeNMSBridgeImpl.java
-@@ -38,6 +38,8 @@ import org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer;
+@@ -38,6 +38,7 @@ import org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer;
  import org.bukkit.craftbukkit.persistence.CraftPersistentDataTypeRegistry;
  import org.bukkit.persistence.PersistentDataContainer;
  import org.jetbrains.annotations.Nullable;
-+import world.kitpvp.aswm.*;
-+import world.kitpvp.aswm.api.*;
++import world.kitpvp.paper.api.aswm.DuelSlimeProperties;
  
  import java.io.IOException;
  import java.util.Locale;
-@@ -139,6 +141,7 @@ public class SlimeNMSBridgeImpl implements SlimeNMSBridge {
+@@ -139,6 +140,7 @@ public class SlimeNMSBridgeImpl implements SlimeNMSBridge {
      public void setDefaultWorlds(SlimeWorld normalWorld, SlimeWorld netherWorld, SlimeWorld endWorld) {
          if (normalWorld != null) {
              normalWorld.getPropertyMap().setValue(SlimeProperties.ENVIRONMENT, World.Environment.NORMAL.toString().toLowerCase());
@@ -25,7 +24,7 @@ index 87b6ee19fd165bde2db3a57545c58251dc6bad22..32a74b7ea55f507b865fbef8f5c03bc7
              defaultWorld = normalWorld;
          }
  
-@@ -256,4 +259,4 @@ public class SlimeNMSBridgeImpl implements SlimeNMSBridge {
+@@ -256,4 +258,4 @@ public class SlimeNMSBridgeImpl implements SlimeNMSBridge {
          return data;
      }
  
@@ -33,14 +32,14 @@ index 87b6ee19fd165bde2db3a57545c58251dc6bad22..32a74b7ea55f507b865fbef8f5c03bc7
 \ No newline at end of file
 +}
 diff --git a/src/main/java/com/infernalsuite/aswm/level/SlimeLevelInstance.java b/src/main/java/com/infernalsuite/aswm/level/SlimeLevelInstance.java
-index 187336ecaa4262e3f081a88702031b17c6037091..9e45d04a9d924822e60fcbd5997a87140f74d87f 100644
+index 187336ecaa4262e3f081a88702031b17c6037091..9ac1f14d3b9fb7559345be7a062c29a6732d3422 100644
 --- a/src/main/java/com/infernalsuite/aswm/level/SlimeLevelInstance.java
 +++ b/src/main/java/com/infernalsuite/aswm/level/SlimeLevelInstance.java
 @@ -34,6 +34,7 @@ import org.bukkit.Bukkit;
  import org.bukkit.event.world.WorldSaveEvent;
  import org.jetbrains.annotations.Nullable;
  import org.spigotmc.AsyncCatcher;
-+import world.kitpvp.aswm.api.DuelSlimeProperties;
++import world.kitpvp.paper.api.aswm.DuelSlimeProperties;
  
  import java.io.IOException;
  import java.nio.file.Files;
@@ -157,7 +156,7 @@ index e2a0487089eb5a7bdc1433e4c75f69d8e9f9d5f9..865c0be9285b364977644827cb44eedb
  
 diff --git a/src/main/java/world/kitpvp/aswm/DuelSlimeWorlds.java b/src/main/java/world/kitpvp/aswm/DuelSlimeWorlds.java
 new file mode 100644
-index 0000000000000000000000000000000000000000..711c27ecb3a08095e915c4f78f72e5ed6ff5c38a
+index 0000000000000000000000000000000000000000..023983dd021f286e5ae00876c416c93a88d213b4
 --- /dev/null
 +++ b/src/main/java/world/kitpvp/aswm/DuelSlimeWorlds.java
 @@ -0,0 +1,14 @@
@@ -165,7 +164,7 @@ index 0000000000000000000000000000000000000000..711c27ecb3a08095e915c4f78f72e5ed
 +
 +import com.infernalsuite.aswm.level.SlimeLevelInstance;
 +import net.minecraft.world.level.Level;
-+import world.kitpvp.aswm.api.DuelSlimeProperties;
++import world.kitpvp.paper.api.aswm.DuelSlimeProperties;
 +
 +public class DuelSlimeWorlds {
 +    public static boolean useDefaultConfig(Level serverLevel) {

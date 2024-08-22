@@ -10,7 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameRule;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
-import world.kitpvp.aswm.api.DuelSlimeProperties;
+import world.kitpvp.paper.api.aswm.DuelSlimeProperties;
 
 import java.util.UUID;
 
