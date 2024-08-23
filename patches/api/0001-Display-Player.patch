@@ -1,0 +1,53 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: NotStevy <notstevy@ultrabuildmc.de>
+Date: Fri, 23 Aug 2024 20:37:35 +0200
+Subject: [PATCH] Display Player
+
+
+diff --git a/src/main/java/org/bukkit/entity/EntityType.java b/src/main/java/org/bukkit/entity/EntityType.java
+index 6905614c3d277a3a725554f02cc92d4b3430eecc..6a56caef244348a9cf7f5351e07ba7cf48afd7c8 100644
+--- a/src/main/java/org/bukkit/entity/EntityType.java
++++ b/src/main/java/org/bukkit/entity/EntityType.java
+@@ -4,6 +4,9 @@ import com.google.common.base.Preconditions;
+ import java.util.HashMap;
+ import java.util.Locale;
+ import java.util.Map;
++import java.util.Objects;
++
++import net.kyori.adventure.key.Namespaced;
+ import org.bukkit.Bukkit;
+ import org.bukkit.Keyed;
+ import org.bukkit.Location;
+@@ -302,10 +305,13 @@ public enum EntityType implements Keyed, Translatable, net.kyori.adventure.trans
+      */
+     LIGHTNING_BOLT("lightning_bolt", LightningStrike.class, -1),
+     PLAYER("player", Player.class, -1, false),
++    // kitpvp start - DisplayPlayer
++    DISPLAY_PLAYER(Objects.requireNonNull(NamespacedKey.fromString("kitpvp:display_player")), Creature.class, -1, true),
+     /**
+      * An unknown entity without an Entity Class
+      */
+-    UNKNOWN(null, null, -1, false);
++    UNKNOWN((String) null, null, -1, false);
++    // kitpvp end - DisplayPlayer
+ 
+     private final String name;
+     private final Class<? extends Entity> clazz;
+@@ -340,6 +346,17 @@ public enum EntityType implements Keyed, Translatable, net.kyori.adventure.trans
+         this.key = (name == null) ? null : NamespacedKey.minecraft(name);
+     }
+ 
++    // kitpvp start - DisplayPlayer
++    private EntityType(@NotNull NamespacedKey key, /*@Nullable*/ Class<? extends Entity> clazz, int typeId, boolean independent) {
++        this.name = key.asMinimalString();
++        this.clazz = clazz;
++        this.typeId = (short) typeId;
++        this.independent = independent;
++        this.living = clazz != null && LivingEntity.class.isAssignableFrom(clazz);
++        this.key = key;
++    }
++    // kitpvp end - DisplayPlayer
++
+     /**
+      * Gets the entity type name.
+      *
