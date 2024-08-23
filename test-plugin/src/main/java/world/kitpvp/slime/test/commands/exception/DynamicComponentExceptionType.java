@@ -1,4 +1,4 @@
-package world.kitpvp.slime.test.commands;
+package world.kitpvp.slime.test.commands.exception;
 
 import com.mojang.brigadier.ImmutableStringReader;
 import com.mojang.brigadier.exceptions.CommandExceptionType;
