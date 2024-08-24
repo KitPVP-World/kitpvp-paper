@@ -1,0 +1,30 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: NotStevy <notstevy@ultrabuildmc.de>
+Date: Sat, 24 Aug 2024 22:57:37 +0200
+Subject: [PATCH] Add Log4J Discord Log Appender Queue
+
+
+diff --git a/src/main/resources/log4j2.xml b/src/main/resources/log4j2.xml
+index 3b090baf12044e19150ec66017c76fc48358f1b7..ac4b840c623fe2db1117928410675d08a7316bd3 100644
+--- a/src/main/resources/log4j2.xml
++++ b/src/main/resources/log4j2.xml
+@@ -29,6 +29,11 @@
+             </Policies>
+             <DefaultRolloverStrategy max="1000"/>
+         </RollingRandomAccessFile>
++        <!-- kitpvp start -->
++        <Queue name="DiscordAppender">
++            <PatternLayout pattern="[%logger] [%d{HH:mm:ss} %level]: %stripAnsi{%msg}%n%xEx{full}" />
++        </Queue>
++        <!-- kitpvp end -->
+         <Async name="Async">
+             <AppenderRef ref="rewrite"/>
+         </Async>
+@@ -41,6 +46,7 @@
+             <AppenderRef ref="File"/>
+             <AppenderRef ref="TerminalConsole" level="info"/>
+             <AppenderRef ref="ServerGuiConsole" level="info"/>
++            <AppenderRef ref="DiscordAppender" level="warn"/> <!-- kitpvp -->
+         </Rewrite>
+     </Appenders>
+     <Loggers>
