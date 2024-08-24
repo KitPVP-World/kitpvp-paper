@@ -125,7 +125,7 @@ tasks.generateDevelopmentBundle {
     libraryRepositories = listOf(
         "https://repo.maven.apache.org/maven2/",
         paperMavenPublicUrl,
-        "https://maven.kitpvp.world/snapshots/", // This should be a repo hosting your API (in this example, 'world.kitpvp.kitpvpslime:kitpvpslime-api')
+        "https://maven.kitpvp.world/public-snapshots/", // This should be a repo hosting your API (in this example, 'world.kitpvp.kitpvpslime:kitpvpslime-api')
     )
 }
 
@@ -136,9 +136,7 @@ allprojects {
         repositories {
             maven {
                 name = "kitpvp"
-                url = uri("https://maven.kitpvp.world/snapshots/")
-                // See Gradle docs for how to provide credentials to PasswordCredentials
-                // https://docs.gradle.org/current/samples/sample_publishing_credentials.html
+                url = uri("https://maven.kitpvp.world/public-snapshots/")
                 credentials(PasswordCredentials::class)
             }
         }
