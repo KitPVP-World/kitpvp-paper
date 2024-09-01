@@ -1,0 +1,23 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: notstevy <notstevy@ultrabuildmc.de>
+Date: Sun, 1 Sep 2024 18:01:49 +0200
+Subject: [PATCH] Extend collides API - for kit duels custom spectator mode
+ (players weren't able to place end crystals inside spectators)
+
+
+diff --git a/src/main/java/net/minecraft/world/entity/EntitySelector.java b/src/main/java/net/minecraft/world/entity/EntitySelector.java
+index d8cc5614502db7025349e085381b6b32ad32296a..f9ce1d26bcc70f2b58c3ec07e3771285509d4173 100644
+--- a/src/main/java/net/minecraft/world/entity/EntitySelector.java
++++ b/src/main/java/net/minecraft/world/entity/EntitySelector.java
+@@ -25,6 +25,11 @@ public final class EntitySelector {
+         return !(entity instanceof Player) || !entity.isSpectator() && !((Player) entity).isCreative();
+     };
+     public static final Predicate<Entity> NO_SPECTATORS = (entity) -> {
++        // kitpvp start - Extend collides API
++        if(entity instanceof LivingEntity livingEntity && !livingEntity.collides)
++            return false;
++        // kitpvp end - Extend collides API
++
+         return !entity.isSpectator();
+     };
+     public static final Predicate<Entity> CAN_BE_COLLIDED_WITH = EntitySelector.NO_SPECTATORS.and(Entity::canBeCollidedWith);
