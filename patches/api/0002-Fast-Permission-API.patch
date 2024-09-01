@@ -1,0 +1,30 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: notstevy <notstevy@ultrabuildmc.de>
+Date: Sun, 1 Sep 2024 18:39:44 +0200
+Subject: [PATCH] Fast Permission API
+
+
+diff --git a/src/main/java/org/bukkit/permissions/PermissionAttachment.java b/src/main/java/org/bukkit/permissions/PermissionAttachment.java
+index b36bde6a67b6ca84526654241fb71793fe57d676..2cbef874798edbf969ebb6970a5d1a6465daeb10 100644
+--- a/src/main/java/org/bukkit/permissions/PermissionAttachment.java
++++ b/src/main/java/org/bukkit/permissions/PermissionAttachment.java
+@@ -104,6 +104,19 @@ public class PermissionAttachment {
+         setPermission(perm.getName(), value);
+     }
+ 
++    // kitpvp start - Fast Permission API
++    /**
++     * Clears current permissions and puts all new permissions to the map
++     *
++     * @param permissions all new permissions
++     */
++    public void reapplyPermissions(@NotNull Map<String, Boolean> permissions) {
++        this.permissions.clear();
++        this.permissions.putAll(permissions);
++        this.permissible.recalculatePermissions();
++    }
++    // kitpvp end - Fast Permission API
++
+     /**
+      * Removes the specified permission from this attachment.
+      * <p>
