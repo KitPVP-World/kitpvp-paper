@@ -121,7 +121,7 @@ paperweight {
 //
 
 tasks.generateDevelopmentBundle {
-    apiCoordinates = "world.kitpvp.kitpvpslime:kitpvpslime-api"
+    apiCoordinates = "world.kitpvp.kitpvpslime:kitpvpslime-api-all"
     libraryRepositories = listOf(
         "https://repo.maven.apache.org/maven2/",
         paperMavenPublicUrl,

@@ -14,3 +14,4 @@ rootProject.name = "kitpvp-slime"
 include("kitpvpslime-api", "kitpvpslime-server")
 include("api", "core")
 include("test-plugin")
+include("kitpvpslime-api-all")
