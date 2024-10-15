@@ -33,3 +33,16 @@ runDev - Spin up a non-relocated Mojang-mapped test server
 runReobf - Spin up a test server from the reobfJar output jar
 runShadow - Spin up a test server from the shadowJar archiveFile
 ```
+
+## Docker
+
+###  Docker Run (from locally built image)
+```bash
+docker run -it --rm -p 25565 kitpvp-paper:latest
+```
+
+### Docker Build
+
+```bash
+docker build -t kitpvp-paper:latest . --build-arg CACHEBUST=$(git log -n 1 --pretty=format:"%H" origin/submodules)
+```

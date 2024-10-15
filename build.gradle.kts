@@ -4,10 +4,10 @@ plugins {
     java
     `maven-publish`
     id("org.kordamp.gradle.profiles") version "0.47.0" // required by aswm - keep version sync
-    id("com.gradleup.shadow") version "8.3.0" apply false
+    id("com.gradleup.shadow") version "8.3.3" apply false
 
     // In general, keep this version in sync with upstream. Sometimes a newer version than upstream might work, but an older version is extremely likely to break.
-    id("io.papermc.paperweight.patcher") version "1.7.1"
+    id("io.papermc.paperweight.patcher") version "1.7.3"
 }
 
 val paperMavenPublicUrl = "https://repo.papermc.io/repository/maven-public/"

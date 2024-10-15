@@ -1,0 +1,6 @@
+bukkit.command.version:
+  default: false
+bukkit.command.help:
+  default: false
+bukkit.command.plugins:
+  default: false

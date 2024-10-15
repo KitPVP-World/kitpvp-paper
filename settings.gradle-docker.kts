@@ -14,4 +14,4 @@ rootProject.name = "kitpvp-slime"
 include("kitpvpslime-api", "kitpvpslime-server")
 include("api", "core")
 include("test-plugin")
-include("kitpvpslime-api-all")
+// include("kitpvpslime-api-all") remove kitpvpslime-api-all project causing issues
