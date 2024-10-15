@@ -105,7 +105,7 @@ index cb61462d4691a055a4b25f7b953609d8a154fdfe..dfca5259f93d3e77a8f71c103e068c01
      private final EntityType.EntityFactory<T> factory;
      private final MobCategory category;
 diff --git a/src/main/java/net/minecraft/world/entity/LivingEntity.java b/src/main/java/net/minecraft/world/entity/LivingEntity.java
-index ccd9dff20a60f019e0c320acfb526b8bf3e5f806..ccab306a6c08a46560a08f0e2e23a2e36722c5d1 100644
+index 2aa6374cd4a96efd85899be8cd3172a8257bfe6b..0bebbc243aa73242c4d4def3c12e16559cdb15f9 100644
 --- a/src/main/java/net/minecraft/world/entity/LivingEntity.java
 +++ b/src/main/java/net/minecraft/world/entity/LivingEntity.java
 @@ -198,7 +198,7 @@ public abstract class LivingEntity extends Entity implements Attackable {
@@ -183,7 +183,7 @@ index 09bcbc0ae36e4e69fee87a7e0c49acf496117a39..95806ecae074e00d2ff74c92586569ba
          builder.define(Player.DATA_PLAYER_ABSORPTION_ID, 0.0F);
          builder.define(Player.DATA_SCORE_ID, 0);
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntityTypes.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntityTypes.java
-index afc75ef3fb0fac40673fdfb684bd1f0d0edeb6ce..d17404dc57076dc457c030fe10324ae48b0cd754 100644
+index afc75ef3fb0fac40673fdfb684bd1f0d0edeb6ce..3b2376254254b001d69f59c894105d4b4cdc09c3 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntityTypes.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntityTypes.java
 @@ -10,6 +10,7 @@ import java.util.function.BiFunction;
@@ -214,7 +214,7 @@ index afc75ef3fb0fac40673fdfb684bd1f0d0edeb6ce..d17404dc57076dc457c030fe10324ae4
          register(new EntityTypeData<>(EntityType.HOPPER_MINECART, HopperMinecart.class, CraftMinecartHopper::new, spawnData -> new MinecartHopper(spawnData.minecraftWorld(), spawnData.x(), spawnData.y(), spawnData.z())));
          register(new EntityTypeData<>(EntityType.SPAWNER_MINECART, SpawnerMinecart.class, CraftMinecartMobSpawner::new, spawnData -> new MinecartSpawner(spawnData.minecraftWorld(), spawnData.x(), spawnData.y(), spawnData.z())));
  
-+        register(new EntityTypeData<>(EntityType.DISPLAY_PLAYER, HumanEntity.class, (server, displayPlayer) -> displayPlayer.getDefaultServerPlayer().getBukkitEntity(), spawnData -> new DisplayPlayer((ServerLevel) spawnData.minecraftWorld(), spawnData.x(), spawnData.y(), spawnData.z()))); // kitpvp - DisplayPlayer
++        register(new EntityTypeData<>(EntityType.DISPLAY_PLAYER, world.kitpvp.paper.api.entity.DisplayPlayer.class, (server, displayPlayer) -> displayPlayer.getDefaultServerPlayer().getBukkitEntity(), spawnData -> new DisplayPlayer((ServerLevel) spawnData.minecraftWorld(), spawnData.x(), spawnData.y(), spawnData.z()))); // kitpvp - DisplayPlayer
 +
          // None spawn able
          register(new EntityTypeData<>(EntityType.FISHING_BOBBER, FishHook.class, CraftFishHook::new, null)); // Cannot spawn a fish hook
@@ -541,3 +541,17 @@ index 0000000000000000000000000000000000000000..cb8f4b309aee388286d368a4a1bb1bb2
 +        return displayPlayer;
 +    }
 +}
+diff --git a/src/test/java/org/bukkit/entity/EntityTypesTest.java b/src/test/java/org/bukkit/entity/EntityTypesTest.java
+index 952924abae79cc504342bbdb6f6953ab8a6cc295..8ac25b8b2b620e61c6b60610db80024b5523ecba 100644
+--- a/src/test/java/org/bukkit/entity/EntityTypesTest.java
++++ b/src/test/java/org/bukkit/entity/EntityTypesTest.java
+@@ -18,7 +18,8 @@ public class EntityTypesTest extends AbstractTestingBase {
+         for (net.minecraft.world.entity.EntityType<?> nms : BuiltInRegistries.ENTITY_TYPE) { // Paper - remap fix
+             ResourceLocation key = net.minecraft.world.entity.EntityType.getKey(nms); // Paper - remap fix
+ 
+-            org.bukkit.entity.EntityType bukkit = org.bukkit.entity.EntityType.fromName(key.getPath());
++            String name = key.getNamespace().equals("minecraft") ? key.getPath() : key.toString(); // kitpvp - Display Player (allow factor in namespaces apart from minecraft)
++            org.bukkit.entity.EntityType bukkit = org.bukkit.entity.EntityType.fromName(name);
+             assertNotNull(bukkit, "Missing nms->bukkit " + key);
+ 
+             assertTrue(allBukkit.remove(bukkit), "Duplicate entity nms->" + bukkit);

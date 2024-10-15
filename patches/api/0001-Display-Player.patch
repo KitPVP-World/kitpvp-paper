@@ -5,7 +5,7 @@ Subject: [PATCH] Display Player
 
 
 diff --git a/src/main/java/org/bukkit/entity/EntityType.java b/src/main/java/org/bukkit/entity/EntityType.java
-index 6905614c3d277a3a725554f02cc92d4b3430eecc..6a56caef244348a9cf7f5351e07ba7cf48afd7c8 100644
+index a78e1c431a6ea46ba7c44880e25a871f473bef41..6dd3f3b8b316cc76e243deeb73d464d427e9eb98 100644
 --- a/src/main/java/org/bukkit/entity/EntityType.java
 +++ b/src/main/java/org/bukkit/entity/EntityType.java
 @@ -4,6 +4,9 @@ import com.google.common.base.Preconditions;
@@ -18,12 +18,20 @@ index 6905614c3d277a3a725554f02cc92d4b3430eecc..6a56caef244348a9cf7f5351e07ba7cf
  import org.bukkit.Bukkit;
  import org.bukkit.Keyed;
  import org.bukkit.Location;
-@@ -302,10 +305,13 @@ public enum EntityType implements Keyed, Translatable, net.kyori.adventure.trans
+@@ -22,6 +25,7 @@ import org.bukkit.potion.PotionEffectType;
+ import org.jetbrains.annotations.Contract;
+ import org.jetbrains.annotations.NotNull;
+ import org.jetbrains.annotations.Nullable;
++import world.kitpvp.paper.api.entity.DisplayPlayer;
+ 
+ public enum EntityType implements Keyed, Translatable, net.kyori.adventure.translation.Translatable, io.papermc.paper.world.flag.FeatureDependant { // Paper - translatable
+ 
+@@ -302,10 +306,13 @@ public enum EntityType implements Keyed, Translatable, net.kyori.adventure.trans
       */
      LIGHTNING_BOLT("lightning_bolt", LightningStrike.class, -1),
      PLAYER("player", Player.class, -1, false),
 +    // kitpvp start - DisplayPlayer
-+    DISPLAY_PLAYER(Objects.requireNonNull(NamespacedKey.fromString("kitpvp:display_player")), Creature.class, -1, true),
++    DISPLAY_PLAYER(Objects.requireNonNull(NamespacedKey.fromString("kitpvp:display_player")), DisplayPlayer.class, -1, true),
      /**
       * An unknown entity without an Entity Class
       */
@@ -33,7 +41,7 @@ index 6905614c3d277a3a725554f02cc92d4b3430eecc..6a56caef244348a9cf7f5351e07ba7cf
  
      private final String name;
      private final Class<? extends Entity> clazz;
-@@ -340,6 +346,17 @@ public enum EntityType implements Keyed, Translatable, net.kyori.adventure.trans
+@@ -340,6 +347,17 @@ public enum EntityType implements Keyed, Translatable, net.kyori.adventure.trans
          this.key = (name == null) ? null : NamespacedKey.minecraft(name);
      }
  
@@ -51,3 +59,34 @@ index 6905614c3d277a3a725554f02cc92d4b3430eecc..6a56caef244348a9cf7f5351e07ba7cf
      /**
       * Gets the entity type name.
       *
+diff --git a/src/main/java/org/bukkit/entity/Player.java b/src/main/java/org/bukkit/entity/Player.java
+index 8086acceacbceb2c5a7228fff005e41a86d37008..ed0427e28a37f4803a949af52062bd08f2f94477 100644
+--- a/src/main/java/org/bukkit/entity/Player.java
++++ b/src/main/java/org/bukkit/entity/Player.java
+@@ -53,11 +53,12 @@ import org.bukkit.scoreboard.Scoreboard;
+ import org.jetbrains.annotations.ApiStatus;
+ import org.jetbrains.annotations.NotNull;
+ import org.jetbrains.annotations.Nullable;
++import world.kitpvp.paper.api.entity.DisplayPlayer;
+ 
+ /**
+  * Represents a player, connected or not
+  */
+-public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginMessageRecipient, net.kyori.adventure.identity.Identified, net.kyori.adventure.bossbar.BossBarViewer, com.destroystokyo.paper.network.NetworkClient { // Paper
++public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginMessageRecipient, net.kyori.adventure.identity.Identified, net.kyori.adventure.bossbar.BossBarViewer, com.destroystokyo.paper.network.NetworkClient, DisplayPlayer { // Paper // kitpvp - extends DisplayPlayer
+ 
+     // Paper start
+     @Override
+diff --git a/src/main/java/world/kitpvp/paper/api/entity/DisplayPlayer.java b/src/main/java/world/kitpvp/paper/api/entity/DisplayPlayer.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..734976c1be8a3e704575c43f42b222ed73cc05f4
+--- /dev/null
++++ b/src/main/java/world/kitpvp/paper/api/entity/DisplayPlayer.java
+@@ -0,0 +1,7 @@
++package world.kitpvp.paper.api.entity;
++
++import net.kyori.adventure.identity.Identified;
++import org.bukkit.entity.HumanEntity;
++
++public interface DisplayPlayer extends HumanEntity, Identified {
++}
