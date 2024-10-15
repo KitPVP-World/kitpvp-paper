@@ -8,7 +8,7 @@ USER gradle
 WORKDIR /home/gradle
 
 ARG CACHEBUST=1
-RUN git clone https://github.com/KitPvP-World/kitpvp-paper -b docker-test /home/gradle/kitpvp-paper
+RUN git clone https://github.com/KitPvP-World/kitpvp-paper -b main /home/gradle/kitpvp-paper
 
 WORKDIR /home/gradle/kitpvp-paper
 
