@@ -36,6 +36,7 @@ RUN java -Dpaperclip.patchonly=true -jar ./kitpvp-paper.jar # cache
 
 ENV EULA=true
 ENV TYPE="CUSTOM"
+ENV MODRINTH_LOADER="paper"
 ENV USE_AIKAR_FLAGS=truepl
 ENV CUSTOM_JAR_EXEC="-jar kitpvp-paper.jar"
 ENV REPLACE_ENV_VARIABLES="TRUE"
