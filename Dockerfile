@@ -36,10 +36,9 @@ COPY --from=build /home/gradle/kitpvp-paper/build/libs/kitpvp-slime-paperclip-*-
 RUN java -Dpaperclip.patchonly=true -jar ./kitpvp-paper.jar # cache
 
 ENV EULA=true
-ENV TYPE="CUSTOM"
-ENV MODRINTH_LOADER="paper"
-ENV USE_AIKAR_FLAGS=truepl
-ENV CUSTOM_JAR_EXEC="-jar kitpvp-paper.jar"
+ENV TYPE="PAPER"
+ENV USE_AIKAR_FLAGS=true
+ENV PAPER_CUSTOM_JAR="/data/kitpvp-paper.jar"
 ENV REPLACE_ENV_VARIABLES="TRUE"
 ENV ENV_VARIABLE_PREFIX="CFG_"
 ENV CFG_VELOCITY_ENABLED=true
