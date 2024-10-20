@@ -42,3 +42,10 @@ ENV PAPER_CUSTOM_JAR="/data/kitpvp-paper.jar"
 ENV REPLACE_ENV_VARIABLES="TRUE"
 ENV ENV_VARIABLE_PREFIX="CFG_"
 ENV CFG_VELOCITY_ENABLED=true
+
+# the version was not set to the right one automatically
+ENV VERSION="1.21.1"
+
+# There was an issue with permissions for the libraries; This seems to fix it
+RUN chmod -R 777 /data/libraries
+RUN chown 1000:1000 -R /data/libraries
