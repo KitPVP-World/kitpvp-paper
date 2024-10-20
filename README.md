@@ -52,3 +52,8 @@ docker build -t kitpvp-paper:latest . --build-arg CACHEBUST=$(git log -n 1 --pre
 ```bash
 docker build -t kitpvp-paper:latest . --build-arg CACHEBUST=$(git log -n 1 --pretty=format:"%H" origin/develop)
 ```
+
+#### Pulling upstream
+```bash
+git submodule update --remote --init
+```
