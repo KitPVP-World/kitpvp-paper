@@ -16,7 +16,7 @@ It's also a good idea to use the same version of the Gradle wrapper as upstream.
 ```
 Paperweight tasks
 -----------------
-yxapplyApiPatches
+applyApiPatches
 applyPatches
 applyServerPatches
 cleanCache - Delete the project setup cache and task outputs.
@@ -43,6 +43,12 @@ docker run -it --rm -p 25565 kitpvp-paper:latest
 
 ### Docker Build
 
+#### Build from `main` branch
 ```bash
-docker build -t kitpvp-paper:latest . --build-arg CACHEBUST=$(git log -n 1 --pretty=format:"%H" origin/submodules)
+docker build -t kitpvp-paper:latest . --build-arg CACHEBUST=$(git log -n 1 --pretty=format:"%H" origin/main)
+```
+
+#### Build from `develop` branch
+```bash
+docker build -t kitpvp-paper:latest . --build-arg CACHEBUST=$(git log -n 1 --pretty=format:"%H" origin/develop)
 ```

@@ -25,15 +25,19 @@ RUN gradle createMojmapPaperclipJar --stacktrace --no-daemon
 
 FROM itzg/minecraft-server
 
+COPY --from=build /home/gradle/kitpvp-paper/docker-data/config /config
+COPY --from=build /home/gradle/kitpvp-paper/docker-data/plugins /plugins
+
 WORKDIR /data
 
 COPY --from=build /home/gradle/kitpvp-paper/build/libs/kitpvp-slime-paperclip-*-mojmap.jar ./kitpvp-paper.jar
 
 RUN java -Dpaperclip.patchonly=true -jar ./kitpvp-paper.jar # cache
 
-COPY --from=build /home/gradle/kitpvp-paper/docker-data/ .
-
 ENV EULA=true
 ENV TYPE="CUSTOM"
 ENV USE_AIKAR_FLAGS=truepl
 ENV CUSTOM_JAR_EXEC="-jar kitpvp-paper.jar"
+ENV REPLACE_ENV_VARIABLES="TRUE"
+ENV ENV_VARIABLE_PREFIX="CFG_"
+ENV CFG_VELOCITY_ENABLED=true

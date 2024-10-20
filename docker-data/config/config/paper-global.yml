@@ -95,9 +95,9 @@ proxies:
     online-mode: true
   proxy-protocol: false
   velocity:
-    enabled: true
+    enabled: ${CFG_VELOCITY_ENABLED}
     online-mode: true
-    secret: ''
+    secret: '${CFG_VELOCITY_SECRET}'
 scoreboards:
   save-empty-scoreboard-teams: true
   track-plugin-scoreboards: false
