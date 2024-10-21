@@ -26,8 +26,8 @@ RUN gradle createMojmapPaperclipJar --stacktrace --no-daemon
 FROM itzg/minecraft-server
 
 COPY --from=build /home/gradle/kitpvp-paper/docker-data/config /config
-# Currently there are no plugins available, needs to be changed when there may are
-# COPY --from=build /home/gradle/kitpvp-paper/docker-data/plugins /plugins
+COPY --from=build /home/gradle/kitpvp-paper/docker-data/plugins /plugins
+COPY --from=build /home/gradle/kitpvp-paper/docker-data/data /data
 
 WORKDIR /data
 
