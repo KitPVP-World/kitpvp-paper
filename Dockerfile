@@ -49,3 +49,5 @@ ENV VERSION="1.21.1"
 # There was an issue with permissions for the libraries; This seems to fix it
 RUN chmod -R 777 /data/libraries
 RUN chown 1000:1000 -R /data/libraries
+RUN chown 1000:1000 -R /data/plugins
+RUN chown 1000:1000 -R /data
