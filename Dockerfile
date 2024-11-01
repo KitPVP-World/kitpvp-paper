@@ -35,11 +35,10 @@ ARG TARGETVARIANT
 ENV VERSION="1.21.1"
 ENV MINECRAFT_VERSION="${VERSION}"
 
-RUN --from=build --mount=target=/setup,source=/home/gradle/kitpvp-paper/docker-data/install \
-    /setup/install-packages.sh
-
-RUN --from=build --mount=target=/setup,source=/home/gradle/kitpvp-paper/docker-data/install \
-    /setup/setup-users.sh
+COPY --from=build /home/gradle/kitpvp-paper/docker-data/install/install-packages.sh /setup/
+RUN /setup/install-packages.sh
+COPY --from=build /home/gradle/kitpvp-paper/docker-data/install/setup-packages.sh /setup/
+RUN /setup/install-users.sh
 
 ARG APPS_REV=1
 ARG GITHUB_BASEURL=https://github.com
