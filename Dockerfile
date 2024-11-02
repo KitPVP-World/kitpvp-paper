@@ -36,8 +36,9 @@ ENV VERSION="1.21.1"
 ENV MINECRAFT_VERSION="${VERSION}"
 
 COPY --from=build /home/gradle/kitpvp-paper/docker-data/scripts/install-packages.sh /setup/install-packages.sh
-RUN /setup/install-packages.sh
 COPY --from=build /home/gradle/kitpvp-paper/docker-data/scripts/setup-users.sh /setup/setup-users.sh
+RUN ls
+RUN /setup/install-packages.sh
 RUN /setup/setup-users.sh
 
 ARG APPS_REV=1
