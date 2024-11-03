@@ -23,7 +23,7 @@ RUN gradle applyPatches --stacktrace --no-daemon
 RUN gradle build --stacktrace --no-daemon
 #RUN gradle createMojmapPaperclipJar --stacktrace --no-daemon
 
-FROM azul/zulu-openjdk-alpine:21-jre
+FROM azul/zulu-openjdk:21-jre
 
 # hook into docker BuildKit --platform support
 # see https://docs.docker.com/engine/reference/builder/#automatic-platform-args-in-the-global-scope
@@ -37,7 +37,7 @@ ENV MINECRAFT_VERSION="${VERSION}"
 
 COPY --from=build /home/gradle/kitpvp-paper/docker-data/scripts/install-packages.sh /setup/install-packages.sh
 COPY --from=build /home/gradle/kitpvp-paper/docker-data/scripts/setup-users.sh /setup/setup-users.sh
-RUN ls
+
 RUN /setup/install-packages.sh
 RUN /setup/setup-users.sh
 
@@ -82,7 +82,6 @@ COPY --from=build --chmod=755 /home/gradle/kitpvp-paper/docker-data/scripts/mc-h
 EXPOSE 25565
 
 ENV MEMORY=2048
-ENV PAPER_VELOCITY_SECRET="${CFG_VELOCITY_SECRET}"
 
 CMD java -Xms${MEMORY}M -Xmx${MEMORY}M \
     -Dfile.encoding=UTF-8 \

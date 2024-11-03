@@ -1,5 +1,7 @@
 #!/bin/bash
 
+: "${EXTRA_DEB_PACKAGES:}"
+
 export TARGET
 
 set -euo pipefail
