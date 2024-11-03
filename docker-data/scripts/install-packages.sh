@@ -1,7 +1,5 @@
 #!/bin/bash
 
-: "${EXTRA_DEB_PACKAGES:}"
-
 export TARGET
 
 set -euo pipefail
@@ -29,8 +27,7 @@ apt-get install -y \
   zstd \
   lbzip2 \
   nfs-common \
-  libpcap0.8 \
-  ${EXTRA_DEB_PACKAGES}
+  libpcap0.8
 
 # Install Git LFS
 curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
