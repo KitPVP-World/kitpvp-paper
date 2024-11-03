@@ -61,11 +61,11 @@ RUN curl -fsSL ${MC_HELPER_BASE_URL}/mc-image-helper-${MC_HELPER_VERSION}.tgz \
   | tar -C /usr/share -zxf - \
   && ln -s /usr/share/mc-image-helper-${MC_HELPER_VERSION}/bin/mc-image-helper /usr/bin
 
+USER 1000:1000
+
 WORKDIR /data
 
 STOPSIGNAL SIGTERM
-
-USER 1000:1000
 
 RUN mkdir -p /data/plugins
 RUN mkdir -p /data/libraries
