@@ -67,10 +67,9 @@ STOPSIGNAL SIGTERM
 
 USER 1000:1000
 
-RUN mkdir /data/
-RUN mkdir /data/plugins
-RUN mkdir /data/libraries
-RUN mkdir /data/config
+RUN mkdir -p /data/plugins
+RUN mkdir -p /data/libraries
+RUN mkdir -p /data/config
 
 COPY --from=build /home/gradle/kitpvp-paper/docker-data/config ./config
 COPY --from=build /home/gradle/kitpvp-paper/docker-data/plugins ./plugins
