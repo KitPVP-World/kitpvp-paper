@@ -12,7 +12,7 @@ if ! [[ -v MINECRAFT_VERSION ]]; then
   exit 1
 fi
 
-rm /tmp/modrinth-download
+rm -rf /tmp/modrinth-download
 
 mc-image-helper modrinth \
   --output-directory=/tmp/modrinth-download \
