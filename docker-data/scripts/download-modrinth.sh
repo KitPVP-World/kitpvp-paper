@@ -13,7 +13,7 @@ if ! [[ -v MINECRAFT_VERSION ]]; then
 fi
 
 mc-image-helper modrinth \
-  --output-directory=/data/plugins \
+  --output-directory=/data \
   --projects="${MODRINTH_PROJECTS}" \
   --game-version="${MINECRAFT_VERSION}" \
   --loader="paper" \
