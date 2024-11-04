@@ -21,7 +21,7 @@ RUN git config --global user.email "no-reply@kitpvp.world"
 RUN git config --global user.name "KitPvP Building"
 RUN gradle applyPatches --stacktrace --no-daemon
 RUN gradle build --stacktrace --no-daemon
-#RUN gradle createMojmapPaperclipJar --stacktrace --no-daemon
+RUN gradle createMojmapBundlerJar --stacktrace --no-daemon
 
 FROM azul/zulu-openjdk:21-jre
 
@@ -74,7 +74,10 @@ RUN mkdir -p /data/config
 COPY --from=build /home/gradle/kitpvp-paper/docker-data/config ./config
 COPY --from=build /home/gradle/kitpvp-paper/docker-data/plugins ./plugins
 COPY --from=build /home/gradle/kitpvp-paper/docker-data/data .
-COPY --from=build /home/gradle/kitpvp-paper/kitpvpslime-server/build/libs/kitpvpslime-server-*-mojang-mapped.jar ./kitpvp-paper.jar
+
+COPY --from=build /home/gradle/kitpvp-paper/build/libs/kitpvp-slime-bundler-*-mojmap.jar ./kitpvp-paper.jar
+RUN java -Dpaperclip.patchonly=true -jar ./kitpvp-paper.jar # cache
+
 COPY --from=build --chmod=755 /home/gradle/kitpvp-paper/docker-data/scripts/download-modrinth.sh .
 COPY --from=build --chmod=755 /home/gradle/kitpvp-paper/docker-data/scripts/mc-health.sh /health.sh
 
