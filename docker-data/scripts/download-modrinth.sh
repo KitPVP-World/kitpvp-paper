@@ -12,10 +12,14 @@ if ! [[ -v MINECRAFT_VERSION ]]; then
   exit 1
 fi
 
+rm /tmp/modrinth-download
+
 mc-image-helper modrinth \
-  --output-directory=/data \
+  --output-directory=/tmp/modrinth-download \
   --projects="${MODRINTH_PROJECTS}" \
   --game-version="${MINECRAFT_VERSION}" \
   --loader="paper" \
   --download-dependencies="${MODRINTH_DOWNLOAD_DEPENDENCIES}" \
   --allowed-version-type="${MODRINTH_ALLOWED_VERSION_TYPE}"
+
+cp -r /tmp-modrinth-download/* /data/
