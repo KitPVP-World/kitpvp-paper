@@ -2,6 +2,8 @@
 
 set -euo pipefail
 
+export MODRINTH_PROJECTS=$1
+
 : "${MODRINTH_DOWNLOAD_DEPENDENCIES:=required}"
 : "${MODRINTH_ALLOWED_VERSION_TYPE:=release}"
 
