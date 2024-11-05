@@ -88,7 +88,7 @@ EXPOSE 25565
 
 ENV MEMORY=2048
 
-CMD cp -r /plugins/* /server/plugins && cp -r /config/* /server/config && cp -r /data/* /server  \
+CMD cp -r /plugins/* /server/plugins && cp -r /config/* /server/config && cp -r /data/* /server && \
     java -Xms${MEMORY}M -Xmx${MEMORY}M \
     -Dfile.encoding=UTF-8 \
     # Akair's Flags
