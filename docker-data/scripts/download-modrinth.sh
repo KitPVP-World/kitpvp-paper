@@ -22,4 +22,4 @@ mc-image-helper modrinth \
   --download-dependencies="${MODRINTH_DOWNLOAD_DEPENDENCIES}" \
   --allowed-version-type="${MODRINTH_ALLOWED_VERSION_TYPE}"
 
-cp -r /tmp/modrinth-download/* /data/
+cp -r /tmp/modrinth-download/* /server/

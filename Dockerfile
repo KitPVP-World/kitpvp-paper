@@ -63,17 +63,20 @@ RUN curl -fsSL ${MC_HELPER_BASE_URL}/mc-image-helper-${MC_HELPER_VERSION}.tgz \
 
 USER 1000:1000
 
-WORKDIR /data
+WORKDIR /server
 
 STOPSIGNAL SIGTERM
 
-RUN mkdir -p /data/plugins
-RUN mkdir -p /data/libraries
-RUN mkdir -p /data/config
+RUN mkdir -p /plugins
+RUN mkdir -p /config
+RUN mkdir -p /data
+RUN mkdir -p /server/plugins
+RUN mkdir -p /server/config
+RUN mkdir -p /server/libraries
 
-COPY --from=build /home/gradle/kitpvp-paper/docker-data/config ./config
-COPY --from=build /home/gradle/kitpvp-paper/docker-data/plugins ./plugins
-COPY --from=build /home/gradle/kitpvp-paper/docker-data/data .
+COPY --from=build /home/gradle/kitpvp-paper/docker-data/config /config
+COPY --from=build /home/gradle/kitpvp-paper/docker-data/plugins /plugins
+COPY --from=build /home/gradle/kitpvp-paper/docker-data/data /data
 
 COPY --from=build /home/gradle/kitpvp-paper/build/libs/kitpvp-slime-bundler-*-mojmap.jar ./kitpvp-paper.jar
 RUN java -Dpaperclip.patchonly=true -jar ./kitpvp-paper.jar # cache
@@ -85,7 +88,8 @@ EXPOSE 25565
 
 ENV MEMORY=2048
 
-CMD java -Xms${MEMORY}M -Xmx${MEMORY}M \
+CMD cp -r /plugins/* /server/plugins && cp -r /config/* /server/config && cp -r /data/* /server  \
+    java -Xms${MEMORY}M -Xmx${MEMORY}M \
     -Dfile.encoding=UTF-8 \
     # Akair's Flags
     -XX:+AlwaysPreTouch -XX:+DisableExplicitGC -XX:+ParallelRefProcEnabled -XX:+PerfDisableSharedMem -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:G1HeapRegionSize=8M -XX:G1HeapWastePercent=5 -XX:G1MaxNewSizePercent=40 -XX:G1MixedGCCountTarget=4 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1NewSizePercent=30 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:G1ReservePercent=20 -XX:InitiatingHeapOccupancyPercent=15 -XX:MaxGCPauseMillis=200 -XX:MaxTenuringThreshold=1 -XX:SurvivorRatio=32 -Dusing.aikars.flags=https://mcflags.emc.gs -Daikars.new.flags=true \
