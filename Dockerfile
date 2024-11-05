@@ -67,12 +67,12 @@ WORKDIR /server
 
 STOPSIGNAL SIGTERM
 
-RUN mkdir -p /plugins
-RUN mkdir -p /config
-RUN mkdir -p /data
-RUN mkdir -p /server/plugins
-RUN mkdir -p /server/config
-RUN mkdir -p /server/libraries
+WORKDIR /plugins
+WORKDIR /config
+WORKDIR /data
+WORKDIR /server/plugins
+WORKDIR /server/config
+WORKDIR /server/libraries
 
 COPY --from=build /home/gradle/kitpvp-paper/docker-data/config /config
 COPY --from=build /home/gradle/kitpvp-paper/docker-data/plugins /plugins
