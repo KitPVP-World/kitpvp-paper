@@ -63,10 +63,6 @@ RUN curl -fsSL ${MC_HELPER_BASE_URL}/mc-image-helper-${MC_HELPER_VERSION}.tgz \
 
 USER 1000:1000
 
-WORKDIR /server
-
-STOPSIGNAL SIGTERM
-
 WORKDIR /plugins
 WORKDIR /config
 WORKDIR /data
@@ -77,6 +73,10 @@ WORKDIR /server/libraries
 COPY --from=build /home/gradle/kitpvp-paper/docker-data/config /config
 COPY --from=build /home/gradle/kitpvp-paper/docker-data/plugins /plugins
 COPY --from=build /home/gradle/kitpvp-paper/docker-data/data /data
+
+WORKDIR /server
+
+STOPSIGNAL SIGTERM
 
 COPY --from=build /home/gradle/kitpvp-paper/build/libs/kitpvp-slime-bundler-*-mojmap.jar ./kitpvp-paper.jar
 RUN java -Dpaperclip.patchonly=true -jar ./kitpvp-paper.jar # cache
