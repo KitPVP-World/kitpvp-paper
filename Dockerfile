@@ -82,6 +82,7 @@ COPY --from=build /home/gradle/kitpvp-paper/build/libs/kitpvp-slime-bundler-*-mo
 RUN java -Dpaperclip.patchonly=true -jar ./kitpvp-paper.jar # cache
 
 COPY --from=build --chmod=755 /home/gradle/kitpvp-paper/docker-data/scripts/download-modrinth.sh .
+COPY --from=build --chmod=755 /home/gradle/kitpvp-paper/docker-data/scripts/download-spiget.sh .
 COPY --from=build --chmod=755 /home/gradle/kitpvp-paper/docker-data/scripts/mc-health.sh /health.sh
 
 EXPOSE 25565
