@@ -8,7 +8,8 @@ USER gradle
 WORKDIR /home/gradle
 
 ARG CACHEBUST=1
-RUN git clone https://github.com/KitPvP-World/kitpvp-paper -b main /home/gradle/kitpvp-paper
+ARG GIT_BRANCH=develop
+RUN git clone https://github.com/KitPvP-World/kitpvp-paper -b ${GIT_BRANCH} /home/gradle/kitpvp-paper
 
 WORKDIR /home/gradle/kitpvp-paper
 
