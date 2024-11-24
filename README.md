@@ -50,7 +50,7 @@ docker build -t kitpvp-paper:latest . --build-arg CACHEBUST=$(git log -n 1 --pre
 
 #### Build from `develop` branch
 ```bash
-docker build -t kitpvp-paper:latest . --build-arg CACHEBUST=$(git log -n 1 --pretty=format:"%H" origin/develop)
+docker build -t kitpvp-paper:develop . --build-arg CACHEBUST=$(git log -n 1 --pretty=format:"%H" origin/develop)
 ```
 
 #### Pulling upstream
