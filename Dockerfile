@@ -1,4 +1,4 @@
-FROM gradle:jdk21-jammy AS build
+FROM gradle:8.6-jdk21-jammy AS build
 
 #RUN apk add --no-cache git
 #RUN apk add --no-cache openssh
