@@ -17,11 +17,22 @@ public class PermissionCommand {
     public static void register(TestPlugin plugin, Commands commands) {
         commands.register(
             Commands.literal("permission")
-                .then(Commands.argument("permission", StringArgumentType.word())
+                .then(Commands.literal("ihaspermission")
+                    .then(Commands.argument("permission", StringArgumentType.string())
+                        .executes((context) -> {
+                            var permission = context.getArgument("permission", String.class);
+
+                            context.getSource().getSender().sendMessage("You haz permission: " + context.getSource().getExecutor().hasPermission(permission));
+                            return Command.SINGLE_SUCCESS;
+                        })))
+                .then(Commands.argument("permission", StringArgumentType.string())
                     .executes((context) -> {
+                        var player = (Player) context.getSource().getSender();
                         var permission = context.getArgument("permission", String.class);
-                        var attachment = getAttachment(plugin, (Player) context.getSource().getSender());
+                        var attachment = getAttachment(plugin, player);
                         attachment.setPermission(permission, true);
+
+                        player.updateCommands();
 
                         return Command.SINGLE_SUCCESS;
                     })).build());

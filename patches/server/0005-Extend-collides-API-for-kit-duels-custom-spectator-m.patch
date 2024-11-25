@@ -6,7 +6,7 @@ Subject: [PATCH] Extend collides API - for kit duels custom spectator mode
 
 
 diff --git a/src/main/java/net/minecraft/world/entity/EntitySelector.java b/src/main/java/net/minecraft/world/entity/EntitySelector.java
-index d8cc5614502db7025349e085381b6b32ad32296a..f9ce1d26bcc70f2b58c3ec07e3771285509d4173 100644
+index dca7b99e97f21bf6cfae6ee69eeac95d0bcf6863..ebd4f174000fda395712ae22cd6b3621fb5dc683 100644
 --- a/src/main/java/net/minecraft/world/entity/EntitySelector.java
 +++ b/src/main/java/net/minecraft/world/entity/EntitySelector.java
 @@ -25,6 +25,11 @@ public final class EntitySelector {
