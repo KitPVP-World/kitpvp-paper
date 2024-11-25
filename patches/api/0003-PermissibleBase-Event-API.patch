@@ -1,0 +1,91 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: notstevy <notstevy@ultrabuildmc.de>
+Date: Mon, 25 Nov 2024 18:05:12 +0100
+Subject: [PATCH] PermissibleBase Event API
+
+
+diff --git a/src/main/java/org/bukkit/permissions/PermissibleBase.java b/src/main/java/org/bukkit/permissions/PermissibleBase.java
+index 75b77cc4fe189b4b6baa1af3663dc492e992a266..bbd7d8aca02c24454702ad977d9f92bd62c39440 100644
+--- a/src/main/java/org/bukkit/permissions/PermissibleBase.java
++++ b/src/main/java/org/bukkit/permissions/PermissibleBase.java
+@@ -255,6 +255,28 @@ public class PermissibleBase implements Permissible {
+         return new HashSet<PermissionAttachmentInfo>(permissions.values());
+     }
+ 
++    // kitpvp - start: permission api
++    @org.jetbrains.annotations.ApiStatus.Experimental
++    public ServerOperator getOpable() {
++        return this.opable;
++    }
++
++    @org.jetbrains.annotations.ApiStatus.Experimental
++    public Permissible getParent() {
++        return this.parent;
++    }
++
++    @org.jetbrains.annotations.ApiStatus.Experimental
++    public List<PermissionAttachment> getAttachments() {
++        return this.attachments;
++    }
++
++    @org.jetbrains.annotations.ApiStatus.Experimental
++    public Map<String, PermissionAttachmentInfo> getPermissions() {
++        return this.permissions;
++    }
++    // kitpvp end
++
+     private static class RemoveAttachmentRunnable implements Runnable {
+         private final PermissionAttachment attachment;
+ 
+diff --git a/src/main/java/world/kitpvp/paper/api/event/PermissionsSetupEvent.java b/src/main/java/world/kitpvp/paper/api/event/PermissionsSetupEvent.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..059da9275386575c0f8b58b7ffa08b99a7a8f8fb
+--- /dev/null
++++ b/src/main/java/world/kitpvp/paper/api/event/PermissionsSetupEvent.java
+@@ -0,0 +1,46 @@
++package world.kitpvp.paper.api.event;
++
++import org.bukkit.entity.HumanEntity;
++import org.bukkit.event.Event;
++import org.bukkit.event.HandlerList;
++import org.bukkit.permissions.PermissibleBase;
++import org.jetbrains.annotations.NotNull;
++
++/**
++ * A sync event for setting a player's {@link PermissibleBase}.
++ * It is called right before the {@link org.bukkit.event.player.PlayerLoginEvent}
++ */
++public class PermissionsSetupEvent extends Event {
++
++    private static final HandlerList HANDLER_LIST = new HandlerList();
++    private PermissibleBase permissibleBase = null;
++    private final HumanEntity player;
++
++    public PermissionsSetupEvent(HumanEntity player) {
++        this.player = player;
++    }
++
++    public @NotNull PermissibleBase permissibleBase() {
++        if(this.permissibleBase == null) {
++            this.permissibleBase = new PermissibleBase(this.player);
++        }
++        return this.permissibleBase;
++    }
++
++    public void permissibleBase(@NotNull PermissibleBase permissibleBase) {
++        this.permissibleBase = permissibleBase;
++    }
++
++    public HumanEntity player() {
++        return this.player;
++    }
++
++    public static HandlerList getHandlerList() {
++        return HANDLER_LIST;
++    }
++
++    @Override
++    public HandlerList getHandlers() {
++        return HANDLER_LIST;
++    }
++}

@@ -1,0 +1,44 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: notstevy <notstevy@ultrabuildmc.de>
+Date: Mon, 25 Nov 2024 18:05:37 +0100
+Subject: [PATCH] PermissionBase Event API
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java
+index 7dcfb45c24d7743956be514c7d554e06aac77b3e..6fcdda5cec03397a666a9ed7081b24e41a53bb70 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java
+@@ -47,7 +47,6 @@ import org.bukkit.craftbukkit.inventory.CraftInventoryView;
+ import org.bukkit.craftbukkit.inventory.CraftItemStack;
+ import org.bukkit.craftbukkit.inventory.CraftItemType;
+ import org.bukkit.craftbukkit.inventory.CraftMerchantCustom;
+-import org.bukkit.craftbukkit.util.CraftChatMessage;
+ import org.bukkit.craftbukkit.util.CraftLocation;
+ import org.bukkit.craftbukkit.util.CraftNamespacedKey;
+ import org.bukkit.entity.Firework;
+@@ -66,11 +65,12 @@ import org.bukkit.permissions.Permission;
+ import org.bukkit.permissions.PermissionAttachment;
+ import org.bukkit.permissions.PermissionAttachmentInfo;
+ import org.bukkit.plugin.Plugin;
++import world.kitpvp.paper.api.event.PermissionsSetupEvent;
+ 
+ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
+     private CraftInventoryPlayer inventory;
+     private final CraftInventory enderChest;
+-    protected final PermissibleBase perm = new PermissibleBase(this);
++    protected final PermissibleBase perm; // kitpvp - permissions api
+     private boolean op;
+     private GameMode mode;
+ 
+@@ -79,6 +79,11 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
+         this.mode = server.getDefaultGameMode();
+         this.inventory = new CraftInventoryPlayer(entity.getInventory());
+         this.enderChest = new CraftInventory(entity.getEnderChestInventory());
++        // kitpvp - start: permission api
++        var event = new PermissionsSetupEvent(this);
++        event.callEvent();
++        this.perm = event.permissibleBase();
++        // kitpvp - end
+     }
+ 
+     @Override

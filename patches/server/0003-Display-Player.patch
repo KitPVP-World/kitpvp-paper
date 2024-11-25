@@ -5,10 +5,10 @@ Subject: [PATCH] Display Player
 
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index 9491cce00f1a74929dd6f845ee29886036ef0444..dbb7d7c0f782e332f119feec4f87d76071a77624 100644
+index 28b7879e8ba08e8d1fa8e8c920df6745480ce24a..7d17a952f0794a30d2301fc80b3ef391d900469f 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
-@@ -209,7 +209,7 @@ tasks.registerRunTask("runReobfServer") {
+@@ -214,7 +214,7 @@ tasks.registerRunTask("runReobfServer") {
  tasks.registerRunTask("runDevServer") {
      description = "Spin up a test server without assembling a jar"
      classpath(sourceSets.main.map { it.runtimeClasspath })
@@ -536,10 +536,10 @@ index 0000000000000000000000000000000000000000..cb8f4b309aee388286d368a4a1bb1bb2
 +    }
 +}
 diff --git a/src/test/java/org/bukkit/entity/EntityTypesTest.java b/src/test/java/org/bukkit/entity/EntityTypesTest.java
-index 952924abae79cc504342bbdb6f6953ab8a6cc295..8ac25b8b2b620e61c6b60610db80024b5523ecba 100644
+index d513d926ddabd61a03172adb846afb7674ed402e..61e00b8b067f0e3e2a700c377bdf0dc065e48a9e 100644
 --- a/src/test/java/org/bukkit/entity/EntityTypesTest.java
 +++ b/src/test/java/org/bukkit/entity/EntityTypesTest.java
-@@ -18,7 +18,8 @@ public class EntityTypesTest extends AbstractTestingBase {
+@@ -19,7 +19,8 @@ public class EntityTypesTest {
          for (net.minecraft.world.entity.EntityType<?> nms : BuiltInRegistries.ENTITY_TYPE) { // Paper - remap fix
              ResourceLocation key = net.minecraft.world.entity.EntityType.getKey(nms); // Paper - remap fix
  
