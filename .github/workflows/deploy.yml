@@ -50,4 +50,4 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            GIT_BRANCH=${{ github.ref }}
+            GIT_BRANCH=${{ github.ref_name }}
