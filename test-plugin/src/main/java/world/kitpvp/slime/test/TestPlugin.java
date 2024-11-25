@@ -13,6 +13,7 @@ public class TestPlugin extends JavaPlugin {
             final Commands commands = event.registrar();
 
             LoadWorldsTestCommand.register(commands);
+            PermissionCommand.register(this, commands);
         });
     }
 }
