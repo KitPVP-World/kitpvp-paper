@@ -89,6 +89,7 @@ COPY --from=build --chmod=755 /home/gradle/kitpvp-paper/docker-data/scripts/mc-h
 EXPOSE 25565
 
 ENV MEMORY=2048
+ENV KITPVP_SHUT_UP_OFFLINE=true
 
 CMD cp -r /plugins/* /server/plugins && cp -r /config/* /server/config && cp -r /data/* /server && \
     java -Xms${MEMORY}M -Xmx${MEMORY}M \
