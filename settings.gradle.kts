@@ -1,4 +1,6 @@
 pluginManagement {
+    includeBuild("asp-build-logic")
+
     repositories {
         gradlePluginPortal()
         mavenLocal()
@@ -10,7 +12,11 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.9.0"
 }
 
-rootProject.name = "forky"
+rootProject.name = "kitpvp-slime"
 
-include("forky-api")
-include("forky-server")
+include(":api")
+project(":api").projectDir = file("asp-api")
+include(":core")
+project(":core").projectDir = file("asp-core")
+include(":kitpvpslime-api")
+//include(":kitpvpslime-server")

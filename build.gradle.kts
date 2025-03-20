@@ -6,30 +6,45 @@ plugins {
 }
 
 paperweight {
-    upstreams.register("fork") {
-        repo = github("PaperMC", "paperweight-examples")
-        ref = providers.gradleProperty("forkRef")
+    upstreams.register("asp") {
+        repo = github("InfernalSuite", "AdvancedSlimePaper")
+        ref = providers.gradleProperty("aspRef")
 
         patchFile {
-            path = "fork-server/build.gradle.kts"
-            outputFile = file("forky-server/build.gradle.kts")
-            patchFile = file("forky-server/build.gradle.kts.patch")
+            path = "impl/aspaper-server/build.gradle.kts"
+            outputFile = file("kitpvpslime-server/build.gradle.kts")
+            patchFile = file("kitpvpslime-server/api-build.gradle.kts.patch")
         }
         patchFile {
-            path = "fork-api/build.gradle.kts"
-            outputFile = file("forky-api/build.gradle.kts")
-            patchFile = file("forky-api/build.gradle.kts.patch")
+            path = "impl/aspaper-api/build.gradle.kts"
+            outputFile = file("kitpvpslime-api/build.gradle.kts")
+            patchFile = file("kitpvpslime-api/api-build.gradle.kts.patch")
         }
         patchRepo("paperApi") {
-            upstreamPath = "paper-api"
-            patchesDir = file("forky-api/paper-patches")
+            upstreamPath = "impl/paper-api/"
+            patchesDir = file("kitpvpslime-api/paper-patches")
             outputDir = file("paper-api")
         }
-        patchDir("forkApi") {
-            upstreamPath = "fork-api"
-            excludes = listOf("build.gradle.kts", "build.gradle.kts.patch", "paper-patches")
-            patchesDir = file("forky-api/fork-patches")
-            outputDir = file("fork-api")
+
+        patchDir("aspApi") {
+            upstreamPath = "api"
+            patchesDir = file("asp-api/asp-patches")
+            outputDir = file("asp-api")
+        }
+        patchDir("aspCore") {
+            upstreamPath = "core"
+            patchesDir = file("asp-api/asp-patches")
+            outputDir = file("asp-core")
+        }
+//        patchDir("aspBuildSrc") {
+//            upstreamPath = "buildSrc"
+//            patchesDir = file("asp-build-logic/build-logic-patches")
+//            outputDir = file("asp-build-logic")
+//        }
+        patchFile {
+            path = "gradle/libs.versions.toml"
+            outputFile = file("gradle/libs.versions.toml")
+            patchFile = file("gradle/libs.versions.toml.patch")
         }
     }
 }

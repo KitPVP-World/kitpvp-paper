@@ -6,13 +6,17 @@ build
 
 /run
 
-/forky-server/build.gradle.kts
-/forky-server/src/minecraft
+/kitpvpslime-server/build.gradle.kts
+/kitpvpslime-server/src/minecraft
 /paper-server
-/fork-server
-/forky-api/build.gradle.kts
+/asp-server
+/kitpvpslime-api/build.gradle.kts
 /paper-api
 /paper-api-generator
-/fork-api
+/asp-api
+!/asp-api/settings.gradle.kts
+/asp-core
+!/asp-core/settings.gradle.kts
+gradle/libs.versions.toml
 
 .idea/
