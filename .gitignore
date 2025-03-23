@@ -1,10 +1,14 @@
+.idea/
+**/*.iml
+.vscode/
+.DS_Store
+
 # Ignore Gradle project-specific cache directory
-.gradle
+**/.gradle/
 
 # Ignore Gradle build output directory
 build
-
-/run
+**/run/
 
 /kitpvpslime-server/build.gradle.kts
 /kitpvpslime-server/src/minecraft
@@ -14,9 +18,4 @@ build
 /paper-api
 /paper-api-generator
 /asp-api
-!/asp-api/settings.gradle.kts
 /asp-core
-!/asp-core/settings.gradle.kts
-gradle/libs.versions.toml
-
-.idea/
