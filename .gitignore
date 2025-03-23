@@ -13,9 +13,10 @@ build
 /kitpvpslime-server/build.gradle.kts
 /kitpvpslime-server/src/minecraft
 /paper-server
-/asp-server
+/aspaper-server
 /kitpvpslime-api/build.gradle.kts
 /paper-api
 /paper-api-generator
+/aspaper-api
 /asp-api
 /asp-core
