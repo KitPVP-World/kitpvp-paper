@@ -48,3 +48,23 @@
      implementation(project(":core")) //ASP
      implementation("commons-io:commons-io:2.11.0")
      implementation("ca.spottedleaf:concurrentutil:0.0.3")
+@@ -217,14 +_,14 @@
+         val gitBranch = git.exec(providers, "rev-parse", "--abbrev-ref", "HEAD").get().trim()
+         attributes(
+             "Main-Class" to "org.bukkit.craftbukkit.Main",
+-            "Implementation-Title" to "AdvancedSlimePaper", //ASP
++            "Implementation-Title" to "KitPvPSlime", //kitpvp
+             "Implementation-Version" to implementationVersion,
+             "Implementation-Vendor" to date,
+-            "Specification-Title" to "AdvancedSlimePaper", //ASP
++            "Specification-Title" to "KitPvPSlime", //kitpvp
+             "Specification-Version" to project.version,
+-            "Specification-Vendor" to "InfernalSuite Team", //ASP
+-            "Brand-Id" to "infernalsuite:advancedslimepaper", //ASP
+-            "Brand-Name" to "AdvancedSlimePaper", //ASP
++            "Specification-Vendor" to "KitPvP World Team", //kitpvp
++            "Brand-Id" to "kitpvp:slime", //kitpvp
++            "Brand-Name" to "KitPvPSlime", //ASP
+             "Build-Number" to (build ?: ""),
+             "Build-Time" to buildTime.toString(),
+             "Git-Branch" to gitBranch,
