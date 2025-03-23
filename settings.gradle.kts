@@ -1,6 +1,4 @@
 pluginManagement {
-    includeBuild("asp-build-logic")
-
     repositories {
         gradlePluginPortal()
         mavenLocal()
@@ -19,4 +17,4 @@ project(":api").projectDir = file("asp-api")
 include(":core")
 project(":core").projectDir = file("asp-core")
 include(":kitpvpslime-api")
-//include(":kitpvpslime-server")
+include(":kitpvpslime-server")

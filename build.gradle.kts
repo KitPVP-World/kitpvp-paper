@@ -2,7 +2,7 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
-    id("io.papermc.paperweight.patcher") version "2.0.0-beta.14"
+    id("io.papermc.paperweight.patcher")
 }
 
 paperweight {
@@ -10,41 +10,31 @@ paperweight {
         repo = github("InfernalSuite", "AdvancedSlimePaper")
         ref = providers.gradleProperty("aspRef")
 
-        patchFile {
-            path = "impl/aspaper-server/build.gradle.kts"
-            outputFile = file("kitpvpslime-server/build.gradle.kts")
-            patchFile = file("kitpvpslime-server/api-build.gradle.kts.patch")
-        }
-        patchFile {
-            path = "impl/aspaper-api/build.gradle.kts"
-            outputFile = file("kitpvpslime-api/build.gradle.kts")
-            patchFile = file("kitpvpslime-api/api-build.gradle.kts.patch")
-        }
-        patchRepo("paperApi") {
-            upstreamPath = "impl/paper-api/"
-            patchesDir = file("kitpvpslime-api/paper-patches")
-            outputDir = file("paper-api")
-        }
-
         patchDir("aspApi") {
             upstreamPath = "api"
-            patchesDir = file("asp-api/asp-patches")
+            patchesDir = file("asp-patches/api")
             outputDir = file("asp-api")
         }
         patchDir("aspCore") {
             upstreamPath = "core"
-            patchesDir = file("asp-api/asp-patches")
+            patchesDir = file("asp-patches/core")
             outputDir = file("asp-core")
         }
-//        patchDir("aspBuildSrc") {
-//            upstreamPath = "buildSrc"
-//            patchesDir = file("asp-build-logic/build-logic-patches")
-//            outputDir = file("asp-build-logic")
-//        }
         patchFile {
-            path = "gradle/libs.versions.toml"
-            outputFile = file("gradle/libs.versions.toml")
-            patchFile = file("gradle/libs.versions.toml.patch")
+            path = "impl/aspaper-server/build.gradle.kts"
+            outputFile = file("kitpvpslime-server/build.gradle.kts")
+            patchFile = file("kitpvpslime-server/build.gradle.kts.patch")
+        }
+        patchFile {
+            path = "impl/aspaper-api/build.gradle.kts"
+            outputFile = file("kitpvpslime-api/build.gradle.kts")
+            patchFile = file("kitpvpslime-api/build.gradle.kts.patch")
+        }
+        patchRepo("paperApi") {
+            upstreamPath = "impl/paper-api/"
+            excludes = setOf("build.gradle.kts")
+            patchesDir = file("kitpvpslime-api/paper-patches")
+            outputDir = file("kitpvpslime-api")
         }
     }
 }
