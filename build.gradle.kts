@@ -6,7 +6,7 @@ plugins {
 }
 
 paperweight {
-    upstreams.register("asp") {
+    upstreams.register("aspaper") {
         repo = github("InfernalSuite", "AdvancedSlimePaper")
         ref = providers.gradleProperty("aspRef")
 
@@ -32,9 +32,14 @@ paperweight {
         }
         patchRepo("paperApi") {
             upstreamPath = "impl/paper-api/"
-            excludes = setOf("build.gradle.kts")
             patchesDir = file("kitpvpslime-api/paper-patches")
-            outputDir = file("kitpvpslime-api")
+            outputDir = file("paper-api")
+        }
+        patchDir("kitpvpSlimeApi") {
+            upstreamPath = "impl/aspaper-api"
+            excludes = listOf("build.gradle.kts", "build.gradle.kts.patch", "paper-patches")
+            patchesDir = file("kitpvpslime-api/aspaper-patches")
+            outputDir = file("aspaper-api")
         }
     }
 }
