@@ -21,22 +21,22 @@ paperweight {
             outputDir = file("asp-core")
         }
         patchFile {
-            path = "impl/aspaper-server/build.gradle.kts"
+            path = "aspaper-server/build.gradle.kts"
             outputFile = file("kitpvpslime-server/build.gradle.kts")
             patchFile = file("kitpvpslime-server/build.gradle.kts.patch")
         }
         patchFile {
-            path = "impl/aspaper-api/build.gradle.kts"
+            path = "aspaper-api/build.gradle.kts"
             outputFile = file("kitpvpslime-api/build.gradle.kts")
             patchFile = file("kitpvpslime-api/build.gradle.kts.patch")
         }
         patchRepo("paperApi") {
-            upstreamPath = "impl/paper-api/"
+            upstreamPath = "paper-api/"
             patchesDir = file("kitpvpslime-api/paper-patches")
             outputDir = file("paper-api")
         }
         patchDir("kitpvpSlimeApi") {
-            upstreamPath = "impl/aspaper-api"
+            upstreamPath = "aspaper-api"
             excludes = listOf("build.gradle.kts", "build.gradle.kts.patch", "paper-patches")
             patchesDir = file("kitpvpslime-api/aspaper-patches")
             outputDir = file("aspaper-api")
