@@ -1,0 +1,57 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: notstevy <notstevy@ultrabuildmc.de>
+Date: Sun, 6 Apr 2025 11:43:32 +0200
+Subject: [PATCH] Display Player
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntityTypes.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntityTypes.java
+index f423bcee46506eccbaf61090adb886a31714c04d..5b139f367f54030384653a57fe48683377e17117 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntityTypes.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntityTypes.java
+@@ -474,6 +474,14 @@ public final class CraftEntityTypes {
+         register(new EntityTypeData<>(EntityType.TNT_MINECART, ExplosiveMinecart.class, CraftMinecartTNT::new, createMinecart(net.minecraft.world.entity.EntityType.TNT_MINECART)));
+         register(new EntityTypeData<>(EntityType.HOPPER_MINECART, HopperMinecart.class, CraftMinecartHopper::new, createMinecart(net.minecraft.world.entity.EntityType.HOPPER_MINECART)));
+         register(new EntityTypeData<>(EntityType.SPAWNER_MINECART, SpawnerMinecart.class, CraftMinecartMobSpawner::new, createMinecart(net.minecraft.world.entity.EntityType.SPAWNER_MINECART)));
++        // kitpvp start - DisplayPlayer
++        register(new EntityTypeData<>(EntityType.DISPLAY_PLAYER, world.kitpvp.slime.api.entity.DisplayPlayer.class,
++            (server, displayPlayer) -> displayPlayer.getDefaultServerPlayer().getBukkitEntity(),
++            spawnData -> new world.kitpvp.slime.entity.DisplayPlayer(
++                spawnData.minecraftWorld(), spawnData.x(), spawnData.y(), spawnData.z()
++            ))
++        );
++        // kitpvp end - DisplayPlayer
+ 
+         // None spawn able
+         register(new EntityTypeData<>(EntityType.FISHING_BOBBER, FishHook.class, CraftFishHook::new, null)); // Cannot spawn a fish hook
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+index 5050f446e75f0ec17daf994ed74cbcd3155664c1..f5707c69aaee6f597068b0b21934cb9af48bc9bb 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+@@ -2325,6 +2325,11 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+ 
+     @Override
+     public ServerPlayer getHandle() {
++        // kitpvp start - Display player
++        if(this.entity instanceof world.kitpvp.slime.entity.DisplayPlayer displayPlayer) {
++            return displayPlayer.getDefaultServerPlayer();
++        }
++        // kitpvp end - Display player
+         return (ServerPlayer) this.entity;
+     }
+ 
+diff --git a/src/test/java/org/bukkit/entity/EntityTypesTest.java b/src/test/java/org/bukkit/entity/EntityTypesTest.java
+index d513d926ddabd61a03172adb846afb7674ed402e..459eb1f31f9180b0fe6289fda48ed40d6ebc3112 100644
+--- a/src/test/java/org/bukkit/entity/EntityTypesTest.java
++++ b/src/test/java/org/bukkit/entity/EntityTypesTest.java
+@@ -19,7 +19,10 @@ public class EntityTypesTest {
+         for (net.minecraft.world.entity.EntityType<?> nms : BuiltInRegistries.ENTITY_TYPE) { // Paper - remap fix
+             ResourceLocation key = net.minecraft.world.entity.EntityType.getKey(nms); // Paper - remap fix
+ 
+-            org.bukkit.entity.EntityType bukkit = org.bukkit.entity.EntityType.fromName(key.getPath());
++            // kitpvp start - Display Player (namespaces apart from minecraft)
++            String name = key.getNamespace().equals("minecraft") ? key.getPath() : key.toString();
++            org.bukkit.entity.EntityType bukkit = org.bukkit.entity.EntityType.fromName(name);
++            // kitpvp end - Display Player
+             assertNotNull(bukkit, "Missing nms->bukkit " + key);
+ 
+             assertTrue(allBukkit.remove(bukkit), "Duplicate entity nms->" + bukkit);
