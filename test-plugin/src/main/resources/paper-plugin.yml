@@ -1,0 +1,12 @@
+name: Paper-Test-Plugin
+version: ${version}
+main: world.kitpvp.testplugin.TestPlugin
+description: Paper Test Plugin
+author: PaperMC
+api-version: ${apiversion}
+load: STARTUP
+bootstrapper: world.kitpvp.testplugin.TestPluginBootstrap
+loader: world.kitpvp.testplugin.TestPluginLoader
+defaultPerm: FALSE
+permissions:
+dependencies:
