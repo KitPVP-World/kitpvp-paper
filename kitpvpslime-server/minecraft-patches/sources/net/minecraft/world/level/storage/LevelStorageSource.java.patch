@@ -1,0 +1,34 @@
+--- a/net/minecraft/world/level/storage/LevelStorageSource.java
++++ b/net/minecraft/world/level/storage/LevelStorageSource.java
+@@ -351,9 +_,9 @@
+         }
+     }
+ 
+-    public LevelStorageSource.LevelStorageAccess createAccess(String saveName, ResourceKey<LevelStem> dimensionType) throws IOException { // CraftBukkit
++    public LevelStorageSource.LevelStorageAccess createAccess(String saveName, ResourceKey<LevelStem> dimensionType, final boolean doNotCreateLockFile) throws IOException { // CraftBukkit // kitpvp - doNotCreateLockFile
+         Path levelPath = this.getLevelPath(saveName);
+-        return new LevelStorageSource.LevelStorageAccess(saveName, levelPath, dimensionType); // CraftBukkit
++        return new LevelStorageSource.LevelStorageAccess(saveName, levelPath, dimensionType, doNotCreateLockFile); // CraftBukkit // kitpvp - doNotCreateLockFile
+     }
+ 
+     public DirectoryValidator getWorldDirValidator() {
+@@ -427,12 +_,18 @@
+         // CraftBukkit start
+         public final ResourceKey<LevelStem> dimensionType;
+ 
++        // kitpvp start - doNotCreateLockFile
+         LevelStorageAccess(final String levelId, final Path levelDir, final ResourceKey<LevelStem> dimensionType) throws IOException {
++            this(levelId, levelDir, dimensionType, false);
++        }
++
++        LevelStorageAccess(final String levelId, final Path levelDir, final ResourceKey<LevelStem> dimensionType, final boolean doNotCreateLockFile) throws IOException {
+             this.dimensionType = dimensionType;
+             // CraftBukkit end
+             this.levelId = levelId;
+             this.levelDirectory = new LevelStorageSource.LevelDirectory(levelDir);
+-            this.lock = DirectoryLock.create(levelDir);
++            this.lock = world.kitpvp.slime.SlimeDirectoryLock.create(levelDir);
++            // kitpvp end - doNotCreateLockFile
+         }
+ 
+         public long estimateDiskSpace() {

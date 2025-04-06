@@ -1,0 +1,11 @@
+--- a/net/minecraft/util/DirectoryLock.java
++++ b/net/minecraft/util/DirectoryLock.java
+@@ -42,7 +_,7 @@
+         }
+     }
+ 
+-    private DirectoryLock(FileChannel lockFile, FileLock lock) {
++    protected DirectoryLock(FileChannel lockFile, FileLock lock) { // kitpvp - doNotCreateLockFile
+         this.lockFile = lockFile;
+         this.lock = lock;
+     }
