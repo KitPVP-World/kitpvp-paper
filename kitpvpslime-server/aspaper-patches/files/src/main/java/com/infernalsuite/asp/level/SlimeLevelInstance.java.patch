@@ -1,0 +1,11 @@
+--- a/src/main/java/com/infernalsuite/asp/level/SlimeLevelInstance.java
++++ b/src/main/java/com/infernalsuite/asp/level/SlimeLevelInstance.java
+@@ -80,7 +_,7 @@
+                               org.bukkit.World.Environment environment) throws IOException {
+ 
+         super(slimeBootstrap, MinecraftServer.getServer(), MinecraftServer.getServer().executor,
+-                CUSTOM_LEVEL_STORAGE.createAccess(slimeBootstrap.initial().getName() + UUID.randomUUID(), dimensionKey),
++                CUSTOM_LEVEL_STORAGE.createAccess(slimeBootstrap.initial().getName() + UUID.randomUUID(), dimensionKey, true), // kitpvp - doNotCreateLockFile
+                 primaryLevelData, worldKey, worldDimension,
+                 MinecraftServer.getServer().progressListenerFactory.create(11), false, 0,
+                 Collections.emptyList(), true, null, environment, null, null);
