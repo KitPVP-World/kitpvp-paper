@@ -36,6 +36,6 @@ Also see: https://minecraft.wiki/w/Color#Biome_colors
 .kitpvp {
     --water-color: hsl(204, 87%, 61%); /* lukewarm_ocean */
     --water-fog-color: hsl(217, 85%, 11%); /* lukewarm_ocean */
-    --grass-color: hsl(hsl(100, 57%, 51%)); /* jungle + plains adjusted */
+    --grass-color: hsl(100, 57%, 51%); /* jungle + plains adjusted */
     --foliage-color: hsl(107, 89%, 39%); /* jungle */
 }
