@@ -1,0 +1,41 @@
+
+/*
+See Minecraft Wiki for biome colors:
+
+Water: https://minecraft.wiki/w/Water#Java_Edition
+Grass: https://minecraft.wiki/w/Grass_Block#Biome_colors
+Foliage: https://minecraft.wiki/w/Leaves#Biome_colors 
+Also see: https://minecraft.wiki/w/Color#Biome_colors
+*/
+
+.jungle {
+    /* https://minecraft.wiki/w/Jungle */
+
+    --water-color: hsl(220, 75%, 57%); /* default */
+    --water-fog-color: hsl(240, 82%, 11%); /* default */
+    --grass-color: hsl(108, 57%, 51%);
+    --foliage-color: hsl(107, 89%, 39%);
+}
+
+.plains {
+    /* https://minecraft.wiki/w/Plains */
+
+    --water-color: hsl(220, 75%, 57%); /* default */
+    --water-fog-color: hsl(240, 82%, 11%); /* default */
+    --grass-color: hsl(86, 43%, 55%);
+    --foliage-color: hsl(85, 57%, 43%);
+}
+
+.lukewarm-ocean {
+    --water-color: hsl(204, 87%, 61%);
+    --water-fog-color: hsl(217, 85%, 11%);
+    --grass-color: hsl(96, 34%, 58%); /* default */
+    --foliage-color: hsl(96, 37%, 48%);
+}
+
+.kitpvp {
+    --water-color: hsl(204, 87%, 61%); /* lukewarm_ocean */
+    --water-fog-color: hsl(217, 85%, 11%); /* lukewarm_ocean */
+    --grass-color: hsl(hsl(100, 57%, 51%)); /* jungle + plains adjusted */
+    --foliage-color: hsl(107, 89%, 39%); /* jungle */
+}
