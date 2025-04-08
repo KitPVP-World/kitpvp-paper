@@ -87,12 +87,10 @@ subprojects {
 
     extensions.configure<PublishingExtension> {
         repositories {
-            /*
-            maven("https://repo.papermc.io/repository/maven-snapshots/") {
-                name = "paperSnapshots"
+            maven("https://maven.kitpvp.world/public-snapshots/") {
+                name = "kitpvpWorldRepository"
                 credentials(PasswordCredentials::class)
             }
-             */
         }
     }
 }
