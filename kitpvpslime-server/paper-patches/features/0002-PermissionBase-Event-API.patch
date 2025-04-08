@@ -1,0 +1,31 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: notstevy <notstevy@ultrabuildmc.de>
+Date: Tue, 8 Apr 2025 20:49:40 +0200
+Subject: [PATCH] PermissionBase Event API
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java
+index a396157548a5b3c3e86206c35789bb40346c701c..4e861061217b863696fa493e0b82d0a6611308b7 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java
+@@ -78,7 +78,7 @@ import org.jetbrains.annotations.Nullable;
+ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
+     private CraftInventoryPlayer inventory;
+     private final CraftInventory enderChest;
+-    protected final PermissibleBase perm = new PermissibleBase(this);
++    protected final PermissibleBase perm;  // kitpvp - permissions api
+     private boolean op;
+     private GameMode mode;
+ 
+@@ -87,6 +87,11 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
+         this.mode = server.getDefaultGameMode();
+         this.inventory = new CraftInventoryPlayer(entity.getInventory());
+         this.enderChest = new CraftInventory(entity.getEnderChestInventory());
++        // kitpvp - start: permission api
++        var event = new world.kitpvp.slime.api.event.PermissionsSetupEvent(this);
++        event.callEvent();
++        this.perm = event.permissibleBase();
++        // kitpvp - end
+     }
+ 
+     @Override
