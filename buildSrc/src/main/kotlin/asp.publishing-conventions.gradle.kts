@@ -66,16 +66,6 @@ extensions.configure<ProfilesExtension>("profiles") {
                         }
                     }
                 }
-                repositories {
-                    maven {
-                        name = "infernalsuite"
-                        url = uri("https://repo.infernalsuite.com/repository/maven-snapshots/")
-                        credentials {
-                            username = project.property("ISUsername") as String?
-                            password = project.property("ISPassword") as String?
-                        }
-                    }
-                }
             }
             extensions.configure<SigningExtension>("signing") {
                 useGpgCmd()
