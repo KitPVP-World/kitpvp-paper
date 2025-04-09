@@ -18,11 +18,69 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '21'
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
+
       - name: Configure Git User Details
         run: git config --global user.email "actions@github.com" && git config --global user.name "Github Actions"
       - name: Apply Patches
         run: ./gradlew applyAllPatches --stacktrace
       - name: Build
         run: ./gradlew build
+
+      - name: Create Paperclip Jar
+        if: github.event_name != 'pull_request'
+        run: ./gradlew createMojmapPaperclipJar --stacktrace
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: paperclip
+          path: kitpvpslime-server/build/libs/kitpvpslime-bundler-*-mojmap.jar
+
+  docker:
+    needs: "build"
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: 'docker'
+      - uses: actions/download-artifact@v4
+        with:
+          name: paperclip
+          path: docker
+
+      - name: Set up Docker Buildx
+        if: github.event_name != 'pull_request'
+        uses: docker/setup-buildx-action@v3
+      - name: Log in to the Container registry
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata (tags, labels) for Docker
+        if: github.event_name != 'pull_request'
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=schedule
+            type=ref,event=branch
+            type=ref,event=tag
+            type=ref,event=pr
+            type=sha,enable=true,priority=100,prefix=sha-,suffix=,format=short
+      - name: Build and push Docker image
+        if: github.event_name != 'pull_request'
+        uses: docker/build-push-action@v4
+        with:
+          context: docker
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
