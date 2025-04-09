@@ -5,7 +5,7 @@
          String proxyLink = (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.velocity.enabled) ? "https://docs.papermc.io/velocity/security" : "http://www.spigotmc.org/wiki/firewall-guide/";
          // Paper end - Add Velocity IP Forwarding Support
 -        if (!this.usesAuthentication()) {
-+        if (!this.usesAuthentication() && !System.getenv("KITPVP_SHUT_UP_OFFLINE").equals("true")) { // kitpvp
++        if (!this.usesAuthentication() && !java.util.Objects.equals(System.getenv("KITPVP_SHUT_UP_OFFLINE"), "true")) { // kitpvp
              LOGGER.warn("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
              LOGGER.warn("The server will make no attempt to authenticate usernames. Beware.");
              // Spigot start
