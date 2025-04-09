@@ -10,7 +10,7 @@ ARG TARGETVARIANT
 ENV VERSION="1.21.4"
 ENV MINECRAFT_VERSION="${VERSION}"
 
-ADD data/scripts/install-packages.sh data/scripts/setup-packages.sh /setup/
+ADD docker/data/scripts/install-packages.sh docker/data/scripts/setup-packages.sh /setup/
 
 RUN /setup/install-packages.sh
 RUN /setup/setup-users.sh
@@ -44,9 +44,9 @@ WORKDIR /server/plugins
 WORKDIR /server/config
 WORKDIR /server/libraries
 
-ADD data/config /config
-ADD data/plugins /plugins
-ADD data/data /data
+ADD docker/data/config /config
+ADD docker/data/plugins /plugins
+ADD docker/data/data /data
 
 WORKDIR /server
 
@@ -54,8 +54,8 @@ STOPSIGNAL SIGTERM
 
 ADD kitpvpslime-bundler-*-mojmap.jar ./kitpvp-paper.jar
 
-ADD data/scripts/download-modrinth.sh data/scripts/download-spiget.sh data/scripts/optimize-startup.sh ./
-ADD data/scripts/mc-health.sh /health.sh
+ADD docker/data/scripts/download-modrinth.sh docker/data/scripts/download-spiget.sh docker/data/scripts/optimize-startup.sh ./
+ADD docker/data/scripts/mc-health.sh /health.sh
 
 RUN ./optimize-startup.sh # cache
 
