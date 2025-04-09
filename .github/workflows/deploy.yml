@@ -3,6 +3,9 @@ name: Patch and Build
 on:
   push:
     branches: [ "**" ]
+    tags:
+      - 'v*'
+  workflow_dispatch:
   pull_request:
 
 concurrency:
