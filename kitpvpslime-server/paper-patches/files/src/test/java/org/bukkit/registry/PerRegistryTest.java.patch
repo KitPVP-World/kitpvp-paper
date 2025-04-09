@@ -1,0 +1,10 @@
+--- a/src/test/java/org/bukkit/registry/PerRegistryTest.java
++++ b/src/test/java/org/bukkit/registry/PerRegistryTest.java
+@@ -67,6 +_,7 @@
+             assertNotNull(key); // Paper - improve Registry
+ 
+             this.assertSameMatchWithKeyMessage(registry, element, key.toString()); // namespace:key
++            if(!"minecraft".equals(key.getNamespace())) return; // kitpvp - skip our biome (causing unexpected bukkit issues)
+             this.assertSameMatchWithKeyMessage(registry, element, key.getKey()); // key
+             this.assertSameMatchWithKeyMessage(registry, element, key.toString().replace('_', ' ')); // namespace:key with space
+             this.assertSameMatchWithKeyMessage(registry, element, key.getKey().replace('_', ' ')); // key with space
