@@ -12,6 +12,9 @@ concurrency:
   cancel-in-progress: true
   group: "${{ github.workflow }}-${{ github.event.number || github.ref }}"
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build:
