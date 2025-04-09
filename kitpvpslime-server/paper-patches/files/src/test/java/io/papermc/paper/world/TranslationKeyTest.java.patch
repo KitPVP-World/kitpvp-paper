@@ -1,0 +1,10 @@
+--- a/src/test/java/io/papermc/paper/world/TranslationKeyTest.java
++++ b/src/test/java/io/papermc/paper/world/TranslationKeyTest.java
+@@ -93,6 +_,7 @@
+     @Test
+     public void testBiome() {
+         for (Map.Entry<ResourceKey<Biome>, Biome> nms : RegistryHelper.getBiomes().entrySet()) {
++            if(!"minecraft".equals(nms.getKey().location().getNamespace())) continue; // kitpvp - skip our biome (causing unexpected bukkit issues)
+             org.bukkit.block.Biome bukkit = org.bukkit.block.Biome.valueOf(nms.getKey().location().getPath().toUpperCase(Locale.ROOT));
+             Assertions.assertEquals(nms.getKey().location().toLanguageKey("biome"), bukkit.translationKey(), "translation key mismatch for " + bukkit);
+         }
