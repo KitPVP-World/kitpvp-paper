@@ -10,7 +10,7 @@ ARG TARGETVARIANT
 ENV VERSION="1.21.4"
 ENV MINECRAFT_VERSION="${VERSION}"
 
-COPY data/scripts/install-packages.sh data/scripts/setup-users.sh ./
+COPY data/scripts/install-packages.sh data/scripts/setup-users.sh /setup/
 
 RUN /setup/install-packages.sh
 RUN /setup/setup-users.sh
