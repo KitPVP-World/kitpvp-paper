@@ -4,3 +4,4 @@ private-f net.minecraft.world.entity.LivingEntity attributes
 public net.minecraft.world.entity.player.Player DATA_PLAYER_MAIN_HAND
 public net.minecraft.world.entity.player.Player defineSynchedData(Lnet/minecraft/network/syncher/SynchedEntityData$Builder;)V
 public-f net.minecraft.world.entity.LivingEntity craftAttributes
+public ca.spottedleaf.moonrise.patches.chunk_system.scheduling.NewChunkHolder onChunkGenComplete(Lnet/minecraft/world/level/chunk/ChunkAccess;Lnet/minecraft/world/level/chunk/status/ChunkStatus;Ljava/util/List;Ljava/util/List;)V
