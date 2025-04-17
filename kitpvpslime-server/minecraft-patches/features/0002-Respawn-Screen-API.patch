@@ -5,7 +5,7 @@ Subject: [PATCH] Respawn Screen API
 
 
 diff --git a/net/minecraft/server/level/ServerPlayer.java b/net/minecraft/server/level/ServerPlayer.java
-index 3de65c4025be91d938a350c884975cb6edc234d3..491b1863431ecd80f521c19bd81f462b07dd6e9c 100644
+index 3de65c4025be91d938a350c884975cb6edc234d3..74a77c771a7d63844826f62e2c0d7e6c76732d10 100644
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
 @@ -1114,22 +1114,27 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
@@ -76,7 +76,7 @@ index 3de65c4025be91d938a350c884975cb6edc234d3..491b1863431ecd80f521c19bd81f462b
 +            return;
 +        }
 +        this.reset();
-+        TeleportTransition teleportTransition = this.findRespawnPositionAndUseSpawnBlock(!keepInventory, TeleportTransition.DO_NOTHING, PlayerRespawnEvent.RespawnReason.DEATH);
++        TeleportTransition teleportTransition = this.findRespawnPositionAndUseSpawnBlock(!keepInventory, TeleportTransition.DO_NOTHING, org.bukkit.event.player.PlayerRespawnEvent.RespawnReason.DEATH);
 +        if(teleportTransition.newLevel() != this.level() || teleportTransition.missingRespawnBlock()) {
 +            this.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.NO_RESPAWN_BLOCK_AVAILABLE, 0.0F));
 +            this.setRespawnPosition(null, null, 0f, false, false, com.destroystokyo.paper.event.player.PlayerSetSpawnEvent.Cause.PLAYER_RESPAWN); // CraftBukkit - SPIGOT-5988: Clear respawn location when obstructed // Paper - PlayerSetSpawnEvent
