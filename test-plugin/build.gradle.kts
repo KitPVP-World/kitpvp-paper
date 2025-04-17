@@ -2,6 +2,9 @@ version = "1.0.0-SNAPSHOT"
 
 dependencies {
     compileOnly(project(":kitpvpslime-api"))
+    compileOnly(project(":kitpvpslime-server"))
+    compileOnly("ca.spottedleaf:concurrentutil:0.0.3")
+
 }
 
 tasks.processResources {
