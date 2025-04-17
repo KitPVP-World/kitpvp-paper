@@ -1,0 +1,42 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: notstevy <notstevy@ultrabuildmc.de>
+Date: Thu, 17 Apr 2025 12:22:11 +0200
+Subject: [PATCH] Respawn Screen API
+
+
+diff --git a/src/main/java/org/bukkit/event/entity/PlayerDeathEvent.java b/src/main/java/org/bukkit/event/entity/PlayerDeathEvent.java
+index bba3821d1215eb00489f841195c890a3f3353912..c1c126bf487051727d1a193185019b901f1047b4 100644
+--- a/src/main/java/org/bukkit/event/entity/PlayerDeathEvent.java
++++ b/src/main/java/org/bukkit/event/entity/PlayerDeathEvent.java
+@@ -18,6 +18,7 @@ public class PlayerDeathEvent extends EntityDeathEvent {
+     private boolean keepLevel = false;
+     private boolean keepInventory = false;
+     private boolean doExpDrop; // Paper - shouldDropExperience API
++    private boolean cancelRespawnScreen = false; // kitpvp - Respawn Screen API
+     // Paper start - adventure
+     @org.jetbrains.annotations.ApiStatus.Internal
+     public PlayerDeathEvent(final @NotNull Player player, final @NotNull DamageSource damageSource, final @NotNull List<ItemStack> drops, final int droppedExp, final @Nullable net.kyori.adventure.text.Component deathMessage) {
+@@ -293,4 +294,23 @@ public class PlayerDeathEvent extends EntityDeathEvent {
+     public boolean getKeepInventory() {
+         return keepInventory;
+     }
++
++    // kitpvp start - Respawn Screen API
++    /**
++     * Gets if the respawn screen should be displayed to the Player.
++     * @return True if the respawn screen should not be shown
++     */
++    public boolean shouldCancelRespawnScreen() {
++        return cancelRespawnScreen;
++    }
++
++    /**
++     * Sets if the respawn screen should be displayed to the Player.
++     * <p>
++     * <b>This only works if the respawn world and the original world are the same (may break if otherwise).
++     */
++    public void cancelRespawnScreen() {
++        this.cancelRespawnScreen = true;
++    }
++    // kitpvp end - Respawn Screen API
+ }
