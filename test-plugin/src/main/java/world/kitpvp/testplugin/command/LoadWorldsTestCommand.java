@@ -53,7 +53,7 @@ public class LoadWorldsTestCommand {
     }
 
     private static void load(CommandSender source, SlimeWorld masterWorld, Path dataDirectory) {
-        int worldsToLoad = 10000;
+        int worldsToLoad = 500;
         long started = System.currentTimeMillis();
         long firstWorldLoad = 0;
         long max = 0;
