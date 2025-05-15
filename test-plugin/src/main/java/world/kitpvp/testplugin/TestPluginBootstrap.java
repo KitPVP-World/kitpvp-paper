@@ -7,6 +7,7 @@ import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import org.jetbrains.annotations.NotNull;
 import world.kitpvp.testplugin.command.DisplayPlayerCommand;
 import world.kitpvp.testplugin.command.LoadWorldsTestCommand;
+import world.kitpvp.testplugin.command.NametagCommand;
 import world.kitpvp.testplugin.command.TestCommand;
 
 public class TestPluginBootstrap implements PluginBootstrap {
@@ -20,6 +21,7 @@ public class TestPluginBootstrap implements PluginBootstrap {
             LoadWorldsTestCommand.register(commands, context.getDataDirectory());
             DisplayPlayerCommand.register(commands);
             TestCommand.register(commands);
+            NametagCommand.register(commands);
         });
     }
 }
