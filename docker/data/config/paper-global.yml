@@ -130,6 +130,7 @@ unsupported-settings:
   compression-format: ZLIB
   perform-username-validation: true
   skip-vanilla-damage-tick-when-shield-blocked: true
+  update-equipment-on-player-actions: false # unfixes sword-axe-switch bug
 watchdog:
   early-warning-delay: 10000
   early-warning-every: 5000
