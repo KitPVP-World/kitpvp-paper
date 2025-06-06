@@ -17,6 +17,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
@@ -39,13 +40,13 @@ public class SkeletonTextDisplay {
         return new ClientboundRemoveEntitiesPacket(this.customName.getNametagId());
     }
 
-    public Packet<ClientGamePacketListener> syncDataPacket() {
+    public Packet<ClientGamePacketListener> syncDataPacket(Player target) {
         byte styleFlags = 0;
         if (this.customName.isTargetEntitySneaking())
             styleFlags |= Display.TextDisplay.FLAG_SEE_THROUGH;
 
         var data = List.of(
-            ofData(Display.TextDisplay.DATA_TEXT_ID, PaperAdventure.asVanilla(this.customName.getName())),
+            ofData(Display.TextDisplay.DATA_TEXT_ID, PaperAdventure.asVanilla(this.customName.getName(target))),
             ofData(Display.TextDisplay.DATA_STYLE_FLAGS_ID, styleFlags),
             ofData(Display.DATA_TRANSLATION_ID, this.customName.getEffectiveTransition()),
             ofData(Display.TextDisplay.DATA_TEXT_OPACITY_ID, (byte) (customName.isTargetEntitySneaking() ? 0x20 : 0x00))
@@ -77,11 +78,11 @@ public class SkeletonTextDisplay {
         return passengerIds;
     }
 
-    public Packet<?> initialSpawnPacket() {
+    public Packet<?> initialSpawnPacket(Player target) {
         ClientboundSetEntityDataPacket initialCreatePacket = new ClientboundSetEntityDataPacket(this.customName.getNametagId(), List.of(
             ofData(Display.DATA_BILLBOARD_RENDER_CONSTRAINTS_ID, Display.BillboardConstraints.CENTER.getId())
         ));
-        Packet<ClientGamePacketListener> syncData = syncDataPacket();
+        Packet<ClientGamePacketListener> syncData = syncDataPacket(target);
 
         return new ClientboundBundlePacket(List.of(
             createPacket(), // Create entity

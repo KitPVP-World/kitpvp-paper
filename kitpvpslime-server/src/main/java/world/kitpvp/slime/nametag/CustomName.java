@@ -17,6 +17,7 @@ import org.jspecify.annotations.NullMarked;
 import world.kitpvp.slime.InternalPluginInstance;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 @NullMarked
 public class CustomName {
@@ -33,7 +34,7 @@ public class CustomName {
 
     // States
     private boolean targetEntitySneaking;
-    private Component name = Component.empty();
+    private Function<Player, Component> nameProvider = (player) -> Component.empty();
     private boolean hidden;
 
     private final BukkitTask task;
@@ -62,8 +63,21 @@ public class CustomName {
         }.runTaskTimer(InternalPluginInstance.INSTANCE, 20, 20);
     }
 
+    /**
+     * Sets the name provider to handle each player on its own
+     * @param nameProvider
+     */
+    public void setNameHandler(Function<Player, Component> nameProvider) {
+        this.nameProvider = nameProvider;
+        this.syncData();
+    }
+
+    /**
+     * Sets the name provider to provide a uniform name to every viewer
+     * @param name new custom name of targeting Player
+     */
     public void setName(Component name) {
-        this.name = name;
+        this.nameProvider = (player) -> name;
         this.syncData();
     }
 
@@ -77,7 +91,7 @@ public class CustomName {
             return;
         }
 
-        ((CraftPlayer) entity).getHandle().connection.send(this.interaction.initialSpawnPacket());
+        ((CraftPlayer) entity).getHandle().connection.send(this.interaction.initialSpawnPacket(entity));
     }
 
     public void removeFromClient(@NotNull Player entity) {
@@ -95,8 +109,8 @@ public class CustomName {
         });
     }
 
-    public Component getName() {
-        return this.name;
+    public Component getName(Player player) {
+        return this.nameProvider.apply(player);
     }
 
     public int getNametagId() {
@@ -125,8 +139,9 @@ public class CustomName {
             return;
         }
 
-        Packet<ClientGamePacketListener> dataPacket = this.interaction.syncDataPacket();
-        this.runOnTrackers((player) -> ((CraftPlayer) player).getHandle().connection.send(dataPacket));
+        this.runOnTrackers((player) -> ((CraftPlayer) player).getHandle().connection
+            .send(this.interaction.syncDataPacket(player))
+        );
     }
 
     private void runOnTrackers(Consumer<Player> consumer) {
