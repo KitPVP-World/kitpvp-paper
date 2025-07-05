@@ -5,67 +5,29 @@ Subject: [PATCH] Respawn Screen API
 
 
 diff --git a/net/minecraft/server/level/ServerPlayer.java b/net/minecraft/server/level/ServerPlayer.java
-index 3de65c4025be91d938a350c884975cb6edc234d3..74a77c771a7d63844826f62e2c0d7e6c76732d10 100644
+index dfa00516e9a6c941087bd7ecfd5aca8a9f7915be..1dd8e814b68962fd0aba19e6e4b90fed62cd55b7 100644
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -1114,22 +1114,27 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
-         if (apiDeathMessage != null && apiDeathMessage != net.kyori.adventure.text.Component.empty() && showDeathMessage) { // Paper - Adventure // TODO: allow plugins to override?
+@@ -1073,7 +1073,8 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
              Component deathMessage = io.papermc.paper.adventure.PaperAdventure.asVanilla(apiDeathMessage); // Paper - Adventure
  
--            this.connection
--                .send(
--                    new ClientboundPlayerCombatKillPacket(this.getId(), deathMessage),
--                    PacketSendListener.exceptionallySend(
--                        () -> {
--                            int i = 256;
--                            String string = deathMessage.getString(256);
--                            Component component = Component.translatable(
--                                "death.attack.message_too_long", Component.literal(string).withStyle(ChatFormatting.YELLOW)
--                            );
--                            Component component1 = Component.translatable("death.attack.even_more_magic", this.getDisplayName())
--                                .withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, component)));
--                            return new ClientboundPlayerCombatKillPacket(this.getId(), component1);
--                        }
--                    )
--                );
-+            // kitpvp start - Respawn Screen API
-+            if(!event.shouldCancelRespawnScreen()) {
-+                this.connection
-+                    .send(
-+                        new ClientboundPlayerCombatKillPacket(this.getId(), deathMessage),
-+                        PacketSendListener.exceptionallySend(
-+                            () -> {
-+                                int i = 256;
-+                                String string = deathMessage.getString(256);
-+                                Component component = Component.translatable(
-+                                    "death.attack.message_too_long", Component.literal(string).withStyle(ChatFormatting.YELLOW)
-+                                );
-+                                Component component1 = Component.translatable("death.attack.even_more_magic", this.getDisplayName())
-+                                    .withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, component)));
-+                                return new ClientboundPlayerCombatKillPacket(this.getId(), component1);
-+                            }
-+                        )
-+                    );
-+            }
-+            // kitpvp end - Respawn Screen API
-+
+             // Paper - moved up to sendClientboundPlayerCombatKillPacket()
+-            sendClientboundPlayerCombatKillPacket(event.getShowDeathMessages(), deathScreenMessage); // Paper - Expand PlayerDeathEvent
++            if(!event.shouldCancelRespawnScreen()) // kitpvp start - Respawn Screen API
++                sendClientboundPlayerCombatKillPacket(event.getShowDeathMessages(), deathScreenMessage); // Paper - Expand PlayerDeathEvent
              Team team = this.getTeam();
              if (team == null || team.getDeathMessageVisibility() == Team.Visibility.ALWAYS) {
                  this.server.getPlayerList().broadcastSystemMessage(deathMessage, false);
-@@ -1139,7 +1144,11 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
+@@ -1082,7 +1083,7 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
+             } else if (team.getDeathMessageVisibility() == Team.Visibility.HIDE_FOR_OWN_TEAM) {
                  this.server.getPlayerList().broadcastSystemToAllExceptTeam(this, deathMessage);
              }
-         } else {
--            this.connection.send(new ClientboundPlayerCombatKillPacket(this.getId(), CommonComponents.EMPTY));
-+            // kitpvp start - Respawn Screen API
-+            if(!event.shouldCancelRespawnScreen()) {
-+                this.connection.send(new ClientboundPlayerCombatKillPacket(this.getId(), CommonComponents.EMPTY));
-+            }
-+            // kitpvp end - Respawn Screen API
+-        } else {
++        } else if(!event.shouldCancelRespawnScreen()) { // kitpvp start - Respawn Screen API
+             sendClientboundPlayerCombatKillPacket(event.getShowDeathMessages(), deathScreenMessage); // Paper - Expand PlayerDeathEvent
          }
  
-         this.removeEntitiesOnShoulder();
-@@ -1179,7 +1188,49 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
+@@ -1136,7 +1137,79 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
          this.setSharedFlagOnFire(false);
          this.getCombatTracker().recheckStatus();
          this.setLastDeathLocation(Optional.of(GlobalPos.of(this.level().dimension(), this.blockPosition())));
@@ -75,43 +37,73 @@ index 3de65c4025be91d938a350c884975cb6edc234d3..74a77c771a7d63844826f62e2c0d7e6c
 +            this.setClientLoaded(false);
 +            return;
 +        }
++        this.stopRiding(); // CraftBukkit
 +        this.reset();
-+        TeleportTransition teleportTransition = this.findRespawnPositionAndUseSpawnBlock(!keepInventory, TeleportTransition.DO_NOTHING, org.bukkit.event.player.PlayerRespawnEvent.RespawnReason.DEATH);
-+        if(teleportTransition.newLevel() != this.level() || teleportTransition.missingRespawnBlock()) {
-+            this.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.NO_RESPAWN_BLOCK_AVAILABLE, 0.0F));
-+            this.setRespawnPosition(null, null, 0f, false, false, com.destroystokyo.paper.event.player.PlayerSetSpawnEvent.Cause.PLAYER_RESPAWN); // CraftBukkit - SPIGOT-5988: Clear respawn location when obstructed // Paper - PlayerSetSpawnEvent
-+        }
-+
-+        this.connection.teleport(org.bukkit.craftbukkit.util.CraftLocation.toBukkit(teleportTransition.position(), teleportTransition.newLevel().getWorld(), teleportTransition.yRot(), teleportTransition.xRot()));
-+        org.bukkit.Location location = org.bukkit.craftbukkit.util.CraftLocation.toBukkit(teleportTransition.position(), teleportTransition.newLevel().getWorld(), teleportTransition.yRot(), teleportTransition.xRot());
-+
 +        boolean isBedSpawn = false;
-+        BlockPos respawnPosition = this.getRespawnPosition();
-+        ServerLevel level1 = this.server.getLevel(this.getRespawnDimension());
-+        if (!keepInventory && respawnPosition != null && level1 != null) {
-+            BlockState blockState = level1.getBlockState(respawnPosition);
-+            if (blockState.is(net.minecraft.world.level.block.Blocks.RESPAWN_ANCHOR)) {
-+                this.connection
-+                    .send(
-+                        new ClientboundSoundPacket(
-+                            net.minecraft.sounds.SoundEvents.RESPAWN_ANCHOR_DEPLETE,
-+                            SoundSource.BLOCKS,
-+                            respawnPosition.getX(),
-+                            respawnPosition.getY(),
-+                            respawnPosition.getZ(),
-+                            1.0F,
-+                            1.0F,
-+                            this.level().getRandom().nextLong()
-+                        )
-+                    );
-+            }
-+            // Paper start - Add PlayerPostRespawnEvent
-+            if (blockState.is(net.minecraft.tags.BlockTags.BEDS) && !teleportTransition.missingRespawnBlock()) {
-+                isBedSpawn = true;
-+            }
-+            // Paper end - Add PlayerPostRespawnEvent
++        boolean isAnchorSpawn = false;
++        TeleportTransition teleportTransition;
++        teleportTransition = this.findRespawnPositionAndUseSpawnBlock(!keepInventory, TeleportTransition.DO_NOTHING, org.bukkit.event.player.PlayerRespawnEvent.RespawnReason.DEATH);
++        org.bukkit.Location location;
++        location = org.bukkit.craftbukkit.util.CraftLocation.toBukkit(teleportTransition.position(), teleportTransition.newLevel().getWorld(), teleportTransition.yRot(), teleportTransition.xRot());
++        Vec3 vec3 = teleportTransition.position();
++        this.forceSetPositionRotation(vec3.x, vec3.y, vec3.z, teleportTransition.yRot(), teleportTransition.xRot());
++        this.level().getChunkSource().addTicketWithRadius(net.minecraft.server.level.TicketType.POST_TELEPORT, new net.minecraft.world.level.ChunkPos(net.minecraft.util.Mth.floor(vec3.x()) >> 4, net.minecraft.util.Mth.floor(vec3.z()) >> 4), 1); // Paper - post teleport ticket type
++        // CraftBukkit end
++        if (teleportTransition.missingRespawnBlock()) {
++            this.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.NO_RESPAWN_BLOCK_AVAILABLE, 0.0F));
++            this.setRespawnPosition(null, false, com.destroystokyo.paper.event.player.PlayerSetSpawnEvent.Cause.PLAYER_RESPAWN); // CraftBukkit - SPIGOT-5988: Clear respawn location when obstructed // Paper - PlayerSetSpawnEvent
 +        }
-+        this.level().getCraftServer().getPluginManager().callEvent(new com.destroystokyo.paper.event.player.PlayerPostRespawnEvent(this.getBukkitEntity(), location, isBedSpawn));
++        ServerPlayer.RespawnConfig respawnConfig = this.getRespawnConfig();
++        if (!keepInventory && respawnConfig != null) {
++            ServerLevel level1 = this.server.getLevel(respawnConfig.dimension());
++            if (level1 != null) {
++                BlockPos blockPos = respawnConfig.pos();
++                BlockState blockState = level1.getBlockState(blockPos);
++                if (blockState.is(net.minecraft.world.level.block.Blocks.RESPAWN_ANCHOR)) {
++                    this.connection
++                        .send(
++                            new ClientboundSoundPacket(
++                                net.minecraft.sounds.SoundEvents.RESPAWN_ANCHOR_DEPLETE,
++                                SoundSource.BLOCKS,
++                                blockPos.getX(),
++                                blockPos.getY(),
++                                blockPos.getZ(),
++                                1.0F,
++                                1.0F,
++                                this.level().getRandom().nextLong()
++                            )
++                        );
++                }
++                // Paper start - Add PlayerPostRespawnEvent
++                if (!teleportTransition.missingRespawnBlock()) {
++                    if (blockState.is(net.minecraft.tags.BlockTags.BEDS)) {
++                        isBedSpawn = true;
++                    } else if (blockState.is(net.minecraft.world.level.block.Blocks.RESPAWN_ANCHOR)) {
++                        isAnchorSpawn = true;
++                    }
++                }
++                // Paper end - Add PlayerPostRespawnEvent
++            }
++        }
++
++        PlayerList playerList = this.server.getPlayerList();
++        // Added from changeDimension
++        playerList.sendAllPlayerInfo(this); // Update health, etc...
++        this.onUpdateAbilities();
++        for (MobEffectInstance mobEffect : this.getActiveEffects()) {
++            this.connection.send(new ClientboundUpdateMobEffectPacket(this.getId(), mobEffect, false)); // blend = false
++        }
++
++        // Fire advancement trigger
++        this.triggerDimensionChangeTriggers(this.level());
++        new com.destroystokyo.paper.event.player.PlayerPostRespawnEvent(
++            this.getBukkitEntity(),
++            location,
++            isBedSpawn,
++            isAnchorSpawn,
++            teleportTransition.missingRespawnBlock(),
++            org.bukkit.event.player.PlayerRespawnEvent.RespawnReason.DEATH
++        ).callEvent();
 +        // kitpvp end - Respawn Screen API
      }
  

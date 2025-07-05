@@ -5,10 +5,10 @@ Subject: [PATCH] Display Player
 
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntityTypes.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntityTypes.java
-index f423bcee46506eccbaf61090adb886a31714c04d..5b139f367f54030384653a57fe48683377e17117 100644
+index d0ab3564928fc9ae1a1fc043d0e841f11b5251d7..4d069b9a3ae608b31b0ee895c2b5129ac859d8ce 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntityTypes.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntityTypes.java
-@@ -474,6 +474,14 @@ public final class CraftEntityTypes {
+@@ -477,6 +477,14 @@ public final class CraftEntityTypes {
          register(new EntityTypeData<>(EntityType.TNT_MINECART, ExplosiveMinecart.class, CraftMinecartTNT::new, createMinecart(net.minecraft.world.entity.EntityType.TNT_MINECART)));
          register(new EntityTypeData<>(EntityType.HOPPER_MINECART, HopperMinecart.class, CraftMinecartHopper::new, createMinecart(net.minecraft.world.entity.EntityType.HOPPER_MINECART)));
          register(new EntityTypeData<>(EntityType.SPAWNER_MINECART, SpawnerMinecart.class, CraftMinecartMobSpawner::new, createMinecart(net.minecraft.world.entity.EntityType.SPAWNER_MINECART)));
@@ -24,10 +24,10 @@ index f423bcee46506eccbaf61090adb886a31714c04d..5b139f367f54030384653a57fe486833
          // None spawn able
          register(new EntityTypeData<>(EntityType.FISHING_BOBBER, FishHook.class, CraftFishHook::new, null)); // Cannot spawn a fish hook
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index 5050f446e75f0ec17daf994ed74cbcd3155664c1..f5707c69aaee6f597068b0b21934cb9af48bc9bb 100644
+index 1e2e8d81e6d05b9e94fdb40dcdc4a7e0e4ceb0ac..08d8594e63e8ca0da9d849564158f72aa705b55b 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-@@ -2325,6 +2325,11 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -236,6 +236,11 @@ public class CraftPlayer extends CraftHumanEntity implements Player, PluginMessa
  
      @Override
      public ServerPlayer getHandle() {
@@ -39,19 +39,3 @@ index 5050f446e75f0ec17daf994ed74cbcd3155664c1..f5707c69aaee6f597068b0b21934cb9a
          return (ServerPlayer) this.entity;
      }
  
-diff --git a/src/test/java/org/bukkit/entity/EntityTypesTest.java b/src/test/java/org/bukkit/entity/EntityTypesTest.java
-index d513d926ddabd61a03172adb846afb7674ed402e..459eb1f31f9180b0fe6289fda48ed40d6ebc3112 100644
---- a/src/test/java/org/bukkit/entity/EntityTypesTest.java
-+++ b/src/test/java/org/bukkit/entity/EntityTypesTest.java
-@@ -19,7 +19,10 @@ public class EntityTypesTest {
-         for (net.minecraft.world.entity.EntityType<?> nms : BuiltInRegistries.ENTITY_TYPE) { // Paper - remap fix
-             ResourceLocation key = net.minecraft.world.entity.EntityType.getKey(nms); // Paper - remap fix
- 
--            org.bukkit.entity.EntityType bukkit = org.bukkit.entity.EntityType.fromName(key.getPath());
-+            // kitpvp start - Display Player (namespaces apart from minecraft)
-+            String name = key.getNamespace().equals("minecraft") ? key.getPath() : key.toString();
-+            org.bukkit.entity.EntityType bukkit = org.bukkit.entity.EntityType.fromName(name);
-+            // kitpvp end - Display Player
-             assertNotNull(bukkit, "Missing nms->bukkit " + key);
- 
-             assertTrue(allBukkit.remove(bukkit), "Duplicate entity nms->" + bukkit);
