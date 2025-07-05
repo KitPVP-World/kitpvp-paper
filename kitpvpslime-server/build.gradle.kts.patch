@@ -1,6 +1,6 @@
 --- a/aspaper-server/build.gradle.kts
 +++ b/aspaper-server/build.gradle.kts
-@@ -30,7 +_,22 @@
+@@ -35,7 +_,22 @@
          }
      }
  
@@ -23,8 +23,8 @@
 +    activeFork = kitpvpSlime
  
      spigot {
-         buildDataRef = "3edaf46ec1eed4115ce1b18d2846cded42577e42"
-@@ -116,10 +_,14 @@
+         enabled = true
+@@ -122,10 +_,14 @@
      main {
          java { srcDir("../paper-server/src/main/java") }
          resources { srcDir("../paper-server/src/main/resources") }
@@ -38,37 +38,37 @@
 +        resources { srcDir("../aspaper-server/src/test/resources") }
      }
  }
- 
-@@ -143,7 +_,7 @@
+ val log4jPlugins = sourceSets.create("log4jPlugins") {
+@@ -152,7 +_,7 @@
  }
  
  dependencies {
 -    implementation(project(":aspaper-api")) //ASP
 +    implementation(project(":kitpvpslime-api")) //ASP
      implementation(project(":core")) //ASP
-     implementation("commons-io:commons-io:2.11.0")
      implementation("ca.spottedleaf:concurrentutil:0.0.3")
-@@ -215,14 +_,14 @@
+     implementation("org.jline:jline-terminal-ffm:3.27.1") // use ffm on java 22+
+@@ -229,14 +_,14 @@
          val gitBranch = git.exec(providers, "rev-parse", "--abbrev-ref", "HEAD").get().trim()
          attributes(
              "Main-Class" to "org.bukkit.craftbukkit.Main",
 -            "Implementation-Title" to "AdvancedSlimePaper", //ASP
-+            "Implementation-Title" to "KitPvPSlime", //kitpvp
++            "Implementation-Title" to "KitPvPSlime", // kitpvp
              "Implementation-Version" to implementationVersion,
              "Implementation-Vendor" to date,
 -            "Specification-Title" to "AdvancedSlimePaper", //ASP
-+            "Specification-Title" to "KitPvPSlime", //kitpvp
++            "Specification-Title" to "KitPvPSlime", // kitpvp
              "Specification-Version" to project.version,
 -            "Specification-Vendor" to "InfernalSuite Team", //ASP
 -            "Brand-Id" to "infernalsuite:advancedslimepaper", //ASP
 -            "Brand-Name" to "AdvancedSlimePaper", //ASP
-+            "Specification-Vendor" to "KitPvP World Team", //kitpvp
-+            "Brand-Id" to "kitpvp:slime", //kitpvp
-+            "Brand-Name" to "KitPvPSlime", //ASP
++            "Specification-Vendor" to "KitPvP World Team", // kitpvp
++            "Brand-Id" to "kitpvp:slime", // kitpvp
++            "Brand-Name" to "KitPvPSlime", // kitpvp
              "Build-Number" to (build ?: ""),
              "Build-Time" to buildTime.toString(),
              "Git-Branch" to gitBranch,
-@@ -288,9 +_,9 @@
+@@ -333,9 +_,9 @@
          .asFile
      javaLauncher.set(project.javaToolchains.launcherFor {
          languageVersion.set(JavaLanguageVersion.of(21))
@@ -80,11 +80,11 @@
  
      if (rootProject.childProjects["test-plugin"] != null) {
          val testPluginJar = rootProject.project(":test-plugin").tasks.jar.flatMap { it.archiveFile }
-@@ -304,6 +_,7 @@
+@@ -349,6 +_,7 @@
          systemProperty("disable.watchdog", true)
      }
      systemProperty("io.papermc.paper.suppress.sout.nags", true)
-+    systemProperty("kitpvpslime.announce", true)
++    systemProperty("kitpvpslime.announce", true) // kitpvp
  
      val memoryGb = providers.gradleProperty("paper.runMemoryGb").getOrElse("2")
      minHeapSize = "${memoryGb}G"

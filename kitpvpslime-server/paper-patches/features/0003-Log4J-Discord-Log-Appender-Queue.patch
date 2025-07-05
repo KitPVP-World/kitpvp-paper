@@ -1,9 +1,9 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: notstevy <notstevy@ultrabuildmc.de>
 Date: Tue, 8 Apr 2025 21:03:39 +0200
-Subject: [PATCH] Log4J-Discord-Log-Appender-Queue - Allowing the core to read
- the warning messages
+Subject: [PATCH] Log4J-Discord-Log-Appender-Queue
 
+Allowing the core to read the warning messages
 
 diff --git a/src/main/resources/log4j2.xml b/src/main/resources/log4j2.xml
 index d2a75850af9c6ad2aca66a5f994f1b587d73eac4..d462305002665dfc53d37059bc34aa74afcceee2 100644

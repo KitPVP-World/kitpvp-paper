@@ -5,7 +5,7 @@ Subject: [PATCH] Display Player
 
 
 diff --git a/net/minecraft/network/syncher/SynchedEntityData.java b/net/minecraft/network/syncher/SynchedEntityData.java
-index 3d90f9f1ac1bd281edf6bb0f93ea821657d5bd2f..4d366caf1b6b18fd1911f4e16c7daa052bf58e12 100644
+index f1ab0e66e7d464f7f31a7a360528ed97cdda0aa0..e6e542fdf673724f767885b03146c25358e3c756 100644
 --- a/net/minecraft/network/syncher/SynchedEntityData.java
 +++ b/net/minecraft/network/syncher/SynchedEntityData.java
 @@ -37,6 +37,19 @@ public class SynchedEntityData {
@@ -29,10 +29,10 @@ index 3d90f9f1ac1bd281edf6bb0f93ea821657d5bd2f..4d366caf1b6b18fd1911f4e16c7daa05
          if (i > 254) {
              throw new IllegalArgumentException("Data value id is too big with " + i + "! (Max is 254)");
 diff --git a/net/minecraft/server/level/ServerEntity.java b/net/minecraft/server/level/ServerEntity.java
-index 0fb253aa55a24b56b17f524b3261c5b75c7d7e59..c51f97ad33b85a839b857d487091354f8e8fa663 100644
+index e96d4dee14c05f2fa329bfb1588ec795d4e3d730..b1db40c917b2a69a83c487765a52db748a8feab2 100644
 --- a/net/minecraft/server/level/ServerEntity.java
 +++ b/net/minecraft/server/level/ServerEntity.java
-@@ -322,6 +322,17 @@ public class ServerEntity {
+@@ -339,6 +339,17 @@ public class ServerEntity {
              // CraftBukkit end
          }
  
@@ -51,10 +51,10 @@ index 0fb253aa55a24b56b17f524b3261c5b75c7d7e59..c51f97ad33b85a839b857d487091354f
          consumer.accept(addEntityPacket);
          if (this.trackedDataValues != null) {
 diff --git a/net/minecraft/world/entity/EntityType.java b/net/minecraft/world/entity/EntityType.java
-index 49201d6664656ebe34c84c1c84b5ea4878729062..cadce0075dd250b350f12d3043eb1777212460c9 100644
+index cdf71340278e05e58bbb4ed51a432336de46e549..1f8ad2b72f300b51ed6f0788372d4a41b05816dc 100644
 --- a/net/minecraft/world/entity/EntityType.java
 +++ b/net/minecraft/world/entity/EntityType.java
-@@ -1043,6 +1043,18 @@ public class EntityType<T extends Entity> implements FeatureElement, EntityTypeT
+@@ -1065,6 +1065,18 @@ public class EntityType<T extends Entity> implements FeatureElement, EntityTypeT
              .clientTrackingRange(32)
              .updateInterval(2)
      );
@@ -74,10 +74,10 @@ index 49201d6664656ebe34c84c1c84b5ea4878729062..cadce0075dd250b350f12d3043eb1777
          "fishing_bobber",
          EntityType.Builder.<FishingHook>of(FishingHook::new, MobCategory.MISC)
 diff --git a/net/minecraft/world/entity/LivingEntity.java b/net/minecraft/world/entity/LivingEntity.java
-index 735b9ee502538200dd0d25f65f3a0b8acaca4fa9..0f237b9d6e092dabb3dab6de4616c66ad8d3c34c 100644
+index 769950296fd54787160a621b1230349b5eed681b..dbee0a68ff96dd89294b623cec3ba1a07e0e0124 100644
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
-@@ -2635,6 +2635,13 @@ public abstract class LivingEntity extends Entity implements Attackable {
+@@ -2729,6 +2729,13 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
          return this.attributes;
      }
  
@@ -92,10 +92,10 @@ index 735b9ee502538200dd0d25f65f3a0b8acaca4fa9..0f237b9d6e092dabb3dab6de4616c66a
          return this.getItemBySlot(EquipmentSlot.MAINHAND);
      }
 diff --git a/net/minecraft/world/entity/ai/attributes/DefaultAttributes.java b/net/minecraft/world/entity/ai/attributes/DefaultAttributes.java
-index 33527a1825119f3667fb3c7ccec318f2c7328ec9..80e4a9e81014d7effc6b6d0865af144c7086fa86 100644
+index 26ffe98c94b2aaf61bf1693e86e8e7962e892a09..d0db3634373eb1c36fd05c8c373c292bd93b36c0 100644
 --- a/net/minecraft/world/entity/ai/attributes/DefaultAttributes.java
 +++ b/net/minecraft/world/entity/ai/attributes/DefaultAttributes.java
-@@ -137,6 +137,7 @@ public class DefaultAttributes {
+@@ -139,6 +139,7 @@ public class DefaultAttributes {
          .put(EntityType.PIGLIN_BRUTE, PiglinBrute.createAttributes().build())
          .put(EntityType.PILLAGER, Pillager.createAttributes().build())
          .put(EntityType.PLAYER, Player.createAttributes().build())

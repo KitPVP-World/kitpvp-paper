@@ -1,17 +1,18 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: notstevy <notstevy@ultrabuildmc.de>
 Date: Sun, 6 Apr 2025 11:43:32 +0200
-Subject: [PATCH] Display Player - Porting changes from old fork
+Subject: [PATCH] Display Player
 
+Porting changes from old fork
 
 diff --git a/src/main/java/org/bukkit/entity/EntityType.java b/src/main/java/org/bukkit/entity/EntityType.java
-index 29d22511660060c182314e23ad849bca34611717..195921741e5c55fae783bf354659148bba08fce3 100644
+index 2b661dbf1d07b6b3319ed86c0aff740df8f48563..28242d96ce182e8b58460c574c30babcce02c5de 100644
 --- a/src/main/java/org/bukkit/entity/EntityType.java
 +++ b/src/main/java/org/bukkit/entity/EntityType.java
-@@ -338,10 +338,13 @@ public enum EntityType implements Keyed, Translatable, net.kyori.adventure.trans
-      */
-     LIGHTNING_BOLT("lightning_bolt", LightningStrike.class, -1),
-     PLAYER("player", Player.class, -1, false),
+@@ -199,10 +199,13 @@ public enum EntityType implements Keyed, Translatable, net.kyori.adventure.trans
+     ZOMBIE_VILLAGER("zombie_villager", ZombieVillager.class, 27),
+     ZOMBIFIED_PIGLIN("zombified_piglin", PigZombie.class, 57),
+     // End generate - EntityType
 +    // kitpvp start - Display Player
 +    DISPLAY_PLAYER(NamespacedKey.fromString("kitpvp:display_player"), world.kitpvp.slime.api.entity.DisplayPlayer.class, -1, true),
      /**
@@ -23,7 +24,7 @@ index 29d22511660060c182314e23ad849bca34611717..195921741e5c55fae783bf354659148b
  
      private final String name;
      private final Class<? extends Entity> clazz;
-@@ -376,6 +379,17 @@ public enum EntityType implements Keyed, Translatable, net.kyori.adventure.trans
+@@ -237,6 +240,17 @@ public enum EntityType implements Keyed, Translatable, net.kyori.adventure.trans
          this.key = (name == null) ? null : NamespacedKey.minecraft(name);
      }
  
@@ -42,10 +43,10 @@ index 29d22511660060c182314e23ad849bca34611717..195921741e5c55fae783bf354659148b
       * Gets the entity type name.
       *
 diff --git a/src/main/java/org/bukkit/entity/Player.java b/src/main/java/org/bukkit/entity/Player.java
-index 494dca2ee48a03953d47050b178496df12bc48c5..78edb96332b1c2346ece50f6f453c1dd0d748e59 100644
+index 3584ca0a89f59e391ab6d5be8f2274a6801d025f..f159049b8fa9b2119a7a36a618add2413d79fc75 100644
 --- a/src/main/java/org/bukkit/entity/Player.java
 +++ b/src/main/java/org/bukkit/entity/Player.java
-@@ -62,7 +62,7 @@ import org.jspecify.annotations.Nullable;
+@@ -63,7 +63,7 @@ import org.jspecify.annotations.Nullable;
   * Represents a player, connected or not
   */
  @NullMarked

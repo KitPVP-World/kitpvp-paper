@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ServerChunkCache.java
 +++ b/net/minecraft/server/level/ServerChunkCache.java
-@@ -201,16 +_,18 @@
+@@ -204,16 +_,18 @@
          this.mainThread = Thread.currentThread();
          Path path = levelStorageAccess.getDimensionPath(level.dimension()).resolve("data");
  
@@ -13,7 +13,7 @@
 +        // kitpvp start - optimize world loading
          //ASP start - No dimension data storage
          if(level instanceof com.infernalsuite.asp.level.SlimeLevelInstance) {
-             this.dataStorage = new com.infernalsuite.asp.level.ReadOnlyDimensionDataStorage(path, fixerUpper, level.registryAccess());
+             this.dataStorage = new com.infernalsuite.asp.level.ReadOnlyDimensionDataStorage(new SavedData.Context(level), path, fixerUpper, level.registryAccess());
          } else {
 +            try {
 +                FileUtil.createDirectoriesSafe(path);
@@ -22,6 +22,6 @@
 +            }
 +            // kitpvp end - optimize world loading
 +
-             this.dataStorage = new DimensionDataStorage(path, fixerUpper, level.registryAccess());
+             this.dataStorage = new DimensionDataStorage(new SavedData.Context(level), path, fixerUpper, level.registryAccess());
          }
          //ASP end - No dimension data storage

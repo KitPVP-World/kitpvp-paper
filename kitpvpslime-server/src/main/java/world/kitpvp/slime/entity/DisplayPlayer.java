@@ -2,13 +2,7 @@ package world.kitpvp.slime.entity;
 
 
 import com.mojang.authlib.GameProfile;
-import com.mojang.serialization.DataResult;
 import net.minecraft.core.GlobalPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
-import net.minecraft.network.Connection;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.PacketFlow;
@@ -16,7 +10,6 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ClientInformation;
 import net.minecraft.server.level.ServerEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -27,7 +20,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -35,14 +27,15 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Abilities;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Objects;
 
 public class DisplayPlayer extends PathfinderMob {
     private static final Logger LOGGER = LoggerFactory.getLogger(DisplayPlayer.class);
@@ -65,13 +58,9 @@ public class DisplayPlayer extends PathfinderMob {
         defaultServerPlayer.zo = this.zo;
         defaultServerPlayer.connection = new ServerGamePacketListenerImpl(
             this.serverLevel().getServer(),
-            new Connection(PacketFlow.SERVERBOUND),
+            new net.minecraft.network.Connection(PacketFlow.SERVERBOUND),
             defaultServerPlayer,
-            new CommonListenerCookie(defaultServerPlayer.getGameProfile(),
-                0,
-                ClientInformation.createDefault(),
-                true
-            )
+            CommonListenerCookie.createInitial(defaultServerPlayer.getGameProfile(), false)
         );
         defaultServerPlayer.setAttributes(getAttributes());
         this.entityData.set(Player.DATA_PLAYER_MODE_CUSTOMISATION, (byte) 127);
@@ -162,46 +151,32 @@ public class DisplayPlayer extends PathfinderMob {
 
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag nbt) {
-        super.readAdditionalSaveData(nbt);
-        if (nbt.contains("playerName")) {
-            this.name = nbt.getString("playerName");
-        }
+    protected void readAdditionalSaveData(@NotNull ValueInput input) {
+        super.readAdditionalSaveData(input);
+        input.getString("playerName").ifPresent(this::name);
         var defaultPlayer = this.getDefaultServerPlayer();
 
         // cloned and modified from Player
-        defaultPlayer.getFoodData().readAdditionalSaveData(nbt);
-        defaultPlayer.getAbilities().loadSaveData(nbt);
-        if (nbt.contains("LastDeathLocation", 10)) {
-            DataResult<GlobalPos> dataresult = GlobalPos.CODEC.parse(NbtOps.INSTANCE, nbt.get("LastDeathLocation"));
-
-            Objects.requireNonNull(LOGGER);
-            defaultPlayer.setLastDeathLocation(dataresult.resultOrPartial(LOGGER::error));
-        }
+        defaultPlayer.getFoodData().readAdditionalSaveData(input);
+        input.read("abilities", Abilities.Packed.CODEC).ifPresent(defaultPlayer.getAbilities()::apply);
+        defaultPlayer.setLastDeathLocation(input.read("LastDeathLocation", GlobalPos.CODEC));
 //        this.setCustomName(Component.literal(this.name));
     }
 
 
     @Override
-    public void addAdditionalSaveData(CompoundTag nbt) {
-        super.addAdditionalSaveData(nbt);
+    public void addAdditionalSaveData(@NotNull ValueOutput output) {
+        super.addAdditionalSaveData(output);
         var defaultPlayer = this.getDefaultServerPlayer();
 
         // cloned and modified from Player
-        defaultPlayer.getFoodData().addAdditionalSaveData(nbt);
-        defaultPlayer.getAbilities().addSaveData(nbt);
-        defaultPlayer.getLastDeathLocation().flatMap((globalpos) -> {
-            DataResult<Tag> dataresult = GlobalPos.CODEC.encodeStart(NbtOps.INSTANCE, globalpos);
-
-            Objects.requireNonNull(LOGGER);
-            return dataresult.resultOrPartial(LOGGER::error);
-        }).ifPresent((nbtbase) -> {
-            nbt.put("LastDeathLocation", nbtbase);
-        });
+        defaultPlayer.getFoodData().addAdditionalSaveData(output);
+        output.store("abilities", Abilities.Packed.CODEC, defaultPlayer.getAbilities().pack());
+        defaultPlayer.getLastDeathLocation().ifPresent(globalPos -> output.store("LastDeathLocation", GlobalPos.CODEC, globalPos));
     }
 
     @Override
-    public boolean hurtServer(ServerLevel level, DamageSource damageSource, float amount) {
+    public boolean hurtServer(@NotNull ServerLevel level, @NotNull DamageSource damageSource, float amount) {
         if (super.hurtServer(level, damageSource, amount)) {
             if (this.level().getLevelData().getDifficulty() == Difficulty.PEACEFUL) {
                 LOGGER.warn("AI of Display Player is not able to function correctly because the server difficulty is set to peaceful.");
@@ -224,11 +199,11 @@ public class DisplayPlayer extends PathfinderMob {
 
     @Override
     protected @NotNull HoverEvent createHoverEvent() {
-        return new HoverEvent(HoverEvent.Action.SHOW_ENTITY, new HoverEvent.EntityTooltipInfo(EntityType.PLAYER, this.getUUID(), this.getName()));
+        return new HoverEvent.ShowEntity(new HoverEvent.EntityTooltipInfo(EntityType.PLAYER, this.getUUID(), this.getName()));
     }
 
     @Override
-    protected SoundEvent getHurtSound(DamageSource source) {
+    public SoundEvent getHurtSound(DamageSource source) {
         return source.type().effects().sound();
     }
 
@@ -237,27 +212,27 @@ public class DisplayPlayer extends PathfinderMob {
         return SoundEvents.PLAYER_DEATH;
     }
 
-    protected SoundEvent getSwimSound() {
+    public @NotNull SoundEvent getSwimSound() {
         return SoundEvents.PLAYER_SWIM;
     }
 
     @Override
-    protected SoundEvent getSwimSplashSound() {
+    public @NotNull SoundEvent getSwimSplashSound() {
         return SoundEvents.PLAYER_SPLASH;
     }
 
     @Override
-    protected SoundEvent getSwimHighSpeedSplashSound() {
+    public @NotNull SoundEvent getSwimHighSpeedSplashSound() {
         return SoundEvents.PLAYER_SPLASH_HIGH_SPEED;
     }
 
     @Override
-    public SoundSource getSoundSource() {
+    public @NotNull SoundSource getSoundSource() {
         return SoundSource.PLAYERS;
     }
 
     @Override
-    public LivingEntity.Fallsounds getFallSounds() {
+    public LivingEntity.@NotNull Fallsounds getFallSounds() {
         return new LivingEntity.Fallsounds(SoundEvents.PLAYER_SMALL_FALL, SoundEvents.PLAYER_BIG_FALL);
     }
 
@@ -294,5 +269,13 @@ public class DisplayPlayer extends PathfinderMob {
     @Override
     public boolean isAggressive() {
         return this.aggressive;
+    }
+
+    public String name() {
+        return this.name;
+    }
+
+    public void name(String name) {
+        this.name = name;
     }
 }
