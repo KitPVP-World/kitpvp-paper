@@ -74,7 +74,7 @@ index cdf71340278e05e58bbb4ed51a432336de46e549..1f8ad2b72f300b51ed6f0788372d4a41
          "fishing_bobber",
          EntityType.Builder.<FishingHook>of(FishingHook::new, MobCategory.MISC)
 diff --git a/net/minecraft/world/entity/LivingEntity.java b/net/minecraft/world/entity/LivingEntity.java
-index 769950296fd54787160a621b1230349b5eed681b..dbee0a68ff96dd89294b623cec3ba1a07e0e0124 100644
+index 769950296fd54787160a621b1230349b5eed681b..a6dd035c2b99a596611b38f2628dbcd5c3201b15 100644
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
 @@ -2729,6 +2729,13 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
@@ -84,7 +84,7 @@ index 769950296fd54787160a621b1230349b5eed681b..dbee0a68ff96dd89294b623cec3ba1a0
 +    // kitpvp start - DisplayPlayer
 +    public void setAttributes(AttributeMap attributeMap) {
 +        this.attributes = attributeMap;
-+        this.craftAttributes = new CraftAttributeMap(this.attributes);
++        this.craftAttributes = new org.bukkit.craftbukkit.attribute.CraftAttributeMap(this.attributes);
 +    }
 +    // kitpvp end - DisplayPlayer
 +
