@@ -5,11 +5,15 @@ import com.infernalsuite.asp.api.world.SlimeWorld;
 import com.infernalsuite.asp.level.SlimeChunkLevel;
 import com.mojang.brigadier.Command;
 import io.papermc.paper.command.brigadier.Commands;
+import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
+import io.papermc.paper.command.brigadier.argument.resolvers.BlockPositionResolver;
+import io.papermc.paper.math.BlockPosition;
 import net.kyori.adventure.text.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +45,7 @@ public class TestCommand {
                         String templateWorldName = "kungfu";
                         SlimeWorld templateWorld = AdvancedSlimePaperAPI.instance().getLoadedWorld(templateWorldName);
 
-                        if(templateWorld == null) {
+                        if (templateWorld == null) {
                             throw ERROR_INVALID_WORLD.create(Component.text(templateWorldName));
                         }
 
@@ -62,6 +66,19 @@ public class TestCommand {
 
                         return width * length;
                     }))
+                .then(Commands.literal("block")
+                    .then(Commands.argument("pos", ArgumentTypes.blockPosition())
+                        .executes((context) -> {
+                            final BlockPositionResolver blockPositionResolver = context.getArgument("pos", BlockPositionResolver.class);
+                            final BlockPosition blockPosition = blockPositionResolver.resolve(context.getSource());
+
+                            Block block = context.getSource().getLocation().getWorld()
+                                .getBlockAt(blockPosition.blockX(), blockPosition.blockY(), blockPosition.blockZ());
+
+                            context.getSource().getSender().sendRichMessage("Block at " + blockPosition + " is <lang:" + block.getType().getBlockTranslationKey() + ">");
+
+                            return Command.SINGLE_SUCCESS;
+                        })))
                 .then(Commands.literal("reset_chunk")
                     .executes((context) -> {
                         SlimeWorld templateWorld = AdvancedSlimePaperAPI.instance().getLoadedWorld("kungfu");
