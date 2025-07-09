@@ -1,5 +1,6 @@
 package world.kitpvp.testplugin.arena;
 
+import ca.spottedleaf.moonrise.common.PlatformHooks;
 import ca.spottedleaf.moonrise.patches.chunk_system.level.entity.EntityLookup;
 import ca.spottedleaf.moonrise.patches.chunk_system.scheduling.NewChunkHolder;
 import ca.spottedleaf.moonrise.patches.starlight.light.StarLightEngine;
@@ -8,7 +9,6 @@ import com.infernalsuite.asp.api.world.SlimeWorld;
 import com.infernalsuite.asp.level.SlimeChunkLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -84,31 +84,39 @@ public class ArenaResetHandler {
     private static void resetChunkKeepCache(ServerLevel level, SlimeChunkLevel newLevelChunk) {
         int x = newLevelChunk.locX, z = newLevelChunk.locZ;
         EntityLookup entityLookup = level.moonrise$getEntityLookup();
+        NewChunkHolder chunkHolder = level.moonrise$getChunkTaskScheduler().chunkHolderManager.getChunkHolder(x, z);
 
         // unload old chunk
         LevelChunk oldLevelChunk = level.getChunk(x, z);
         level.unload(oldLevelChunk);
-        level.moonrise$removeChunkForPlayerTicking(oldLevelChunk);
+        PlatformHooks.get().onChunkNotTicking(oldLevelChunk, chunkHolder.vanillaChunkHolder);
+        PlatformHooks.get().onChunkNotEntityTicking(oldLevelChunk, chunkHolder.vanillaChunkHolder);
+        PlatformHooks.get().onChunkNotBorder(oldLevelChunk, chunkHolder.vanillaChunkHolder);
+        PlatformHooks.get().onChunkPostNotBorder(oldLevelChunk, chunkHolder.vanillaChunkHolder);
         for (Entity entity : entityLookup.getChunk(x, z).getAllEntities()) {
             if (!(entity instanceof ServerPlayer))
-                entity.remove(Entity.RemovalReason.DISCARDED);
+                entity.discard();
         }
+        oldLevelChunk.clearAllBlockEntities();
+        oldLevelChunk.unregisterTickContainerFromLevel(level);
 
         // load new chunk
-        level.chunkSource.moonrise$setFullChunk(x, z, newLevelChunk);
+        PlatformHooks.get().onChunkPreBorder(newLevelChunk, chunkHolder.vanillaChunkHolder);
         level.slimeInstance.promoteInChunkStorage(newLevelChunk);
+        PlatformHooks.get().onChunkBorder(newLevelChunk, chunkHolder.vanillaChunkHolder);
+
+        newLevelChunk.moonrise$setChunkHolder(chunkHolder);
+
+        PlatformHooks.get().onChunkTicking(newLevelChunk, chunkHolder.vanillaChunkHolder);
+        PlatformHooks.get().onChunkEntityTicking(newLevelChunk, chunkHolder.vanillaChunkHolder);
 
         // see: ca.spottedleaf.moonrise.patches.chunk_system.scheduling.task.ChunkFullTask#run
-        NewChunkHolder chunkHolder = level.moonrise$getChunkTaskScheduler().chunkHolderManager.getChunkHolder(x, z);
-        newLevelChunk.moonrise$setChunkAndHolder(new ServerChunkCache.ChunkAndHolder(newLevelChunk, chunkHolder.vanillaChunkHolder));
-
         newLevelChunk.runPostLoad();
         level.moonrise$getChunkTaskScheduler().chunkHolderManager.getOrCreateEntityChunk(x, z, false);
         newLevelChunk.setLoaded(true);
         newLevelChunk.registerAllBlockEntitiesAfterLevelLoad();
         newLevelChunk.registerTickContainerInLevel(level);
         newLevelChunk.needsDecoration = false;
-        newLevelChunk.loadCallback();
 
         chunkHolder.onChunkGenComplete(newLevelChunk, ChunkStatus.FULL, List.of(), List.of());
 
