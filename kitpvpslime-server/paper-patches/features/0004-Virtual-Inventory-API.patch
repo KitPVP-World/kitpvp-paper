@@ -1,0 +1,48 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: notstevy <notstevy@ultrabuildmc.de>
+Date: Thu, 17 Jul 2025 15:49:24 +0200
+Subject: [PATCH] Virtual Inventory API
+
+Signed-off-by: notstevy <notstevy@ultrabuildmc.de>
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java
+index c6997597609affca32f034e71223ae0667d20504..b955d9b1a614e7e18ae9b933b929361255e54492 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java
+@@ -496,6 +496,13 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
+                 player.connection.send(new ClientboundOpenScreenPacket(container.containerId, windowType, io.papermc.paper.adventure.PaperAdventure.asVanilla(adventure$title)));
+             }
+         }
++        // kitpvp start - Virtual Inventory
++        if(inventory instanceof world.kitpvp.slime.api.inventory.VirtualInventoryView)  {
++            var inventoryPlayer = (org.bukkit.craftbukkit.inventory.CraftInventoryPlayer) inventory.getBottomInventory();
++            this.getHandle().virtualInventory(inventoryPlayer.getInventory());
++        }
++        // kitpvp end - Virtual Inventory
++
+         player.containerMenu = container;
+         player.initMenu(container);
+     }
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventoryPlayer.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventoryPlayer.java
+index d8aae267a038446333abfffa6fa95a92644db546..5ebe95eae0d3a13fc6ddf8cb438b7b03f0610625 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventoryPlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventoryPlayer.java
+@@ -86,7 +86,7 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
+         // This is a poor representation by this API, but basically instead send a player inventory update packet.
+         // This will allow updates to the player inventory rather than through the menu.
+         // TODO: This could be something worth cleaning up in the future.
+-        if (index > 40) {
++        if (index > 40 && player.isInventoryAllowedToUpdate(this.getInventory())) {
+             player.connection.send(new ClientboundSetPlayerInventoryPacket(index, CraftItemStack.asNMSCopy(item)));
+             return;
+         }
+@@ -126,7 +126,8 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
+         } else if (index > 35) {
+             index = 8 - (index - 36);
+         }
+-        player.connection.send(new ClientboundContainerSetSlotPacket(player.inventoryMenu.containerId, player.inventoryMenu.incrementStateId(), index, CraftItemStack.asNMSCopy(item)));
++        if(player.isInventoryAllowedToUpdate(this.getInventory())) // kitpvp - Virtual Inventory
++            player.connection.send(new ClientboundContainerSetSlotPacket(player.inventoryMenu.containerId, player.inventoryMenu.incrementStateId(), index, CraftItemStack.asNMSCopy(item)));
+     }
+ 
+     @Override

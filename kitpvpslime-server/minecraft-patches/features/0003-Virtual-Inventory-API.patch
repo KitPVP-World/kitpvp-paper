@@ -1,0 +1,130 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: notstevy <notstevy@ultrabuildmc.de>
+Date: Thu, 17 Jul 2025 15:49:24 +0200
+Subject: [PATCH] Virtual Inventory API
+
+Signed-off-by: notstevy <notstevy@ultrabuildmc.de>
+
+diff --git a/net/minecraft/server/level/ServerPlayer.java b/net/minecraft/server/level/ServerPlayer.java
+index 1dd8e814b68962fd0aba19e6e4b90fed62cd55b7..4e13eb78130b7cad4e88935d6d77395e13828c5b 100644
+--- a/net/minecraft/server/level/ServerPlayer.java
++++ b/net/minecraft/server/level/ServerPlayer.java
+@@ -296,13 +296,14 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
+         // Paper start - Sync offhand slot in menus
+         @Override
+         public void sendOffHandSlotChange() {
+-            ServerPlayer.this.connection.send(new ClientboundContainerSetSlotPacket(ServerPlayer.this.inventoryMenu.containerId, ServerPlayer.this.inventoryMenu.incrementStateId(), net.minecraft.world.inventory.InventoryMenu.SHIELD_SLOT, ServerPlayer.this.inventoryMenu.getSlot(net.minecraft.world.inventory.InventoryMenu.SHIELD_SLOT).getItem().copy()));
++            ServerPlayer.this.connection.send(new ClientboundContainerSetSlotPacket(ServerPlayer.this.inventoryMenu.containerId, ServerPlayer.this.inventoryMenu.incrementStateId(), net.minecraft.world.inventory.InventoryMenu.SHIELD_SLOT, ServerPlayer.this.virtualOrInventory().equipment.get(EquipmentSlot.OFFHAND).copy())); // kitpvp - Virtual Inventory
+         }
+         // Paper end - Sync offhand slot in menus
+ 
+         @Override
+         public void sendSlotChange(AbstractContainerMenu container, int slot, ItemStack itemStack) {
+-            ServerPlayer.this.connection.send(new ClientboundContainerSetSlotPacket(container.containerId, container.incrementStateId(), slot, itemStack));
++            if(container != ServerPlayer.this.inventoryMenu || ServerPlayer.this.hasVirtualInventory()) // kitpvp - Virtual Inventory
++                ServerPlayer.this.connection.send(new ClientboundContainerSetSlotPacket(container.containerId, container.incrementStateId(), slot, itemStack));
+         }
+ 
+         @Override
+@@ -1891,6 +1892,7 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
+         this.containerMenu.removed(this);
+         this.inventoryMenu.transferState(this.containerMenu);
+         this.containerMenu = this.inventoryMenu;
++        this.virtualInventory(null); // kitpvp - Virtual Inventory
+     }
+ 
+     @Override
+diff --git a/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+index 3bb431da22aaf4ed1965aa9bc89732b25b1e3648..752ab768e7ece9033f403b436735d4a4d1a0ebbf 100644
+--- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
++++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+@@ -3062,7 +3062,7 @@ public class ServerGamePacketListenerImpl
+                                 click = (packet.buttonNum() == Inventory.SLOT_OFFHAND) ? ClickType.SWAP_OFFHAND : ClickType.NUMBER_KEY;
+                                 Slot clickedSlot = this.player.containerMenu.getSlot(slotNum);
+                                 if (clickedSlot.mayPickup(this.player)) {
+-                                    ItemStack hotbar = this.player.getInventory().getItem(packet.buttonNum());
++                                    ItemStack hotbar = this.player.virtualOrInventory().getItem(packet.buttonNum()); // kitpvp - Virtual Inventory
+                                     if ((!hotbar.isEmpty() && clickedSlot.mayPlace(hotbar)) || (hotbar.isEmpty() && clickedSlot.hasItem())) { // Paper - modernify this logic (no such thing as a "hotbar move and readd"
+                                         action = InventoryAction.HOTBAR_SWAP;
+                                     } else {
+@@ -3199,6 +3199,15 @@ public class ServerGamePacketListenerImpl
+                             }
+                         }
+                         // Paper end - cartography item event
++                        // kitpvp start - Virtual Inventory
++                        if (this.player.hasVirtualInventory()) {
++                            if (click == ClickType.SWAP_OFFHAND
++                                || action == InventoryAction.DROP_ALL_SLOT || action == InventoryAction.DROP_ALL_CURSOR
++                                || action == InventoryAction.DROP_ONE_SLOT || action == InventoryAction.DROP_ONE_CURSOR) {
++                                cancelled = true;
++                            }
++                        }
++                        // kitpvp end - Virtual Inventory
+ 
+                         event.setCancelled(cancelled);
+                         net.minecraft.world.inventory.AbstractContainerMenu oldContainer = this.player.containerMenu; // SPIGOT-1224
+diff --git a/net/minecraft/world/entity/player/Inventory.java b/net/minecraft/world/entity/player/Inventory.java
+index a6bb436dc80daf6901dc027a6011ead4b3ed27e2..d3154ffa25f8104151e4902f248afc5357cc2851 100644
+--- a/net/minecraft/world/entity/player/Inventory.java
++++ b/net/minecraft/world/entity/player/Inventory.java
+@@ -409,6 +409,7 @@ public class Inventory implements Container, Nameable {
+     }
+ 
+     public void placeItemBackInInventory(ItemStack stack, boolean sendPacket) {
++        if(this.player.isInventoryAllowedToUpdate(this)) sendPacket = false;  // kitpvp - Virtual Inventory
+         while (!stack.isEmpty()) {
+             int slotWithRemainingSpace = this.getSlotWithRemainingSpace(stack);
+             if (slotWithRemainingSpace == -1) {
+diff --git a/net/minecraft/world/entity/player/Player.java b/net/minecraft/world/entity/player/Player.java
+index 5bfe541419209734683e8568ed381cfe01f7b80b..d1f8f37e5eed8a1aae10b4987f1b7da20784e64f 100644
+--- a/net/minecraft/world/entity/player/Player.java
++++ b/net/minecraft/world/entity/player/Player.java
+@@ -181,6 +181,7 @@ public abstract class Player extends LivingEntity {
+     protected PlayerEnderChestContainer enderChestInventory = new PlayerEnderChestContainer(this); // CraftBukkit - add "this" to constructor
+     public final InventoryMenu inventoryMenu;
+     public AbstractContainerMenu containerMenu;
++    private @Nullable Inventory virtualInventory; // kitpvp - Virtual Inventory
+     protected FoodData foodData = new FoodData();
+     protected int jumpTriggerTime;
+     private boolean clientLoaded = false;
+@@ -1461,6 +1462,27 @@ public abstract class Player extends LivingEntity {
+         return this.inventory;
+     }
+ 
++    // kitpvp start - Virtual Inventory
++    public void virtualInventory(@Nullable Inventory virtualInventory) {
++        this.virtualInventory = virtualInventory;
++        if(virtualInventory == null) {
++            inventoryMenu.sendAllDataToRemote();
++        }
++    }
++
++    public Inventory virtualOrInventory() {
++        return this.virtualInventory != null ? this.virtualInventory : this.getInventory();
++    }
++
++    public boolean isInventoryAllowedToUpdate(Inventory inventory) {
++        return !hasVirtualInventory() || inventory == virtualInventory;
++    }
++
++    public boolean hasVirtualInventory() {
++        return this.virtualInventory != null;
++    }
++    // kitpvp end - Virtual Inventory
++
+     public Abilities getAbilities() {
+         return this.abilities;
+     }
+diff --git a/net/minecraft/world/inventory/AbstractContainerMenu.java b/net/minecraft/world/inventory/AbstractContainerMenu.java
+index f4548edae77eb86e54ba499acbb20613fd60d7bd..8dcf97a6d02c03dc8d1cf4472154d3deb0f04470 100644
+--- a/net/minecraft/world/inventory/AbstractContainerMenu.java
++++ b/net/minecraft/world/inventory/AbstractContainerMenu.java
+@@ -375,7 +375,7 @@ public abstract class AbstractContainerMenu {
+     }
+ 
+     private void doClick(int slotId, int button, ClickType clickType, Player player) {
+-        Inventory inventory = player.getInventory();
++        Inventory inventory = player.virtualOrInventory(); // kitpvp - Virtual Inventory
+         if (clickType == ClickType.QUICK_CRAFT) {
+             int i = this.quickcraftStatus;
+             this.quickcraftStatus = getQuickcraftHeader(button);
