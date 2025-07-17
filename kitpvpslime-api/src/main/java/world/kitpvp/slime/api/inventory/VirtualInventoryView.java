@@ -9,7 +9,7 @@ import org.jspecify.annotations.NullMarked;
 
 /**
  * An inventory view that shows the player a different hotbar and inventory contents
- * @apiNote <b>This view instance is not returned {@link InventoryEvent#getView()}.
+ * @apiNote This view instance may not be returned {@link InventoryEvent#getView()}.
  * You should create a custom {@link org.bukkit.inventory.InventoryHolder} on the top inventory to differentiate between the inventories, <a href="https://docs.papermc.io/paper/dev/custom-inventory-holder/">see PaperMC docs</a>.
  * In your InventoryHolder you can also store the bottom player inventory returned by {@link VirtualInventoryView} since you cannot use {@link Player#getInventory()} to get the virtual inventory.
  */

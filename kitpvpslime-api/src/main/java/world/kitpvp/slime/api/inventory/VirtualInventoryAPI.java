@@ -9,7 +9,7 @@ import org.jspecify.annotations.NullMarked;
 /**
  * Virtual inventory API for showing a different player inventory until the player closes it.
  * <br>
- * <b>For an example implementation see</b>: <a href="https://github.com/KitPVP-World/kitpvp-paper/tree/main/java/world/kitpvp/testplugin/VirtualViewTest.java">VirtualViewTest</a>
+ * For an example implementation see: <a href="https://github.com/KitPVP-World/kitpvp-paper/tree/main/java/world/kitpvp/testplugin/VirtualViewTest.java">VirtualViewTest</a>
  */
 @NullMarked
 public interface VirtualInventoryAPI {
