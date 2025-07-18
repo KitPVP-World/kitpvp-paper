@@ -24,18 +24,18 @@ index c6997597609affca32f034e71223ae0667d20504..b955d9b1a614e7e18ae9b933b9293612
          player.initMenu(container);
      }
 diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventoryPlayer.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventoryPlayer.java
-index d8aae267a038446333abfffa6fa95a92644db546..5ebe95eae0d3a13fc6ddf8cb438b7b03f0610625 100644
+index d8aae267a038446333abfffa6fa95a92644db546..b09d8bad084d2ceff255b6f6d386fac96fddfa77 100644
 --- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventoryPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventoryPlayer.java
-@@ -86,7 +86,7 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
-         // This is a poor representation by this API, but basically instead send a player inventory update packet.
+@@ -87,7 +87,7 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
          // This will allow updates to the player inventory rather than through the menu.
          // TODO: This could be something worth cleaning up in the future.
--        if (index > 40) {
-+        if (index > 40 && player.isInventoryAllowedToUpdate(this.getInventory())) {
-             player.connection.send(new ClientboundSetPlayerInventoryPacket(index, CraftItemStack.asNMSCopy(item)));
+         if (index > 40) {
+-            player.connection.send(new ClientboundSetPlayerInventoryPacket(index, CraftItemStack.asNMSCopy(item)));
++            if(player.isInventoryAllowedToUpdate(this.getInventory())) player.connection.send(new ClientboundSetPlayerInventoryPacket(index, CraftItemStack.asNMSCopy(item))); // kitpvp - Virtual Inventory
              return;
          }
+ 
 @@ -126,7 +126,8 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
          } else if (index > 35) {
              index = 8 - (index - 36);
