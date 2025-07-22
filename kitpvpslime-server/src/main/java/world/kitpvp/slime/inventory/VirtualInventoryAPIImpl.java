@@ -32,7 +32,7 @@ public class VirtualInventoryAPIImpl implements VirtualInventoryAPI {
         return provideView(player, playerHandle, topInventory, virtualInventoryHandle, virtualInventory);
     }
 
-    private VirtualInventoryView provideView(Player player, ServerPlayer playerHandle, org.bukkit.inventory.Inventory inventory, Inventory virtualInventoryHandle, PlayerInventory virtualInventory) {
+    private VirtualInventoryView provideView(Player player, ServerPlayer playerHandle, org.bukkit.inventory.Inventory inventory, Inventory virtualInventoryHandle, CraftInventoryPlayer virtualInventory) {
         // extracted and modified from org.bukkit.craftbukkit.entity.CraftHumanEntity.openInventory(org.bukkit.inventory.Inventory)
 
         MenuProvider menuProvider = null;

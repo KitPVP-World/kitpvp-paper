@@ -1,8 +1,10 @@
 package world.kitpvp.slime.inventory;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.craftbukkit.inventory.CraftAbstractInventoryView;
 import org.bukkit.craftbukkit.inventory.CraftContainer;
 import org.bukkit.craftbukkit.inventory.CraftInventoryCustom;
+import org.bukkit.craftbukkit.inventory.CraftInventoryPlayer;
 import org.bukkit.craftbukkit.inventory.CraftInventoryView;
 import org.bukkit.craftbukkit.inventory.CraftMenuType;
 import org.bukkit.entity.HumanEntity;
@@ -12,6 +14,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.MenuType;
 import org.bukkit.inventory.PlayerInventory;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 
 @NullMarked
 public class CustomVirtualInventoryView extends CraftAbstractInventoryView implements PlayerVirtualInventoryView {
@@ -20,6 +23,7 @@ public class CustomVirtualInventoryView extends CraftAbstractInventoryView imple
     private final Inventory inventory;
     private final PlayerInventory virtualInventory;
 
+    private @Nullable Component titleOverride;
 
     private final String originalTitle;
     private String title;
@@ -55,9 +59,16 @@ public class CustomVirtualInventoryView extends CraftAbstractInventoryView imple
     // Paper start
     @Override
     public net.kyori.adventure.text.Component title() {
-        return this.inventory instanceof CraftInventoryCustom custom ? custom.title() : this.inventory.getType().defaultTitle(); // Paper
+        return this.titleOverride != null ? this.titleOverride : this.inventory instanceof CraftInventoryCustom custom ? custom.title() : this.inventory.getType().defaultTitle(); // Paper
     }
     // Paper end
+
+
+    @Override
+    public void overrideTitle(@Nullable Component title) {
+        this.titleOverride = title;
+        PlayerVirtualInventoryView.super.overrideTitle(title);
+    }
 
     @Override
     public String getTitle() {
