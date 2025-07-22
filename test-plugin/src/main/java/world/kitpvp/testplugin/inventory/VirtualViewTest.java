@@ -41,14 +41,8 @@ public abstract class VirtualViewTest extends StandardInventory {
 
     @Override
     public void handleClick(InventoryClickEvent event) {
-        // the event.getView() will never be the virtualView instance
-        // because that would break the custom inventory views by the Bukkit API, i.e. for furnaces
-        assert event.getView() != this.virtualView;
-        if(event.getView() ==  this.virtualView) {
-            System.out.println("Event view is virtual view");
-        }
-        System.out.println(event.getView().getClass().getCanonicalName());
-        System.out.println(this.virtualView.getClass().getCanonicalName());
+        // the event.getView() may be the virtualView instance
+        // it is not when it would break the custom inventory views by the Bukkit API, i.e. for furnaces
 
         // disable moving items both in the virtual and top inventory
         event.setCancelled(true);

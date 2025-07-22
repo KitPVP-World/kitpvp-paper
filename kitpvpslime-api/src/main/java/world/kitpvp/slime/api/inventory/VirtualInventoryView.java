@@ -1,9 +1,11 @@
 package world.kitpvp.slime.api.inventory;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.PlayerInventory;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 import org.jspecify.annotations.NullMarked;
 
@@ -36,6 +38,11 @@ public interface VirtualInventoryView extends InventoryView {
     default int rawSlotInVirtualInventory(@Range(from = 0, to = Short.MAX_VALUE) int slot) {
         return this.getTopInventory().getSize() + slot;
     }
+
+    /**
+     * Overrides the title and sends a ClientboundOpenScreenPacket if the player has this view open
+     */
+    void overrideTitle(@Nullable Component title);
 
     /**
      * Provides the virtual inventory's size

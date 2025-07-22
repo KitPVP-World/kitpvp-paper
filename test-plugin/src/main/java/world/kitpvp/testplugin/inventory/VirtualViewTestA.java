@@ -4,12 +4,22 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+import world.kitpvp.testplugin.TestPlugin;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class VirtualViewTestA extends VirtualViewTest {
+    private static final List<NamedTextColor> COLORS = new ArrayList<>(NamedTextColor.NAMES.values());
+
+    private int counter;
+
     public VirtualViewTestA(Player player) {
         super(player, Component.text("Virtual Test A").color(NamedTextColor.BLUE));
 
@@ -26,6 +36,11 @@ public class VirtualViewTestA extends VirtualViewTest {
         for (int i = 0; i < virtualView().getBottomInventory().getSize(); i++) {
             virtualView().getBottomInventory().setItem(i, ItemStack.of(Material.LIGHT, i + 1));
         }
+
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(TestPlugin.getPlugin(TestPlugin.class), () -> {
+            this.virtualView().overrideTitle(Component.text("Hi " + this.counter, COLORS.get(this.counter % COLORS.size())));
+            this.counter++;
+        }, 20L, 20L);
 
         button(bottomSlot(10), ItemStack.of(Material.BLUE_BANNER, 2), () -> {
             this.player().playSound(Sound.sound(Key.key("entity.breeze.death"), Sound.Source.UI, 1.0f, 1.0f));
