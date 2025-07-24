@@ -6,7 +6,7 @@ import ca.spottedleaf.moonrise.patches.chunk_system.scheduling.NewChunkHolder;
 import ca.spottedleaf.moonrise.patches.starlight.light.StarLightEngine;
 import ca.spottedleaf.moonrise.patches.starlight.light.StarLightInterface;
 import com.infernalsuite.asp.api.world.SlimeWorld;
-import com.infernalsuite.asp.level.SlimeChunkLevel;
+import com.infernalsuite.asp.level.chunk.SlimeChunkLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
