@@ -2,7 +2,7 @@ package world.kitpvp.testplugin.command;
 
 import com.infernalsuite.asp.api.AdvancedSlimePaperAPI;
 import com.infernalsuite.asp.api.world.SlimeWorld;
-import com.infernalsuite.asp.level.SlimeChunkLevel;
+import com.infernalsuite.asp.level.chunk.SlimeChunkLevel;
 import com.mojang.brigadier.Command;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
