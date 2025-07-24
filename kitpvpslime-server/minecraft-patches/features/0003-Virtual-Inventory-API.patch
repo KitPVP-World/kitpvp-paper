@@ -6,17 +6,10 @@ Subject: [PATCH] Virtual Inventory API
 Signed-off-by: notstevy <notstevy@ultrabuildmc.de>
 
 diff --git a/net/minecraft/server/level/ServerPlayer.java b/net/minecraft/server/level/ServerPlayer.java
-index 1dd8e814b68962fd0aba19e6e4b90fed62cd55b7..df7c16d497e45ccf6392b37423a1ff3757930152 100644
+index 8891baab314cd1a1096c3930e7357b0f368efe1d..26e87fd74cee0f1bb9f26899b06303e56cacfff3 100644
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -296,13 +296,14 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
-         // Paper start - Sync offhand slot in menus
-         @Override
-         public void sendOffHandSlotChange() {
--            ServerPlayer.this.connection.send(new ClientboundContainerSetSlotPacket(ServerPlayer.this.inventoryMenu.containerId, ServerPlayer.this.inventoryMenu.incrementStateId(), net.minecraft.world.inventory.InventoryMenu.SHIELD_SLOT, ServerPlayer.this.inventoryMenu.getSlot(net.minecraft.world.inventory.InventoryMenu.SHIELD_SLOT).getItem().copy()));
-+            ServerPlayer.this.connection.send(new ClientboundContainerSetSlotPacket(ServerPlayer.this.inventoryMenu.containerId, ServerPlayer.this.inventoryMenu.incrementStateId(), net.minecraft.world.inventory.InventoryMenu.SHIELD_SLOT, ServerPlayer.this.virtualOrInventory().equipment.get(EquipmentSlot.OFFHAND).copy())); // kitpvp - Virtual Inventory
-         }
-         // Paper end - Sync offhand slot in menus
+@@ -302,7 +302,8 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
  
          @Override
          public void sendSlotChange(AbstractContainerMenu container, int slot, ItemStack itemStack) {
@@ -26,7 +19,7 @@ index 1dd8e814b68962fd0aba19e6e4b90fed62cd55b7..df7c16d497e45ccf6392b37423a1ff37
          }
  
          @Override
-@@ -1891,6 +1892,7 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
+@@ -1900,6 +1901,7 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
          this.containerMenu.removed(this);
          this.inventoryMenu.transferState(this.containerMenu);
          this.containerMenu = this.inventoryMenu;
@@ -35,10 +28,10 @@ index 1dd8e814b68962fd0aba19e6e4b90fed62cd55b7..df7c16d497e45ccf6392b37423a1ff37
  
      @Override
 diff --git a/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 3bb431da22aaf4ed1965aa9bc89732b25b1e3648..752ab768e7ece9033f403b436735d4a4d1a0ebbf 100644
+index 5bba860a5f913d3a83c1d469f0f4854b6e063a49..36a52f3e21b7c6bb675e33f03d63d982c95af920 100644
 --- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -3062,7 +3062,7 @@ public class ServerGamePacketListenerImpl
+@@ -3064,7 +3064,7 @@ public class ServerGamePacketListenerImpl
                                  click = (packet.buttonNum() == Inventory.SLOT_OFFHAND) ? ClickType.SWAP_OFFHAND : ClickType.NUMBER_KEY;
                                  Slot clickedSlot = this.player.containerMenu.getSlot(slotNum);
                                  if (clickedSlot.mayPickup(this.player)) {
@@ -47,7 +40,7 @@ index 3bb431da22aaf4ed1965aa9bc89732b25b1e3648..752ab768e7ece9033f403b436735d4a4
                                      if ((!hotbar.isEmpty() && clickedSlot.mayPlace(hotbar)) || (hotbar.isEmpty() && clickedSlot.hasItem())) { // Paper - modernify this logic (no such thing as a "hotbar move and readd"
                                          action = InventoryAction.HOTBAR_SWAP;
                                      } else {
-@@ -3199,6 +3199,15 @@ public class ServerGamePacketListenerImpl
+@@ -3201,6 +3201,15 @@ public class ServerGamePacketListenerImpl
                              }
                          }
                          // Paper end - cartography item event
@@ -76,7 +69,7 @@ index a6bb436dc80daf6901dc027a6011ead4b3ed27e2..3d55ea8d32b3bff2baed3d6c35c69059
              int slotWithRemainingSpace = this.getSlotWithRemainingSpace(stack);
              if (slotWithRemainingSpace == -1) {
 diff --git a/net/minecraft/world/entity/player/Player.java b/net/minecraft/world/entity/player/Player.java
-index 5bfe541419209734683e8568ed381cfe01f7b80b..e1590e3d3ca0dcbe189821724471bf3c62082f1a 100644
+index 34b8d020140d9ed563b7cbe0a604b9ce2ffe4d49..e2e2ceb5370ec179272d11de8d0e5b1719ef7558 100644
 --- a/net/minecraft/world/entity/player/Player.java
 +++ b/net/minecraft/world/entity/player/Player.java
 @@ -181,6 +181,7 @@ public abstract class Player extends LivingEntity {
@@ -87,7 +80,7 @@ index 5bfe541419209734683e8568ed381cfe01f7b80b..e1590e3d3ca0dcbe189821724471bf3c
      protected FoodData foodData = new FoodData();
      protected int jumpTriggerTime;
      private boolean clientLoaded = false;
-@@ -1461,6 +1462,28 @@ public abstract class Player extends LivingEntity {
+@@ -1460,6 +1461,28 @@ public abstract class Player extends LivingEntity {
          return this.inventory;
      }
  
@@ -117,10 +110,10 @@ index 5bfe541419209734683e8568ed381cfe01f7b80b..e1590e3d3ca0dcbe189821724471bf3c
          return this.abilities;
      }
 diff --git a/net/minecraft/world/inventory/AbstractContainerMenu.java b/net/minecraft/world/inventory/AbstractContainerMenu.java
-index f4548edae77eb86e54ba499acbb20613fd60d7bd..8dcf97a6d02c03dc8d1cf4472154d3deb0f04470 100644
+index 96da9b8e3556e58365dc6742f44d6dfd608e2953..522c23bfdbb79dc74e3b61274abf752d0470ecb1 100644
 --- a/net/minecraft/world/inventory/AbstractContainerMenu.java
 +++ b/net/minecraft/world/inventory/AbstractContainerMenu.java
-@@ -375,7 +375,7 @@ public abstract class AbstractContainerMenu {
+@@ -399,7 +399,7 @@ public abstract class AbstractContainerMenu {
      }
  
      private void doClick(int slotId, int button, ClickType clickType, Player player) {
