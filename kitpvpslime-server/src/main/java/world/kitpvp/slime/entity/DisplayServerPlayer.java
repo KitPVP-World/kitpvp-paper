@@ -72,6 +72,6 @@ public final class DisplayServerPlayer extends ServerPlayer {
     }
 
     public DisplayPlayer getDisplayPlayer() {
-        return displayPlayer;
+        return this.displayPlayer;
     }
 }

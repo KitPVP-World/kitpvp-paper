@@ -24,18 +24,34 @@ index d0ab3564928fc9ae1a1fc043d0e841f11b5251d7..4d069b9a3ae608b31b0ee895c2b5129a
          // None spawn able
          register(new EntityTypeData<>(EntityType.FISHING_BOBBER, FishHook.class, CraftFishHook::new, null)); // Cannot spawn a fish hook
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index 1e2e8d81e6d05b9e94fdb40dcdc4a7e0e4ceb0ac..08d8594e63e8ca0da9d849564158f72aa705b55b 100644
+index 9d6235390c530b4f3780ac8d088ad8f6ee3db58e..55359d17d60f13d59f4509b68195150e4cc3451b 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-@@ -236,6 +236,11 @@ public class CraftPlayer extends CraftHumanEntity implements Player, PluginMessa
+@@ -348,11 +348,21 @@ public class CraftPlayer extends CraftHumanEntity implements Player, PluginMessa
+     }
+     // Paper end
  
++    // kitpvp start - Display player
      @Override
      public ServerPlayer getHandle() {
-+        // kitpvp start - Display player
 +        if(this.entity instanceof world.kitpvp.slime.entity.DisplayPlayer displayPlayer) {
 +            return displayPlayer.getDefaultServerPlayer();
 +        }
-+        // kitpvp end - Display player
          return (ServerPlayer) this.entity;
      }
  
++    @Override
++    public boolean isBotEntity() {
++        return this.entity instanceof world.kitpvp.slime.entity.DisplayPlayer;
++    }
++    // kitpvp end - Display player
++
+     @Override
+     public boolean equals(Object obj) {
+         // Long-term, this should just use the super equals... for now, check the UUID
+@@ -3601,4 +3611,5 @@ public class CraftPlayer extends CraftHumanEntity implements Player, PluginMessa
+             this(new ShortArraySet(), new ArrayList<>());
+         }
+     }
++
+ }
