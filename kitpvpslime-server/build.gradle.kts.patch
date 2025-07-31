@@ -48,7 +48,7 @@
      implementation(project(":core")) //ASP
      implementation("ca.spottedleaf:concurrentutil:0.0.3")
      implementation("org.jline:jline-terminal-ffm:3.27.1") // use ffm on java 22+
-@@ -229,14 +_,14 @@
+@@ -224,14 +_,14 @@
          val gitBranch = git.exec(providers, "rev-parse", "--abbrev-ref", "HEAD").get().trim()
          attributes(
              "Main-Class" to "org.bukkit.craftbukkit.Main",
@@ -68,7 +68,7 @@
              "Build-Number" to (build ?: ""),
              "Build-Time" to buildTime.toString(),
              "Git-Branch" to gitBranch,
-@@ -333,9 +_,9 @@
+@@ -328,9 +_,9 @@
          .asFile
      javaLauncher.set(project.javaToolchains.launcherFor {
          languageVersion.set(JavaLanguageVersion.of(21))
@@ -80,7 +80,7 @@
  
      if (rootProject.childProjects["test-plugin"] != null) {
          val testPluginJar = rootProject.project(":test-plugin").tasks.jar.flatMap { it.archiveFile }
-@@ -349,6 +_,7 @@
+@@ -344,6 +_,7 @@
          systemProperty("disable.watchdog", true)
      }
      systemProperty("io.papermc.paper.suppress.sout.nags", true)
