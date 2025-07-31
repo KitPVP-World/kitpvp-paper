@@ -1,0 +1,19 @@
+--- a/net/minecraft/world/entity/player/Player.java
++++ b/net/minecraft/world/entity/player/Player.java
+@@ -219,6 +_,7 @@
+     private int currentImpulseContextResetGraceTime = 0;
+     public boolean affectsSpawning = true; // Paper - Affects Spawning API
+     public net.kyori.adventure.util.TriState flyingFallDamage = net.kyori.adventure.util.TriState.NOT_SET; // Paper - flying fall damage
++    public boolean isFakeSpectator = false; // kitpvp - Fake Spectator Utility
+ 
+     // CraftBukkit start
+     public boolean fauxSleeping;
+@@ -1940,7 +_,7 @@
+ 
+     @Override
+     public boolean isSpectator() {
+-        return this.gameMode() == GameType.SPECTATOR;
++        return this.gameMode() == GameType.SPECTATOR || this.isFakeSpectator; // kitpvp - Fake Spectator Utility
+     }
+ 
+     @Override

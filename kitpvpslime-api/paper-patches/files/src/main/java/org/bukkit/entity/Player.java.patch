@@ -1,0 +1,19 @@
+--- a/src/main/java/org/bukkit/entity/Player.java
++++ b/src/main/java/org/bukkit/entity/Player.java
+@@ -3932,4 +_,16 @@
+      */
+     @ApiStatus.Experimental
+     PlayerGameConnection getConnection();
++
++    // kitpvp start - Fake Spectator Utility
++    /**
++     * Checks whether the player is in an imitated spectator mode (i.e., the player cannot fly through, but mobs will not attack them)
++     */
++    boolean isFakeSpectator();
++
++    /**
++     * Sets if the player should be in an imitated spectator mode (i.e., the player cannot fly through, but mobs will not attack them)
++     */
++    void setFakeSpectator(boolean spectator);
++    // kitpvp end - Fake Spectator Utiltiy
+ }

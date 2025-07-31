@@ -1,0 +1,21 @@
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+@@ -2810,6 +_,18 @@
+         this.getHandle().setCamera((entity == null) ? null : ((CraftEntity) entity).getHandle());
+     }
+ 
++    // kitpvp start - Fake Spectator Utility
++    @Override
++    public boolean isFakeSpectator() {
++        return this.getHandle().isFakeSpectator;
++    }
++
++    @Override
++    public void setFakeSpectator(boolean spectator) {
++        this.getHandle().isFakeSpectator = spectator;
++    }
++    // kitpvp end - Fake Spectator
++
+     @Override
+     public void sendTitle(String title, String subtitle) {
+         this.sendTitle(title, subtitle, 10, 70, 20);
