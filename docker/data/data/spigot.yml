@@ -64,7 +64,7 @@ world-settings:
     simulation-distance: default
     merge-radius:
       item: 0.5
-      exp: -1.0
+      exp: 2.0
     mob-spawn-range: 8
     item-despawn-rate: 6000
     arrow-despawn-rate: 1200
