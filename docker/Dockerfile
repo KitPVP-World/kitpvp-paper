@@ -66,12 +66,14 @@ EXPOSE 25565
 
 ENV MEMORY=2048
 ENV OTEL_JAVAAGENT_ENABLED=false
+ENV OTEL_ENDPOINT=http://localhost:4318
+ENV OTEL_SERVICE_NAME=paper
 
 CMD cp -r /plugins/* /server/plugins && cp -r /config/* /server/config && cp -r /data/* /server && \
     java -Xms${MEMORY}M -Xmx${MEMORY}M \
     -Dfile.encoding=UTF-8 \
     -XX:+AlwaysPreTouch -XX:+DisableExplicitGC -XX:+ParallelRefProcEnabled -XX:+PerfDisableSharedMem -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:G1HeapRegionSize=8M -XX:G1HeapWastePercent=5 -XX:G1MaxNewSizePercent=40 -XX:G1MixedGCCountTarget=4 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1NewSizePercent=30 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:G1ReservePercent=20 -XX:InitiatingHeapOccupancyPercent=15 -XX:MaxGCPauseMillis=200 -XX:MaxTenuringThreshold=1 -XX:SurvivorRatio=32 -Dusing.aikars.flags=https://mcflags.emc.gs -Daikars.new.flags=true \
-    -javaagent:opentelemetry-javaagent.jar -Dotel.service.name=${OTEL_SERVICE_NAME} -Dotel.instrumentation.jdbc.enabled=false -Dotel.exporter.otlp.endpoint=${OTEL_ENDPOINT} \
+    -javaagent:opentelemetry-javaagent.jar -Dotel.service.name=${OTEL_SERVICE_NAME}-${HOSTNAME} -Dotel.instrumentation.jdbc.enabled=false -Dotel.exporter.otlp.endpoint=${OTEL_ENDPOINT} \
     -jar kitpvp-paper.jar nogui
 
 HEALTHCHECK --start-period=2m --retries=2 --interval=30s CMD /health.sh
