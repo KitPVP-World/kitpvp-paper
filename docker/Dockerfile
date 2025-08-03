@@ -51,7 +51,7 @@ ADD data/data /data
 WORKDIR /server
 
 ARG OPENTELEMETRY_JAVAAGENT_VERSION=2.18.1
-ADD --chown minecraft:minecraft https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v${OPENTELEMETRY_JAVAAGENT_VERSION}/opentelemetry-javaagent.jar /server/opentelemetry-javaagent.jar
+ADD --chown=minecraft:minecraft https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v${OPENTELEMETRY_JAVAAGENT_VERSION}/opentelemetry-javaagent.jar /server/opentelemetry-javaagent.jar
 
 STOPSIGNAL SIGTERM
 
