@@ -1,0 +1,11 @@
+--- a/net/minecraft/server/level/ServerPlayer.java
++++ b/net/minecraft/server/level/ServerPlayer.java
+@@ -2413,7 +_,7 @@
+ 
+     @Override
+     public void attack(Entity targetEntity) {
+-        if (this.isSpectator()) {
++        if (this.isSpectator() && !this.isFakeSpectator) { // kitpvp - Fake Spectator Utility
+             this.setCamera(targetEntity);
+         } else {
+             super.attack(targetEntity);
