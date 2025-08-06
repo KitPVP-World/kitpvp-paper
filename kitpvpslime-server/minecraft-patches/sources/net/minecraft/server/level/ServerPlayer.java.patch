@@ -1,5 +1,14 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
+@@ -821,7 +_,7 @@
+ 
+     public void doTick() {
+         try {
+-            if (valid && !this.isSpectator() || !this.touchingUnloadedChunk()) { // Paper - don't tick dead players that are not in the world currently (pending respawn)
++            if (valid && this.gameMode() != GameType.SPECTATOR || !this.touchingUnloadedChunk()) { // Paper - don't tick dead players that are not in the world currently (pending respawn) // kitpvp - Fake Spectator Utility
+                 super.tick();
+             }
+ 
 @@ -2413,7 +_,7 @@
  
      @Override
