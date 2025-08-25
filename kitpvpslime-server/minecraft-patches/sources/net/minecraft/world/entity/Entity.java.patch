@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/entity/Entity.java
++++ b/net/minecraft/world/entity/Entity.java
+@@ -3756,6 +_,11 @@
+     }
+ 
+     public void resetFallDistance() {
++        // kitpvp start - EntityFallEvent
++        if(this.fallDistance > 0) {
++            new world.kitpvp.slime.api.event.EntityFallEvent(this.getBukkitEntity()).callEvent();
++        }
++        // kitpvp end  - EntityFallEvent
+         this.fallDistance = 0.0;
+     }
+ 
