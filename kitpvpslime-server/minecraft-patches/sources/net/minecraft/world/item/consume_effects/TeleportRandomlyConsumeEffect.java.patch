@@ -1,0 +1,26 @@
+--- a/net/minecraft/world/item/consume_effects/TeleportRandomlyConsumeEffect.java
++++ b/net/minecraft/world/item/consume_effects/TeleportRandomlyConsumeEffect.java
+@@ -42,6 +_,15 @@
+     public boolean apply(Level level, ItemStack stack, LivingEntity entity) {
+         boolean flag = false;
+ 
++        // kitpvp start - TeleportRandomlyConsumableLocationChooseEvent
++        var locationChooseEvent = new world.kitpvp.slime.api.event.TeleportRandomlyConsumableLocationChooseEvent(entity.getBukkitLivingEntity());
++        if(!locationChooseEvent.callEvent()) {
++            // Early exit, no teleport allowed
++            return false;
++        }
++        org.bukkit.util.BoundingBox boundingBox = locationChooseEvent.boundingBox();
++        // kitpvp end - TeleportRandomlyConsumableLocationChooseEvent
++
+         for (int i = 0; i < 16; i++) {
+             double d = entity.getX() + (entity.getRandom().nextDouble() - 0.5) * this.diameter;
+             double d1 = Mth.clamp(
+@@ -50,6 +_,7 @@
+                 (double)(level.getMinY() + ((ServerLevel)level).getLogicalHeight() - 1)
+             );
+             double d2 = entity.getZ() + (entity.getRandom().nextDouble() - 0.5) * this.diameter;
++            if(boundingBox != null && !boundingBox.contains(d, d1, d2)) continue; // kitpvp - TeleportRandomlyConsumableLocationChooseEvent
+             if (entity.isPassenger()) {
+                 entity.stopRiding();
+             }
