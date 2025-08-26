@@ -21,4 +21,8 @@ public class EntityFallEvent extends EntityEvent {
     public HandlerList getHandlers() {
         return HANDLER_LIST;
     }
+
+    public static HandlerList getHandlerList() {
+        return HANDLER_LIST;
+    }
 }
