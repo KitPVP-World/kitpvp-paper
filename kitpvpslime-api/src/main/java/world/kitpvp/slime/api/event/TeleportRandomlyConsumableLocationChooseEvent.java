@@ -40,6 +40,9 @@ public class TeleportRandomlyConsumableLocationChooseEvent extends Event impleme
     public HandlerList getHandlers() {
         return HANDLER_LIST;
     }
+    public static HandlerList getHandlerList() {
+        return HANDLER_LIST;
+    }
 
     @Override
     public boolean isCancelled() {
