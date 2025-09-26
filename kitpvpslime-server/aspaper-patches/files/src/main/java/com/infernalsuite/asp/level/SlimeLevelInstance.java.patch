@@ -1,6 +1,6 @@
 --- a/src/main/java/com/infernalsuite/asp/level/SlimeLevelInstance.java
 +++ b/src/main/java/com/infernalsuite/asp/level/SlimeLevelInstance.java
-@@ -85,7 +_,7 @@
+@@ -86,7 +_,7 @@
                                org.bukkit.World.Environment environment) throws IOException {
  
          super(slimeBootstrap, MinecraftServer.getServer(), MinecraftServer.getServer().executor,

@@ -28,10 +28,10 @@ index fd83f0c2715b019e599e3b53707e3421dc4a193f..f73cccc8938ceb4a0d1c7a25308b0e9d
  
      @Override
 diff --git a/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index ca13dd72f173be6714965c506f2d48dcd3c9e569..54d65e92181ba28c982d44be4d6e008b51453b2b 100644
+index ba29032e84930a753c687e95222e64a7fe728b0d..a736c83e7bdf40d74da243c8da4367aa6d453a3a 100644
 --- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -3065,7 +3065,7 @@ public class ServerGamePacketListenerImpl
+@@ -3066,7 +3066,7 @@ public class ServerGamePacketListenerImpl
                                  click = (packet.buttonNum() == Inventory.SLOT_OFFHAND) ? ClickType.SWAP_OFFHAND : ClickType.NUMBER_KEY;
                                  Slot clickedSlot = this.player.containerMenu.getSlot(slotNum);
                                  if (clickedSlot.mayPickup(this.player)) {
@@ -40,7 +40,7 @@ index ca13dd72f173be6714965c506f2d48dcd3c9e569..54d65e92181ba28c982d44be4d6e008b
                                      if ((!hotbar.isEmpty() && clickedSlot.mayPlace(hotbar)) || (hotbar.isEmpty() && clickedSlot.hasItem())) { // Paper - modernify this logic (no such thing as a "hotbar move and readd"
                                          action = InventoryAction.HOTBAR_SWAP;
                                      } else {
-@@ -3202,6 +3202,15 @@ public class ServerGamePacketListenerImpl
+@@ -3203,6 +3203,15 @@ public class ServerGamePacketListenerImpl
                              }
                          }
                          // Paper end - cartography item event
