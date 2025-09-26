@@ -24,10 +24,10 @@ index d0ab3564928fc9ae1a1fc043d0e841f11b5251d7..4d069b9a3ae608b31b0ee895c2b5129a
          // None spawn able
          register(new EntityTypeData<>(EntityType.FISHING_BOBBER, FishHook.class, CraftFishHook::new, null)); // Cannot spawn a fish hook
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index 839e8eed9b7551dd7a3eeb819e1c8fb19c059332..ca51b45ef0a9b9ce8be4bd9f30d3e610a7687429 100644
+index cbbdc0acfb298602b22f2ec78485a45bb71912da..fa8dd1747045cb28dcd1dd013369788a7bca1a86 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-@@ -236,11 +236,21 @@ public class CraftPlayer extends CraftHumanEntity implements Player, PluginMessa
+@@ -237,11 +237,21 @@ public class CraftPlayer extends CraftHumanEntity implements Player, PluginMessa
          this.firstPlayed = System.currentTimeMillis();
      }
  

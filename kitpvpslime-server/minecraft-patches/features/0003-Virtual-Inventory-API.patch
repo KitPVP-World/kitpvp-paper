@@ -6,7 +6,7 @@ Subject: [PATCH] Virtual Inventory API
 Signed-off-by: notstevy <notstevy@ultrabuildmc.de>
 
 diff --git a/net/minecraft/server/level/ServerPlayer.java b/net/minecraft/server/level/ServerPlayer.java
-index 8891baab314cd1a1096c3930e7357b0f368efe1d..26e87fd74cee0f1bb9f26899b06303e56cacfff3 100644
+index fd83f0c2715b019e599e3b53707e3421dc4a193f..f73cccc8938ceb4a0d1c7a25308b0e9d78d6696b 100644
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
 @@ -302,7 +302,8 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
@@ -19,7 +19,7 @@ index 8891baab314cd1a1096c3930e7357b0f368efe1d..26e87fd74cee0f1bb9f26899b06303e5
          }
  
          @Override
-@@ -1900,6 +1901,7 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
+@@ -1904,6 +1905,7 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
          this.containerMenu.removed(this);
          this.inventoryMenu.transferState(this.containerMenu);
          this.containerMenu = this.inventoryMenu;
@@ -28,10 +28,10 @@ index 8891baab314cd1a1096c3930e7357b0f368efe1d..26e87fd74cee0f1bb9f26899b06303e5
  
      @Override
 diff --git a/net/minecraft/server/network/ServerGamePacketListenerImpl.java b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-index 5bba860a5f913d3a83c1d469f0f4854b6e063a49..36a52f3e21b7c6bb675e33f03d63d982c95af920 100644
+index ca13dd72f173be6714965c506f2d48dcd3c9e569..54d65e92181ba28c982d44be4d6e008b51453b2b 100644
 --- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -3064,7 +3064,7 @@ public class ServerGamePacketListenerImpl
+@@ -3065,7 +3065,7 @@ public class ServerGamePacketListenerImpl
                                  click = (packet.buttonNum() == Inventory.SLOT_OFFHAND) ? ClickType.SWAP_OFFHAND : ClickType.NUMBER_KEY;
                                  Slot clickedSlot = this.player.containerMenu.getSlot(slotNum);
                                  if (clickedSlot.mayPickup(this.player)) {
@@ -40,7 +40,7 @@ index 5bba860a5f913d3a83c1d469f0f4854b6e063a49..36a52f3e21b7c6bb675e33f03d63d982
                                      if ((!hotbar.isEmpty() && clickedSlot.mayPlace(hotbar)) || (hotbar.isEmpty() && clickedSlot.hasItem())) { // Paper - modernify this logic (no such thing as a "hotbar move and readd"
                                          action = InventoryAction.HOTBAR_SWAP;
                                      } else {
-@@ -3201,6 +3201,15 @@ public class ServerGamePacketListenerImpl
+@@ -3202,6 +3202,15 @@ public class ServerGamePacketListenerImpl
                              }
                          }
                          // Paper end - cartography item event
@@ -69,7 +69,7 @@ index a6bb436dc80daf6901dc027a6011ead4b3ed27e2..3d55ea8d32b3bff2baed3d6c35c69059
              int slotWithRemainingSpace = this.getSlotWithRemainingSpace(stack);
              if (slotWithRemainingSpace == -1) {
 diff --git a/net/minecraft/world/entity/player/Player.java b/net/minecraft/world/entity/player/Player.java
-index 34b8d020140d9ed563b7cbe0a604b9ce2ffe4d49..e2e2ceb5370ec179272d11de8d0e5b1719ef7558 100644
+index 94edb1f01848bffd4e75d7976e2eaf37c207c87c..685905da0ebaabbaa8f3242860e4c6625a66170e 100644
 --- a/net/minecraft/world/entity/player/Player.java
 +++ b/net/minecraft/world/entity/player/Player.java
 @@ -181,6 +181,7 @@ public abstract class Player extends LivingEntity {
@@ -80,7 +80,7 @@ index 34b8d020140d9ed563b7cbe0a604b9ce2ffe4d49..e2e2ceb5370ec179272d11de8d0e5b17
      protected FoodData foodData = new FoodData();
      protected int jumpTriggerTime;
      private boolean clientLoaded = false;
-@@ -1460,6 +1461,28 @@ public abstract class Player extends LivingEntity {
+@@ -1461,6 +1462,28 @@ public abstract class Player extends LivingEntity {
          return this.inventory;
      }
  
@@ -110,7 +110,7 @@ index 34b8d020140d9ed563b7cbe0a604b9ce2ffe4d49..e2e2ceb5370ec179272d11de8d0e5b17
          return this.abilities;
      }
 diff --git a/net/minecraft/world/inventory/AbstractContainerMenu.java b/net/minecraft/world/inventory/AbstractContainerMenu.java
-index 96da9b8e3556e58365dc6742f44d6dfd608e2953..522c23bfdbb79dc74e3b61274abf752d0470ecb1 100644
+index 06846950348954328c07f64cd9b3359e79a1a468..73d04797a23514f5fb2965213834b0ee60ca9f3c 100644
 --- a/net/minecraft/world/inventory/AbstractContainerMenu.java
 +++ b/net/minecraft/world/inventory/AbstractContainerMenu.java
 @@ -399,7 +399,7 @@ public abstract class AbstractContainerMenu {

@@ -5,10 +5,10 @@ Subject: [PATCH] Respawn Screen API
 
 
 diff --git a/net/minecraft/server/level/ServerPlayer.java b/net/minecraft/server/level/ServerPlayer.java
-index dfa00516e9a6c941087bd7ecfd5aca8a9f7915be..1dd8e814b68962fd0aba19e6e4b90fed62cd55b7 100644
+index f266bf71bbca2ac0e7297eea93d850331705bb78..fd83f0c2715b019e599e3b53707e3421dc4a193f 100644
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -1073,7 +1073,8 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
+@@ -1077,7 +1077,8 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
              Component deathMessage = io.papermc.paper.adventure.PaperAdventure.asVanilla(apiDeathMessage); // Paper - Adventure
  
              // Paper - moved up to sendClientboundPlayerCombatKillPacket()
@@ -18,7 +18,7 @@ index dfa00516e9a6c941087bd7ecfd5aca8a9f7915be..1dd8e814b68962fd0aba19e6e4b90fed
              Team team = this.getTeam();
              if (team == null || team.getDeathMessageVisibility() == Team.Visibility.ALWAYS) {
                  this.server.getPlayerList().broadcastSystemMessage(deathMessage, false);
-@@ -1082,7 +1083,7 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
+@@ -1086,7 +1087,7 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
              } else if (team.getDeathMessageVisibility() == Team.Visibility.HIDE_FOR_OWN_TEAM) {
                  this.server.getPlayerList().broadcastSystemToAllExceptTeam(this, deathMessage);
              }
@@ -27,7 +27,7 @@ index dfa00516e9a6c941087bd7ecfd5aca8a9f7915be..1dd8e814b68962fd0aba19e6e4b90fed
              sendClientboundPlayerCombatKillPacket(event.getShowDeathMessages(), deathScreenMessage); // Paper - Expand PlayerDeathEvent
          }
  
-@@ -1136,7 +1137,79 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
+@@ -1140,7 +1141,79 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
          this.setSharedFlagOnFire(false);
          this.getCombatTracker().recheckStatus();
          this.setLastDeathLocation(Optional.of(GlobalPos.of(this.level().dimension(), this.blockPosition())));

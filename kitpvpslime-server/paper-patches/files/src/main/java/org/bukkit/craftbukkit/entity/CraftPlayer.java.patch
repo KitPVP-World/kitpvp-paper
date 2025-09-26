@@ -1,6 +1,6 @@
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-@@ -2810,6 +_,18 @@
+@@ -2817,6 +_,18 @@
          this.getHandle().setCamera((entity == null) ? null : ((CraftEntity) entity).getHandle());
      }
  
