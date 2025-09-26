@@ -1,0 +1,10 @@
+--- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
++++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+@@ -748,6 +_,7 @@
+                 return;
+             }
+ 
++            this.player.preserveMotion = true; // kitpvp - Undo patch breaking movement with ender pearls
+             this.player
+                  .snapTo( // Paper - Fix Entity Teleportation and cancel velocity if teleported
+                     this.awaitingPositionFromClient.x,
