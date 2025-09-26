@@ -8,19 +8,19 @@ Modifying enchantments (such as Unbreaking) to not use random, making pvp more d
 Signed-off-by: notstevy <notstevy@ultrabuildmc.de>
 
 diff --git a/src/main/java/org/bukkit/GameRule.java b/src/main/java/org/bukkit/GameRule.java
-index ff5893a7144bc3d740675f6833424c858598b9b4..9254368d9102ea671f65324858241e0d587ba3cb 100644
+index ff5893a7144bc3d740675f6833424c858598b9b4..6f99ed5815d42f7daf7b92e8514d78eb31e21889 100644
 --- a/src/main/java/org/bukkit/GameRule.java
 +++ b/src/main/java/org/bukkit/GameRule.java
 @@ -310,6 +310,13 @@ public final class GameRule<T> implements net.kyori.adventure.translation.Transl
       */
      public static final GameRule<Boolean> LOCATOR_BAR = new GameRule<>("locatorBar", Boolean.class);
  
-+    // kitpvp start - Predicatable Enchantments
++    // kitpvp start - Predictable Enchantments
 +    /**
 +     * KitPvP: Configures whether enchantments like unbreaking should be random or deterministic
 +     */
-+    public static final GameRule<Boolean> PREDICATABLE_ENCHANTMENTS = new GameRule<>("predicatableEnchantments", Boolean.class);
-+    // kitpvp end - Predicatable Enchantments
++    public static final GameRule<Boolean> PREDICTABLE_ENCHANTMENTS = new GameRule<>("predictableEnchantments", Boolean.class);
++    // kitpvp end - Predictable Enchantments
 +
      // All GameRules instantiated above this for organizational purposes
      private final String name;
