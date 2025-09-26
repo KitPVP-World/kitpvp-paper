@@ -1,0 +1,147 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: notstevy <notstevy@ultrabuildmc.de>
+Date: Fri, 26 Sep 2025 16:42:43 +0200
+Subject: [PATCH] Predicatable Enchantments Modifying enchantments (such as
+ Unbreaking) to not use random, making pvp more deterministic
+
+Signed-off-by: notstevy <notstevy@ultrabuildmc.de>
+
+diff --git a/net/minecraft/world/item/enchantment/Enchantment.java b/net/minecraft/world/item/enchantment/Enchantment.java
+index 7a620eb92b1e672cedd72ec4d986c01eba337686..e2b32700536e8eba5d1186b027751d40084d6cc4 100644
+--- a/net/minecraft/world/item/enchantment/Enchantment.java
++++ b/net/minecraft/world/item/enchantment/Enchantment.java
+@@ -212,7 +212,7 @@ public record Enchantment(Component description, Enchantment.EnchantmentDefiniti
+ 
+         for (ConditionalEffect<EnchantmentValueEffect> conditionalEffect : this.getEffects(EnchantmentEffectComponents.DAMAGE_PROTECTION)) {
+             if (conditionalEffect.matches(lootContext)) {
+-                damageProtection.setValue(conditionalEffect.effect().process(enchantmentLevel, entity.getRandom(), damageProtection.floatValue()));
++                damageProtection.setValue(conditionalEffect.effect().process(enchantmentLevel, entity.getRandom(), damageProtection.floatValue(), level)); // kitpvp - Predicatable enchantments
+             }
+         }
+     }
+@@ -366,7 +366,7 @@ public record Enchantment(Component description, Enchantment.EnchantmentDefiniti
+         applyEffects(
+             this.getEffects(componentType),
+             itemContext(level, enchantmentLevel, tool),
+-            enchantmentValueEffect -> value.setValue(enchantmentValueEffect.process(enchantmentLevel, level.getRandom(), value.getValue()))
++            enchantmentValueEffect -> value.setValue(enchantmentValueEffect.process(enchantmentLevel, level.getRandom(), value.getValue(), level))  // kitpvp - Predicatable enchantments
+         );
+     }
+ 
+@@ -381,7 +381,7 @@ public record Enchantment(Component description, Enchantment.EnchantmentDefiniti
+         applyEffects(
+             this.getEffects(componentType),
+             entityContext(level, enchantmentLevel, entity, entity.position()),
+-            enchantmentValueEffect -> value.setValue(enchantmentValueEffect.process(enchantmentLevel, entity.getRandom(), value.floatValue()))
++            enchantmentValueEffect -> value.setValue(enchantmentValueEffect.process(enchantmentLevel, entity.getRandom(), value.floatValue(), level)) // kitpvp - Predicatable enchantments
+         );
+     }
+ 
+@@ -397,7 +397,7 @@ public record Enchantment(Component description, Enchantment.EnchantmentDefiniti
+         applyEffects(
+             this.getEffects(componentType),
+             damageContext(level, enchantmentLevel, entity, damageSource),
+-            enchantmentValueEffect -> value.setValue(enchantmentValueEffect.process(enchantmentLevel, entity.getRandom(), value.floatValue()))
++            enchantmentValueEffect -> value.setValue(enchantmentValueEffect.process(enchantmentLevel, entity.getRandom(), value.floatValue(), level)) // kitpvp - Predicatable enchantments
+         );
+     }
+ 
+diff --git a/net/minecraft/world/item/enchantment/EnchantmentHelper.java b/net/minecraft/world/item/enchantment/EnchantmentHelper.java
+index 66234431b265e0596275ca468cd40f8da98c22e2..6dbba0a6a9a7bb047881578d3d5b856465a2a38c 100644
+--- a/net/minecraft/world/item/enchantment/EnchantmentHelper.java
++++ b/net/minecraft/world/item/enchantment/EnchantmentHelper.java
+@@ -335,7 +335,7 @@ public class EnchantmentHelper {
+                             if (targetedConditionalEffect.enchanted() == EnchantmentTarget.VICTIM
+                                 && targetedConditionalEffect.affected() == EnchantmentTarget.VICTIM
+                                 && targetedConditionalEffect.matches(lootContext)) {
+-                                mutableFloat.setValue(targetedConditionalEffect.effect().process(level1, random, mutableFloat.floatValue()));
++                                mutableFloat.setValue(targetedConditionalEffect.effect().process(level1, random, mutableFloat.floatValue(), level)); // kitpvp - Predicatable enchantments
+                             }
+                         }
+                     );
+@@ -353,7 +353,7 @@ public class EnchantmentHelper {
+                                 if (targetedConditionalEffect.enchanted() == EnchantmentTarget.ATTACKER
+                                     && targetedConditionalEffect.affected() == EnchantmentTarget.VICTIM
+                                     && targetedConditionalEffect.matches(lootContext)) {
+-                                    mutableFloat.setValue(targetedConditionalEffect.effect().process(level1, random, mutableFloat.floatValue()));
++                                    mutableFloat.setValue(targetedConditionalEffect.effect().process(level1, random, mutableFloat.floatValue(), level)); // kitpvp - Predicatable enchantments
+                                 }
+                             }
+                         );
+diff --git a/net/minecraft/world/item/enchantment/effects/AllOf.java b/net/minecraft/world/item/enchantment/effects/AllOf.java
+index c27a372be28b48a54297bdca6839ab177ac7a1f7..c681367c144741e2746bdf7c44360ce80d2c2a73 100644
+--- a/net/minecraft/world/item/enchantment/effects/AllOf.java
++++ b/net/minecraft/world/item/enchantment/effects/AllOf.java
+@@ -74,6 +74,17 @@ public interface AllOf {
+     public record ValueEffects(List<EnchantmentValueEffect> effects) implements EnchantmentValueEffect {
+         public static final MapCodec<AllOf.ValueEffects> CODEC = AllOf.codec(EnchantmentValueEffect.CODEC, AllOf.ValueEffects::new, AllOf.ValueEffects::effects);
+ 
++        // kitpvp start - Predicatable enchantments
++        @Override
++        public float process(int enchantmentLevel, RandomSource random, float value, ServerLevel level) {
++            for (EnchantmentValueEffect enchantmentValueEffect : this.effects) {
++                value = enchantmentValueEffect.process(enchantmentLevel, random, value, level);
++            }
++
++            return value;
++        }
++        // kitpvp start - Predicatable Enchantments
++
+         @Override
+         public float process(int enchantmentLevel, RandomSource random, float value) {
+             for (EnchantmentValueEffect enchantmentValueEffect : this.effects) {
+diff --git a/net/minecraft/world/item/enchantment/effects/EnchantmentValueEffect.java b/net/minecraft/world/item/enchantment/effects/EnchantmentValueEffect.java
+index 28f836d602a8ea068b8a86a1ea2a54d9e08cf2cf..033f810697f00e5bbed37fe1f04cc465dfea88aa 100644
+--- a/net/minecraft/world/item/enchantment/effects/EnchantmentValueEffect.java
++++ b/net/minecraft/world/item/enchantment/effects/EnchantmentValueEffect.java
+@@ -20,7 +20,14 @@ public interface EnchantmentValueEffect {
+         return Registry.register(registry, "set", SetValue.CODEC);
+     }
+ 
+-    float process(int enchantmentLevel, RandomSource random, float value);
++    // kitpvp start - Predicatable enchantments
++    default float process(int enchantmentLevel, RandomSource random, float value) {
++        return value;
++    }
++    default float process(int enchantmentLevel, RandomSource random, float value, net.minecraft.server.level.ServerLevel level) {
++        return this.process(enchantmentLevel, random, value);
++    }
++    // kitpvp end - Predicatable enchantments
+ 
+     MapCodec<? extends EnchantmentValueEffect> codec();
+ }
+diff --git a/net/minecraft/world/item/enchantment/effects/RemoveBinomial.java b/net/minecraft/world/item/enchantment/effects/RemoveBinomial.java
+index 642f9b0e293d42ff8f043717f1dffdac5dd7e0dc..54f48ea7a4bac7ed08b61d70971c04860f7f86e0 100644
+--- a/net/minecraft/world/item/enchantment/effects/RemoveBinomial.java
++++ b/net/minecraft/world/item/enchantment/effects/RemoveBinomial.java
+@@ -11,8 +11,13 @@ public record RemoveBinomial(LevelBasedValue chance) implements EnchantmentValue
+     );
+ 
+     @Override
+-    public float process(int enchantmentLevel, RandomSource random, float value) {
++    // kitpvp start - Predicatable enchantments
++    public float process(int enchantmentLevel, RandomSource random, float value, net.minecraft.server.level.ServerLevel serverLevel) {
+         float f = this.chance.calculate(enchantmentLevel);
++        if(serverLevel.getGameRules().getBoolean(net.minecraft.world.level.GameRules.RULE_PREDICATBLE_ENCHANTMENTS)) {
++            return value - value * f;
++        }
++        // kitpvp end - Predicatable enchantments
+         int i = 0;
+ 
+         for (int i1 = 0; i1 < value; i1++) {
+diff --git a/net/minecraft/world/level/GameRules.java b/net/minecraft/world/level/GameRules.java
+index d5536dd40a1e9a2e05967652f690abbbca287852..ff5ac5d7aa0346c6598ed097cfb10b0e2991642e 100644
+--- a/net/minecraft/world/level/GameRules.java
++++ b/net/minecraft/world/level/GameRules.java
+@@ -240,6 +240,11 @@ public class GameRules {
+             }
+         }))
+     );
++    // kitpvp start - Predicatable Enchantments
++    public static final GameRules.Key<GameRules.BooleanValue> RULE_PREDICATBLE_ENCHANTMENTS = register(
++        "predictableEnchantments", GameRules.Category.MISC, GameRules.BooleanValue.create(false)
++    );
++    // kitpvp end - Predicatable Enchantments
+     private final Map<GameRules.Key<?>, GameRules.Value<?>> rules;
+     private final FeatureFlagSet enabledFeatures;
+     private final GameRules.Value<?>[] gameruleArray; // Paper - Perf: Use array for gamerule storage
