@@ -1,8 +1,9 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: notstevy <notstevy@ultrabuildmc.de>
 Date: Fri, 26 Sep 2025 16:42:43 +0200
-Subject: [PATCH] Predicatable Enchantments Modifying enchantments (such as
- Unbreaking) to not use random, making pvp more deterministic
+Subject: [PATCH] Predicatable Enchantments
+
+Modifying enchantments (such as Unbreaking) to not use random, making pvp more deterministic
 
 Signed-off-by: notstevy <notstevy@ultrabuildmc.de>
 
