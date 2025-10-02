@@ -1,0 +1,40 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: notstevy <notstevy@ultrabuildmc.de>
+Date: Thu, 2 Oct 2025 21:37:23 +0200
+Subject: [PATCH] Predictable Projectiles
+
+Signed-off-by: notstevy <notstevy@ultrabuildmc.de>
+
+diff --git a/net/minecraft/world/entity/projectile/Projectile.java b/net/minecraft/world/entity/projectile/Projectile.java
+index dae6619f4670c6f68dae7e4b10b0b6a8bbe6dc2e..a85f9745e61a5b05752beceacca34bc9cbbc0b04 100644
+--- a/net/minecraft/world/entity/projectile/Projectile.java
++++ b/net/minecraft/world/entity/projectile/Projectile.java
+@@ -139,6 +139,12 @@ public abstract class Projectile extends Entity implements TraceableEntity {
+     }
+ 
+     public Vec3 getMovementToShoot(double x, double y, double z, float velocity, float inaccuracy) {
++        // kitpvp start - Predictable Projectiles
++        if(((ServerLevel) this.level()).getGameRules().getBoolean(GameRules.RULE_PREDICATBLE_PROJECTILES)) {
++            inaccuracy = 0;
++        }
++        // kitpvp end - Predictable Projectiles
++
+         return new Vec3(x, y, z)
+             .normalize()
+             .add(
+diff --git a/net/minecraft/world/level/GameRules.java b/net/minecraft/world/level/GameRules.java
+index ff5ac5d7aa0346c6598ed097cfb10b0e2991642e..4420ce80c8dff106c1f497c63161649eb8c37c06 100644
+--- a/net/minecraft/world/level/GameRules.java
++++ b/net/minecraft/world/level/GameRules.java
+@@ -245,6 +245,11 @@ public class GameRules {
+         "predictableEnchantments", GameRules.Category.MISC, GameRules.BooleanValue.create(false)
+     );
+     // kitpvp end - Predicatable Enchantments
++    // kitpvp start - Predicatable Projectiles
++    public static final GameRules.Key<GameRules.BooleanValue> RULE_PREDICATBLE_PROJECTILES = register(
++        "predictableProjectiles", GameRules.Category.MISC, GameRules.BooleanValue.create(false)
++    );
++    // kitpvp end - Predicatable Projectiles
+     private final Map<GameRules.Key<?>, GameRules.Value<?>> rules;
+     private final FeatureFlagSet enabledFeatures;
+     private final GameRules.Value<?>[] gameruleArray; // Paper - Perf: Use array for gamerule storage
