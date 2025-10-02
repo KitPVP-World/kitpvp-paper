@@ -71,11 +71,6 @@ public final class DisplayServerPlayer extends ServerPlayer {
         );
     }
 
-    @Override
-    public boolean isDeadOrDying() {
-        return false; // do not kill
-    }
-
     public DisplayPlayer getDisplayPlayer() {
         return this.displayPlayer;
     }
