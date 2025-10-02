@@ -1,0 +1,25 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: notstevy <notstevy@ultrabuildmc.de>
+Date: Thu, 2 Oct 2025 21:37:23 +0200
+Subject: [PATCH] Predictable Projectiles
+
+Signed-off-by: notstevy <notstevy@ultrabuildmc.de>
+
+diff --git a/src/main/java/org/bukkit/GameRule.java b/src/main/java/org/bukkit/GameRule.java
+index 6f99ed5815d42f7daf7b92e8514d78eb31e21889..e00b0c9e1fbdd0d75d70d5818f4051ae8d0dc416 100644
+--- a/src/main/java/org/bukkit/GameRule.java
++++ b/src/main/java/org/bukkit/GameRule.java
+@@ -316,6 +316,13 @@ public final class GameRule<T> implements net.kyori.adventure.translation.Transl
+      */
+     public static final GameRule<Boolean> PREDICTABLE_ENCHANTMENTS = new GameRule<>("predictableEnchantments", Boolean.class);
+     // kitpvp end - Predictable Enchantments
++    // kitpvp start - Predictable Projectiles
++    /**
++     * KitPvP: Configures whether projectiles should have a random deviation
++     */
++    public static final GameRule<Boolean> PREDICTABLE_PROJECTILES = new GameRule<>("predictableProjectiles", Boolean.class);
++    // kitpvp end - Predictable Projectiles
++
+ 
+     // All GameRules instantiated above this for organizational purposes
+     private final String name;
