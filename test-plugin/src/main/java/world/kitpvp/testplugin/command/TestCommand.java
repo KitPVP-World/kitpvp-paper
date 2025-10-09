@@ -9,12 +9,23 @@ import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import io.papermc.paper.command.brigadier.argument.resolvers.BlockPositionResolver;
 import io.papermc.paper.math.BlockPosition;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.util.TriState;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.ChunkPos;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.Sign;
+import org.bukkit.block.data.type.WallSign;
+import org.bukkit.block.sign.Side;
 import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Mob;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.inventory.ItemType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import world.kitpvp.testplugin.arena.ArenaResetHandler;
@@ -31,6 +42,52 @@ public class TestCommand {
     public static void register(Commands commands) {
         commands.register(
             Commands.literal("test")
+                .then(Commands.literal("spawn_all_entities")
+                    .executes((ctx) -> {
+                        EntityType[] entityTypes = EntityType.values();
+                        int index = 0;
+                        for (EntityType entityType : entityTypes) {
+                            if (!entityType.isSpawnable())
+                                continue;
+
+                            Location location = ctx.getSource().getLocation().add(2 * index, 0, 0);
+
+                            ctx.getSource().getLocation().getWorld().spawnEntity(location, entityType, CreatureSpawnEvent.SpawnReason.COMMAND, (entity) -> {
+                                entity.setGravity(false);
+                                entity.setCustomNameVisible(true);
+                                entity.setPersistent(true);
+                                entity.customName(Component.text(entityType.name(), TextColor.color(0xffba00)));
+                                if (entity instanceof Mob mob) {
+                                    mob.setDespawnInPeacefulOverride(TriState.FALSE);
+                                    mob.setAI(false);
+
+
+                                    mob.getEquipment().setHelmet(ItemType.CHAINMAIL_HELMET.createItemStack((meta) -> {
+                                        meta.setUnbreakable(true);
+                                    }));
+                                }
+
+                            });
+                            location.clone().subtract(0, 1, 0).getBlock().setType(Material.STONE);
+
+                            Block block = location.clone().subtract(0, 1, 1).getBlock();
+                            block.setType(Material.OAK_WALL_SIGN);
+
+                            if (block.getState() instanceof Sign sign && block.getBlockData() instanceof WallSign wallSign) {
+                                wallSign.setFacing(BlockFace.SOUTH);
+                                sign.getSide(Side.FRONT).setGlowingText(true);
+                                sign.getSide(Side.FRONT).line(0, Component.text(entityType.name(), TextColor.color(0xffba00)));
+
+                                block.setBlockData(wallSign);
+                                sign.update();
+                            }
+
+                            index++;
+                        }
+
+
+                        return Command.SINGLE_SUCCESS;
+                    }))
                 .then(Commands.literal("light_level")
                     .executes((context) -> {
                         var location = context.getSource().getLocation();

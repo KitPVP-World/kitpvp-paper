@@ -51,12 +51,12 @@ index e96d4dee14c05f2fa329bfb1588ec795d4e3d730..b1db40c917b2a69a83c487765a52db74
          consumer.accept(addEntityPacket);
          if (this.trackedDataValues != null) {
 diff --git a/net/minecraft/world/entity/EntityType.java b/net/minecraft/world/entity/EntityType.java
-index cdf71340278e05e58bbb4ed51a432336de46e549..1f8ad2b72f300b51ed6f0788372d4a41b05816dc 100644
+index cdf71340278e05e58bbb4ed51a432336de46e549..14882cafa7019263169cb36ade4ce3dbb6e5e2d9 100644
 --- a/net/minecraft/world/entity/EntityType.java
 +++ b/net/minecraft/world/entity/EntityType.java
-@@ -1065,6 +1065,18 @@ public class EntityType<T extends Entity> implements FeatureElement, EntityTypeT
-             .clientTrackingRange(32)
-             .updateInterval(2)
+@@ -1075,6 +1075,18 @@ public class EntityType<T extends Entity> implements FeatureElement, EntityTypeT
+             .clientTrackingRange(4)
+             .updateInterval(5)
      );
 +    // kitpvp start - DisplayPlayer
 +    public static final EntityType<world.kitpvp.slime.entity.DisplayPlayer> DISPLAY_PLAYER = register(
@@ -70,11 +70,11 @@ index cdf71340278e05e58bbb4ed51a432336de46e549..1f8ad2b72f300b51ed6f0788372d4a41
 +            .updateInterval(2)
 +    );
 +    // kitpvp end - DisplayPlayer
-     public static final EntityType<FishingHook> FISHING_BOBBER = register(
-         "fishing_bobber",
-         EntityType.Builder.<FishingHook>of(FishingHook::new, MobCategory.MISC)
+     private static final Set<EntityType<?>> OP_ONLY_CUSTOM_DATA = Set.of(FALLING_BLOCK, COMMAND_BLOCK_MINECART, SPAWNER_MINECART);
+     private final EntityType.EntityFactory<T> factory;
+     private final MobCategory category;
 diff --git a/net/minecraft/world/entity/LivingEntity.java b/net/minecraft/world/entity/LivingEntity.java
-index 769950296fd54787160a621b1230349b5eed681b..a6dd035c2b99a596611b38f2628dbcd5c3201b15 100644
+index b9292f7a898af50a037d7e4acb700102bd791a40..e0d571f0af5b5441aa7454dfa20156c630f513ba 100644
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
 @@ -2729,6 +2729,13 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
