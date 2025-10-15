@@ -21,7 +21,6 @@ public class NametagCommand implements Listener {
                 .executes((context) -> {
                     if (NametagCommand.name != null) {
                         NametagCommand.name.setHidden(true);
-                        NametagCommand.name.close();
 
                         NametagCommand.name = null;
                     }
@@ -54,7 +53,6 @@ public class NametagCommand implements Listener {
         if (event.getPlayer() != name.getTargetEntity())
             return;
         name.setHidden(true);
-        name.close();
         name = null;
     }
 
