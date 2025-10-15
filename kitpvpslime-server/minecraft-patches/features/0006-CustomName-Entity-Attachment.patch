@@ -25,7 +25,7 @@ index b1db40c917b2a69a83c487765a52db748a8feab2..f3e83d47d182dddbad2d511486d0557f
          if (!this.trackedPlayers.isEmpty() && this.entity instanceof ItemFrame itemFrame /*&& this.tickCount % 10 == 0*/) { // CraftBukkit - moved tickCount below // Paper - Perf: Only tick item frames if players can see it
              ItemStack item = itemFrame.getItem();
 diff --git a/net/minecraft/world/entity/Entity.java b/net/minecraft/world/entity/Entity.java
-index 3034127edb9b31e9e9c21778c058d87f77ecfe36..9aee1a4aa431efc992d58e389e21408a87c08cc2 100644
+index 3034127edb9b31e9e9c21778c058d87f77ecfe36..14ffb149e52dc34f4b7d09c06efeed4d81b1b059 100644
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
 @@ -390,6 +390,7 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
@@ -44,7 +44,7 @@ index 3034127edb9b31e9e9c21778c058d87f77ecfe36..9aee1a4aa431efc992d58e389e21408a
      }
  
      public void setPose(Pose pose) {
-@@ -5253,6 +5255,24 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+@@ -5253,6 +5255,23 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
          this.applyImplicitComponents(stack.getComponents());
      }
  
@@ -61,7 +61,6 @@ index 3034127edb9b31e9e9c21778c058d87f77ecfe36..9aee1a4aa431efc992d58e389e21408a
 +    public void unregisterCustomNameEntity() {
 +        if(this.customNameEntity == null)
 +            return;
-+        this.customNameEntity.close();
 +        this.customNameEntity = null;
 +    }
 +    // kitpvp end - CustomName entity
