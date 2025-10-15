@@ -5,6 +5,25 @@ Subject: [PATCH] CustomName Entity Attachment
 
 Signed-off-by: notstevy <notstevy@ultrabuildmc.de>
 
+diff --git a/net/minecraft/server/level/ServerEntity.java b/net/minecraft/server/level/ServerEntity.java
+index b1db40c917b2a69a83c487765a52db748a8feab2..f3e83d47d182dddbad2d511486d0557f91df5f5a 100644
+--- a/net/minecraft/server/level/ServerEntity.java
++++ b/net/minecraft/server/level/ServerEntity.java
+@@ -127,6 +127,14 @@ public class ServerEntity {
+             // Paper end - Allow riding players
+             this.lastPassengers = passengers;
+         }
++        // kitpvp start - CustomName entity
++        if(this.tickCount % 20 == 0) {
++            world.kitpvp.slime.nametag.CustomName customName = this.entity.customNameEntityOrNull();
++            if (customName != null) {
++                customName.sendRiding(this.broadcast);
++            }
++        }
++        // kitpvp end - CustomName entity
+ 
+         if (!this.trackedPlayers.isEmpty() && this.entity instanceof ItemFrame itemFrame /*&& this.tickCount % 10 == 0*/) { // CraftBukkit - moved tickCount below // Paper - Perf: Only tick item frames if players can see it
+             ItemStack item = itemFrame.getItem();
 diff --git a/net/minecraft/world/entity/Entity.java b/net/minecraft/world/entity/Entity.java
 index 3034127edb9b31e9e9c21778c058d87f77ecfe36..9aee1a4aa431efc992d58e389e21408a87c08cc2 100644
 --- a/net/minecraft/world/entity/Entity.java

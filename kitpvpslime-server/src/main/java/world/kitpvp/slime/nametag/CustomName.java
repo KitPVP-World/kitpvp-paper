@@ -9,18 +9,16 @@ import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 import org.jspecify.annotations.NullMarked;
-import world.kitpvp.slime.InternalPluginInstance;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 @NullMarked
-public class CustomName implements AutoCloseable {
+public class CustomName {
 
     private final SkeletonTextDisplay interaction = new SkeletonTextDisplay(this);
 
@@ -37,8 +35,6 @@ public class CustomName implements AutoCloseable {
     private Function<Player, Component> nameProvider = (player) -> Component.empty();
     private boolean hidden;
 
-    private final BukkitTask task;
-
     public CustomName(Entity entity) {
         this.nametagEntityId = net.minecraft.world.entity.Entity.nextEntityId();
         this.targetEntity = entity;
@@ -51,16 +47,13 @@ public class CustomName implements AutoCloseable {
         // First, negate the riding offset to get to the bounding of the entity's bounding box
         // Add the default offset of nametags to imitate it using the text displaying correctly (0.3)
         this.effectiveTransiton = nametagOffset.add(0, -ridingOffset.y + 0.3, 0).toVector3f();
+    }
 
-        this.task = new BukkitRunnable() {
-            @Override
-            public void run() {
-                Packet<ClientGamePacketListener> riderPacket = CustomName.this.interaction.getRiderPacket();
-                for (Player player : entity.getTrackedBy()) {
-                    ((CraftPlayer) player).getHandle().connection.send(riderPacket);
-                }
-            }
-        }.runTaskTimer(InternalPluginInstance.INSTANCE, 20, 20);
+    @ApiStatus.Internal
+    public void sendRiding(Consumer<Packet<?>> broadcast) {
+        if(this.hidden)
+            return;
+        broadcast.accept(this.interaction.getRiderPacket());
     }
 
     /**
@@ -148,11 +141,6 @@ public class CustomName implements AutoCloseable {
         for (Player player : this.targetEntity.getTrackedBy()) {
             consumer.accept(player);
         }
-    }
-
-    @Override
-    public void close() {
-        this.task.cancel();
     }
 
     public boolean isHidden() {
