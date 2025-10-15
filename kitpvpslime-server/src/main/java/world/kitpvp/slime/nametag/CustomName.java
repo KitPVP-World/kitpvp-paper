@@ -2,7 +2,6 @@ package world.kitpvp.slime.nametag;
 
 import net.kyori.adventure.text.Component;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.world.entity.EntityAttachment;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.craftbukkit.entity.CraftEntity;
@@ -10,7 +9,6 @@ import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 import org.jspecify.annotations.NullMarked;
 
@@ -79,7 +77,7 @@ public class CustomName {
         this.syncData();
     }
 
-    public void sendToClient(@NotNull Player entity) {
+    public void sendToClient(Player entity) {
         if (this.hidden) {
             return;
         }
@@ -87,7 +85,7 @@ public class CustomName {
         ((CraftPlayer) entity).getHandle().connection.send(this.interaction.initialSpawnPacket(entity));
     }
 
-    public void removeFromClient(@NotNull Player entity) {
+    public void removeFromClient(Player entity) {
         ((CraftPlayer) entity).getHandle().connection.send(this.interaction.removePacket());
     }
 

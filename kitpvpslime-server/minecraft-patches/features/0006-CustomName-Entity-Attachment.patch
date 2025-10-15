@@ -6,17 +6,39 @@ Subject: [PATCH] CustomName Entity Attachment
 Signed-off-by: notstevy <notstevy@ultrabuildmc.de>
 
 diff --git a/net/minecraft/server/level/ServerEntity.java b/net/minecraft/server/level/ServerEntity.java
-index b1db40c917b2a69a83c487765a52db748a8feab2..f3e83d47d182dddbad2d511486d0557f91df5f5a 100644
+index b1db40c917b2a69a83c487765a52db748a8feab2..0b398b9322fed414b76dd5787c8809e71ebc5318 100644
 --- a/net/minecraft/server/level/ServerEntity.java
 +++ b/net/minecraft/server/level/ServerEntity.java
-@@ -127,6 +127,14 @@ public class ServerEntity {
+@@ -115,9 +115,16 @@ public class ServerEntity {
+         if (((ca.spottedleaf.moonrise.patches.chunk_system.entity.ChunkSystemEntity)this.entity).moonrise$isHardColliding()) {
+             this.teleportDelay = 9999;
+         }
++
++        world.kitpvp.slime.nametag.CustomName customName = this.entity.customNameEntityOrNull(); // kitpvp - CustomName entity
+         // Paper end - optimise collisions
+         List<Entity> passengers = this.entity.getPassengers();
+         if (!passengers.equals(this.lastPassengers)) {
++            // kitpvp start - CustomName entity
++            if(customName != null && !passengers.isEmpty()) {
++                customName.setHidden(true);
++            }
++            // kitpvp end - CustomName entity
+             List<UUID> list = this.mountedOrDismounted(passengers).map(Entity::getUUID).toList();
+             this.broadcastWithIgnore.accept(new ClientboundSetPassengersPacket(this.entity), list);
+             // Paper start - Allow riding players
+@@ -126,7 +133,19 @@ public class ServerEntity {
+             }
              // Paper end - Allow riding players
              this.lastPassengers = passengers;
++            // kitpvp start - CustomName entity
++            if(customName != null && passengers.isEmpty()) {
++                customName.setHidden(false);
++            }
++            // kitpvp end - CustomName entity
          }
 +        // kitpvp start - CustomName entity
-+        if(this.tickCount % 20 == 0) {
-+            world.kitpvp.slime.nametag.CustomName customName = this.entity.customNameEntityOrNull();
-+            if (customName != null) {
++        if(this.tickCount % 20 == 0 || !passengers.equals(this.lastPassengers)) {
++            if (customName != null && !customName.isHidden()) {
 +                customName.sendRiding(this.broadcast);
 +            }
 +        }
@@ -24,8 +46,34 @@ index b1db40c917b2a69a83c487765a52db748a8feab2..f3e83d47d182dddbad2d511486d0557f
  
          if (!this.trackedPlayers.isEmpty() && this.entity instanceof ItemFrame itemFrame /*&& this.tickCount % 10 == 0*/) { // CraftBukkit - moved tickCount below // Paper - Perf: Only tick item frames if players can see it
              ItemStack item = itemFrame.getItem();
+@@ -322,6 +341,12 @@ public class ServerEntity {
+     public void removePairing(ServerPlayer player) {
+         this.entity.stopSeenByPlayer(player);
+         player.connection.send(new ClientboundRemoveEntitiesPacket(this.entity.getId()));
++        // kitpvp start - CustomName entity
++        world.kitpvp.slime.nametag.CustomName customName = this.entity.customNameEntityOrNull(); // kitpvp - CustomName entity
++        if(customName != null) {
++            customName.removeFromClient(player.getBukkitEntity());
++        }
++        // kitpvp end - CustomName entity
+     }
+ 
+     public void addPairing(ServerPlayer player) {
+@@ -329,6 +354,12 @@ public class ServerEntity {
+         this.sendPairingData(player, list::add);
+         player.connection.send(new ClientboundBundlePacket(list));
+         this.entity.startSeenByPlayer(player);
++        // kitpvp start - CustomName entity
++        world.kitpvp.slime.nametag.CustomName customName = this.entity.customNameEntityOrNull(); // kitpvp - CustomName entity
++        if(customName != null) {
++            customName.sendToClient(player.getBukkitEntity());
++        }
++        // kitpvp end - CustomName entity
+     }
+ 
+     public void sendPairingData(ServerPlayer player, Consumer<Packet<ClientGamePacketListener>> consumer) {
 diff --git a/net/minecraft/world/entity/Entity.java b/net/minecraft/world/entity/Entity.java
-index 3034127edb9b31e9e9c21778c058d87f77ecfe36..14ffb149e52dc34f4b7d09c06efeed4d81b1b059 100644
+index 3034127edb9b31e9e9c21778c058d87f77ecfe36..2d7547af921f01d2741a9a69bf82e2ea2e899577 100644
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
 @@ -390,6 +390,7 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
@@ -44,7 +92,20 @@ index 3034127edb9b31e9e9c21778c058d87f77ecfe36..14ffb149e52dc34f4b7d09c06efeed4d
      }
  
      public void setPose(Pose pose) {
-@@ -5253,6 +5255,23 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+@@ -3471,6 +3473,12 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+ 
+     public void setShiftKeyDown(boolean keyDown) {
+         this.setSharedFlag(1, keyDown);
++        // kitpvp start - CustomName entity
++        world.kitpvp.slime.nametag.CustomName customName = this.customNameEntityOrNull(); // kitpvp - CustomName entity
++        if(customName != null) {
++            customName.setHidden(keyDown);
++        }
++        // kitpvp end - CustomName entity
+     }
+ 
+     public boolean isShiftKeyDown() {
+@@ -5253,6 +5261,24 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
          this.applyImplicitComponents(stack.getComponents());
      }
  
@@ -61,6 +122,7 @@ index 3034127edb9b31e9e9c21778c058d87f77ecfe36..14ffb149e52dc34f4b7d09c06efeed4d
 +    public void unregisterCustomNameEntity() {
 +        if(this.customNameEntity == null)
 +            return;
++        this.customNameEntity.setHidden(true);
 +        this.customNameEntity = null;
 +    }
 +    // kitpvp end - CustomName entity
