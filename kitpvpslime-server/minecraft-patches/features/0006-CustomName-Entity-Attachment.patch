@@ -1,0 +1,42 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: notstevy <notstevy@ultrabuildmc.de>
+Date: Wed, 15 Oct 2025 13:13:01 +0200
+Subject: [PATCH] CustomName Entity Attachment
+
+Signed-off-by: notstevy <notstevy@ultrabuildmc.de>
+
+diff --git a/net/minecraft/world/entity/Entity.java b/net/minecraft/world/entity/Entity.java
+index 3034127edb9b31e9e9c21778c058d87f77ecfe36..b2828fb46d426fd4a6564a9ad964a4f0e217994f 100644
+--- a/net/minecraft/world/entity/Entity.java
++++ b/net/minecraft/world/entity/Entity.java
+@@ -390,6 +390,7 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+     private int sectionY = Integer.MIN_VALUE;
+     private int sectionZ = Integer.MIN_VALUE;
+     private boolean updatingSectionStatus;
++    private @Nullable world.kitpvp.slime.nametag.CustomName customNameEntity; // kitpvp - CustomName entity
+ 
+     @Override
+     public final boolean moonrise$isHardColliding() {
+@@ -5253,6 +5254,22 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+         this.applyImplicitComponents(stack.getComponents());
+     }
+ 
++    // kitpvp start - CustomName entity
++    public world.kitpvp.slime.nametag.CustomName customNameEntity() {
++        if(this.customNameEntity == null) {
++            this.customNameEntity = new world.kitpvp.slime.nametag.CustomName(this.getBukkitEntity());
++        }
++        return this.customNameEntity;
++    }
++
++    public void unregisterCustomNameEntity() {
++        if(this.customNameEntity == null)
++            return;
++        this.customNameEntity.close();
++        this.customNameEntity = null;
++    }
++    // kitpvp end - CustomName entity
++
+     @Nullable
+     @Override
+     public <T> T get(DataComponentType<? extends T> component) {
