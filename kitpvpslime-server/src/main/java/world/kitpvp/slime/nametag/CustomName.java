@@ -20,7 +20,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 @NullMarked
-public class CustomName {
+public class CustomName implements AutoCloseable {
 
     private final SkeletonTextDisplay interaction = new SkeletonTextDisplay(this);
 
@@ -150,6 +150,7 @@ public class CustomName {
         }
     }
 
+    @Override
     public void close() {
         this.task.cancel();
     }
