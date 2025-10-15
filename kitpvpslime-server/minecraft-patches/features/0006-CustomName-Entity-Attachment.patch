@@ -6,7 +6,7 @@ Subject: [PATCH] CustomName Entity Attachment
 Signed-off-by: notstevy <notstevy@ultrabuildmc.de>
 
 diff --git a/net/minecraft/world/entity/Entity.java b/net/minecraft/world/entity/Entity.java
-index 3034127edb9b31e9e9c21778c058d87f77ecfe36..b2828fb46d426fd4a6564a9ad964a4f0e217994f 100644
+index 3034127edb9b31e9e9c21778c058d87f77ecfe36..6988b3cec1da75df32d04cd0b60fb5558a5aad76 100644
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
 @@ -390,6 +390,7 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
@@ -17,7 +17,15 @@ index 3034127edb9b31e9e9c21778c058d87f77ecfe36..b2828fb46d426fd4a6564a9ad964a4f0
  
      @Override
      public final boolean moonrise$isHardColliding() {
-@@ -5253,6 +5254,22 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+@@ -721,6 +722,7 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
+     }
+ 
+     public void onRemoval(Entity.RemovalReason reason) {
++        this.unregisterCustomNameEntity(); // kitpvp - CustomName entity
+     }
+ 
+     public void setPose(Pose pose) {
+@@ -5253,6 +5255,22 @@ public abstract class Entity implements SyncedDataHolder, Nameable, EntityAccess
          this.applyImplicitComponents(stack.getComponents());
      }
  
