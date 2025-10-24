@@ -49,7 +49,7 @@ public class SkeletonTextDisplay {
             ofData(Display.TextDisplay.DATA_TEXT_ID, PaperAdventure.asVanilla(this.customName.getName(target))),
             ofData(Display.TextDisplay.DATA_STYLE_FLAGS_ID, styleFlags),
             ofData(Display.DATA_TRANSLATION_ID, this.customName.getEffectiveTransition()),
-            ofData(Display.TextDisplay.DATA_TEXT_OPACITY_ID, (byte) (customName.isTargetEntitySneaking() ? 0x20 : 0x00))
+            ofData(Display.TextDisplay.DATA_TEXT_OPACITY_ID, (byte) (customName.isTargetEntitySneaking() ? 0x20 : 0xFF))
         );
         return new ClientboundSetEntityDataPacket(this.customName.getNametagId(), data);
     }
