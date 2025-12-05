@@ -5,10 +5,10 @@ Subject: [PATCH] Respawn Screen API
 
 
 diff --git a/net/minecraft/server/level/ServerPlayer.java b/net/minecraft/server/level/ServerPlayer.java
-index f266bf71bbca2ac0e7297eea93d850331705bb78..fd83f0c2715b019e599e3b53707e3421dc4a193f 100644
+index 33f36bfd8a67b3255007f2f68cd7c302f8c3b745..88269f88c80ef7d9665684c8d7aa493f980991cc 100644
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -1077,7 +1077,8 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
+@@ -1184,7 +1184,8 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
              Component deathMessage = io.papermc.paper.adventure.PaperAdventure.asVanilla(apiDeathMessage); // Paper - Adventure
  
              // Paper - moved up to sendClientboundPlayerCombatKillPacket()
@@ -18,7 +18,7 @@ index f266bf71bbca2ac0e7297eea93d850331705bb78..fd83f0c2715b019e599e3b53707e3421
              Team team = this.getTeam();
              if (team == null || team.getDeathMessageVisibility() == Team.Visibility.ALWAYS) {
                  this.server.getPlayerList().broadcastSystemMessage(deathMessage, false);
-@@ -1086,7 +1087,7 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
+@@ -1193,7 +1194,7 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
              } else if (team.getDeathMessageVisibility() == Team.Visibility.HIDE_FOR_OWN_TEAM) {
                  this.server.getPlayerList().broadcastSystemToAllExceptTeam(this, deathMessage);
              }
@@ -27,7 +27,7 @@ index f266bf71bbca2ac0e7297eea93d850331705bb78..fd83f0c2715b019e599e3b53707e3421
              sendClientboundPlayerCombatKillPacket(event.getShowDeathMessages(), deathScreenMessage); // Paper - Expand PlayerDeathEvent
          }
  
-@@ -1140,7 +1141,79 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
+@@ -1247,7 +1248,74 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
          this.setSharedFlagOnFire(false);
          this.getCombatTracker().recheckStatus();
          this.setLastDeathLocation(Optional.of(GlobalPos.of(this.level().dimension(), this.blockPosition())));
@@ -38,15 +38,18 @@ index f266bf71bbca2ac0e7297eea93d850331705bb78..fd83f0c2715b019e599e3b53707e3421
 +            return;
 +        }
 +        this.stopRiding(); // CraftBukkit
++        ServerPlayer.RespawnResult result = this.findRespawnPositionAndUseSpawnBlock0(!keepInventory, TeleportTransition.DO_NOTHING, org.bukkit.event.player.PlayerRespawnEvent.RespawnReason.DEATH);
++        if(result == null) {
++            this.setClientLoaded(false);
++            return;
++        }
 +        this.reset();
-+        boolean isBedSpawn = false;
-+        boolean isAnchorSpawn = false;
-+        TeleportTransition teleportTransition;
-+        teleportTransition = this.findRespawnPositionAndUseSpawnBlock(!keepInventory, TeleportTransition.DO_NOTHING, org.bukkit.event.player.PlayerRespawnEvent.RespawnReason.DEATH);
++        TeleportTransition teleportTransition = result.transition();
 +        org.bukkit.Location location;
 +        location = org.bukkit.craftbukkit.util.CraftLocation.toBukkit(teleportTransition.position(), teleportTransition.newLevel().getWorld(), teleportTransition.yRot(), teleportTransition.xRot());
 +        Vec3 vec3 = teleportTransition.position();
-+        this.forceSetPositionRotation(vec3.x, vec3.y, vec3.z, teleportTransition.yRot(), teleportTransition.xRot());
++        this.snapTo(vec3.x, vec3.y, vec3.z, teleportTransition.yRot(), teleportTransition.xRot());
++        this.connection.resetPosition(); // Paper - Fix SPIGOT-1903, MC-98153
 +        this.level().getChunkSource().addTicketWithRadius(net.minecraft.server.level.TicketType.POST_TELEPORT, new net.minecraft.world.level.ChunkPos(net.minecraft.util.Mth.floor(vec3.x()) >> 4, net.minecraft.util.Mth.floor(vec3.z()) >> 4), 1); // Paper - post teleport ticket type
 +        // CraftBukkit end
 +        if (teleportTransition.missingRespawnBlock()) {
@@ -55,34 +58,26 @@ index f266bf71bbca2ac0e7297eea93d850331705bb78..fd83f0c2715b019e599e3b53707e3421
 +        }
 +        ServerPlayer.RespawnConfig respawnConfig = this.getRespawnConfig();
 +        if (!keepInventory && respawnConfig != null) {
-+            ServerLevel level1 = this.server.getLevel(respawnConfig.dimension());
++            LevelData.RespawnData respawnData = respawnConfig.respawnData();
++            ServerLevel level1 = this.server.getLevel(respawnData.dimension());
 +            if (level1 != null) {
-+                BlockPos blockPos = respawnConfig.pos();
++                BlockPos blockPos = respawnData.pos();
 +                BlockState blockState = level1.getBlockState(blockPos);
 +                if (blockState.is(net.minecraft.world.level.block.Blocks.RESPAWN_ANCHOR)) {
 +                    this.connection
-+                        .send(
-+                            new ClientboundSoundPacket(
-+                                net.minecraft.sounds.SoundEvents.RESPAWN_ANCHOR_DEPLETE,
-+                                SoundSource.BLOCKS,
-+                                blockPos.getX(),
-+                                blockPos.getY(),
-+                                blockPos.getZ(),
-+                                1.0F,
-+                                1.0F,
-+                                this.level().getRandom().nextLong()
-+                            )
-+                        );
++                            .send(
++                                    new ClientboundSoundPacket(
++                                            net.minecraft.sounds.SoundEvents.RESPAWN_ANCHOR_DEPLETE,
++                                            SoundSource.BLOCKS,
++                                            blockPos.getX(),
++                                            blockPos.getY(),
++                                            blockPos.getZ(),
++                                            1.0F,
++                                            1.0F,
++                                            this.level().getRandom().nextLong()
++                                    )
++                            );
 +                }
-+                // Paper start - Add PlayerPostRespawnEvent
-+                if (!teleportTransition.missingRespawnBlock()) {
-+                    if (blockState.is(net.minecraft.tags.BlockTags.BEDS)) {
-+                        isBedSpawn = true;
-+                    } else if (blockState.is(net.minecraft.world.level.block.Blocks.RESPAWN_ANCHOR)) {
-+                        isAnchorSpawn = true;
-+                    }
-+                }
-+                // Paper end - Add PlayerPostRespawnEvent
 +            }
 +        }
 +
@@ -99,8 +94,8 @@ index f266bf71bbca2ac0e7297eea93d850331705bb78..fd83f0c2715b019e599e3b53707e3421
 +        new com.destroystokyo.paper.event.player.PlayerPostRespawnEvent(
 +            this.getBukkitEntity(),
 +            location,
-+            isBedSpawn,
-+            isAnchorSpawn,
++            result.isBedSpawn(),
++            result.isAnchorSpawn(),
 +            teleportTransition.missingRespawnBlock(),
 +            org.bukkit.event.player.PlayerRespawnEvent.RespawnReason.DEATH
 +        ).callEvent();

@@ -23,7 +23,7 @@ index cc206ecff2d95f0398ca424c178a336ad80cc396..c0f6224a742b6ef8837c69f5f38de1f6
  
      public DamageSource outOfBorder() {
 diff --git a/net/minecraft/world/level/block/BedBlock.java b/net/minecraft/world/level/block/BedBlock.java
-index e72ead9ff6541f821a61ad3c50fe068a8c8bb69d..f5e071c3f6f4771fef064035ab478dc8238998e0 100644
+index 63768a73c04060fbc4aceb734ba32bc203514017..c7120911506f1aae5b983026341a9559878d9ecf 100644
 --- a/net/minecraft/world/level/block/BedBlock.java
 +++ b/net/minecraft/world/level/block/BedBlock.java
 @@ -98,10 +98,10 @@ public class BedBlock extends HorizontalDirectionalBlock implements EntityBlock
@@ -67,19 +67,19 @@ index e72ead9ff6541f821a61ad3c50fe068a8c8bb69d..f5e071c3f6f4771fef064035ab478dc8
       }
      // CraftBukkit end
 diff --git a/net/minecraft/world/level/block/RespawnAnchorBlock.java b/net/minecraft/world/level/block/RespawnAnchorBlock.java
-index 5b9d67d671ea70d4a8920a7f190d240c920971ac..059826173f1c0f65232a26b96b9bc9f9d4996584 100644
+index fad87904eed0d7816c41eb426b5942341d12ed50..19882f2d843022b21553005d3767ac8dc30dc0da 100644
 --- a/net/minecraft/world/level/block/RespawnAnchorBlock.java
 +++ b/net/minecraft/world/level/block/RespawnAnchorBlock.java
-@@ -94,7 +94,7 @@ public class RespawnAnchorBlock extends Block {
+@@ -95,7 +95,7 @@ public class RespawnAnchorBlock extends Block {
              return InteractionResult.PASS;
          } else if (!canSetSpawn(level)) {
-             if (!level.isClientSide) {
+             if (!level.isClientSide()) {
 -                this.explode(state, level, pos);
 +                this.explode(state, level, pos, player); // kitpvp - Bad Respawn Point Causing Entity
              }
  
              return InteractionResult.SUCCESS;
-@@ -145,7 +145,7 @@ public class RespawnAnchorBlock extends Block {
+@@ -146,7 +146,7 @@ public class RespawnAnchorBlock extends Block {
          }
      }
  
@@ -87,8 +87,8 @@ index 5b9d67d671ea70d4a8920a7f190d240c920971ac..059826173f1c0f65232a26b96b9bc9f9
 +    private void explode(BlockState state, Level level, final BlockPos pos2, final @Nullable Entity causingEntity) { // kitpvp - Bad Respawn Point Causing Entity
          org.bukkit.block.BlockState blockState = org.bukkit.craftbukkit.block.CraftBlock.at(level, pos2).getState(); // CraftBukkit - capture BlockState before remove block
          level.removeBlock(pos2, false);
-         boolean flag = Direction.Plane.HORIZONTAL.stream().map(pos2::relative).anyMatch(pos -> isWaterThatWouldFlow(pos, level));
-@@ -160,7 +160,7 @@ public class RespawnAnchorBlock extends Block {
+         boolean flag = Direction.Plane.HORIZONTAL.stream().map(pos2::relative).anyMatch(blockPos -> isWaterThatWouldFlow(blockPos, level));
+@@ -161,7 +161,7 @@ public class RespawnAnchorBlock extends Block {
          };
          Vec3 center = pos2.getCenter();
          level.explode(

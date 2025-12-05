@@ -5,7 +5,7 @@ Subject: [PATCH] Display Player
 
 
 diff --git a/net/minecraft/network/syncher/SynchedEntityData.java b/net/minecraft/network/syncher/SynchedEntityData.java
-index f1ab0e66e7d464f7f31a7a360528ed97cdda0aa0..e6e542fdf673724f767885b03146c25358e3c756 100644
+index f1ab0e66e7d464f7f31a7a360528ed97cdda0aa0..23e0fdad2a20315dd9f14233bfa36d03002ef886 100644
 --- a/net/minecraft/network/syncher/SynchedEntityData.java
 +++ b/net/minecraft/network/syncher/SynchedEntityData.java
 @@ -37,6 +37,19 @@ public class SynchedEntityData {
@@ -15,7 +15,7 @@ index f1ab0e66e7d464f7f31a7a360528ed97cdda0aa0..e6e542fdf673724f767885b03146c253
 +        // kitpvp start
 +        if(clazz == world.kitpvp.slime.entity.DisplayPlayer.class)
 +            throw new RuntimeException("Cannot register a SynchedEntityData for the 'world.kitpvp.slime.entity.DisplayPlayer'! It must be synchronous with the 'net.minecraft.world.entity.player.Player'");
-+        if(clazz == net.minecraft.world.entity.player.Player.class) {
++        if(clazz == net.minecraft.world.entity.player.Player.class || clazz == net.minecraft.world.entity.Avatar.class) {
 +            var displayPlayerLastId = ID_REGISTRY.getLastIdFor(world.kitpvp.slime.entity.DisplayPlayer.class);
 +            var playerLastId = ID_REGISTRY.getLastIdFor(net.minecraft.world.entity.player.Player.class);
 +            if(displayPlayerLastId != playerLastId)
@@ -29,10 +29,10 @@ index f1ab0e66e7d464f7f31a7a360528ed97cdda0aa0..e6e542fdf673724f767885b03146c253
          if (i > 254) {
              throw new IllegalArgumentException("Data value id is too big with " + i + "! (Max is 254)");
 diff --git a/net/minecraft/server/level/ServerEntity.java b/net/minecraft/server/level/ServerEntity.java
-index e96d4dee14c05f2fa329bfb1588ec795d4e3d730..b1db40c917b2a69a83c487765a52db748a8feab2 100644
+index 638432a2e6506d3db6a25c068a33eeafb13cf0d6..b861dce8221daa8ca1a1861de5fe7361ba878c4c 100644
 --- a/net/minecraft/server/level/ServerEntity.java
 +++ b/net/minecraft/server/level/ServerEntity.java
-@@ -339,6 +339,17 @@ public class ServerEntity {
+@@ -320,6 +320,17 @@ public class ServerEntity {
              // CraftBukkit end
          }
  
@@ -51,10 +51,10 @@ index e96d4dee14c05f2fa329bfb1588ec795d4e3d730..b1db40c917b2a69a83c487765a52db74
          consumer.accept(addEntityPacket);
          if (this.trackedDataValues != null) {
 diff --git a/net/minecraft/world/entity/EntityType.java b/net/minecraft/world/entity/EntityType.java
-index cdf71340278e05e58bbb4ed51a432336de46e549..14882cafa7019263169cb36ade4ce3dbb6e5e2d9 100644
+index 4706a41ecaccd20fc623ce64858b160204f60f9e..6a9c573e15ef4ddb73a5dd5c18845093ab8f77ab 100644
 --- a/net/minecraft/world/entity/EntityType.java
 +++ b/net/minecraft/world/entity/EntityType.java
-@@ -1075,6 +1075,18 @@ public class EntityType<T extends Entity> implements FeatureElement, EntityTypeT
+@@ -1183,6 +1183,18 @@ public class EntityType<T extends Entity> implements FeatureElement, EntityTypeT
              .clientTrackingRange(4)
              .updateInterval(5)
      );
@@ -74,10 +74,10 @@ index cdf71340278e05e58bbb4ed51a432336de46e549..14882cafa7019263169cb36ade4ce3db
      private final EntityType.EntityFactory<T> factory;
      private final MobCategory category;
 diff --git a/net/minecraft/world/entity/LivingEntity.java b/net/minecraft/world/entity/LivingEntity.java
-index b9292f7a898af50a037d7e4acb700102bd791a40..e0d571f0af5b5441aa7454dfa20156c630f513ba 100644
+index 0fe71704b0f34bfc4b3626f56558148aca46d4d8..3f5e70fc12281234777b1865e725edd790bd91c7 100644
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
-@@ -2729,6 +2729,13 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
+@@ -2769,6 +2769,13 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
          return this.attributes;
      }
  
@@ -92,10 +92,10 @@ index b9292f7a898af50a037d7e4acb700102bd791a40..e0d571f0af5b5441aa7454dfa20156c6
          return this.getItemBySlot(EquipmentSlot.MAINHAND);
      }
 diff --git a/net/minecraft/world/entity/ai/attributes/DefaultAttributes.java b/net/minecraft/world/entity/ai/attributes/DefaultAttributes.java
-index 26ffe98c94b2aaf61bf1693e86e8e7962e892a09..d0db3634373eb1c36fd05c8c373c292bd93b36c0 100644
+index 942cda3d411e579fb5fd2f2edf0be59cc7bdbee8..0f5396b440dc7b072f7b2ae84013646d3e60684b 100644
 --- a/net/minecraft/world/entity/ai/attributes/DefaultAttributes.java
 +++ b/net/minecraft/world/entity/ai/attributes/DefaultAttributes.java
-@@ -139,6 +139,7 @@ public class DefaultAttributes {
+@@ -142,6 +142,7 @@ public class DefaultAttributes {
          .put(EntityType.PIGLIN_BRUTE, PiglinBrute.createAttributes().build())
          .put(EntityType.PILLAGER, Pillager.createAttributes().build())
          .put(EntityType.PLAYER, Player.createAttributes().build())

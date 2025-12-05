@@ -1,20 +1,20 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -821,7 +_,7 @@
+@@ -799,7 +_,7 @@
  
      public void doTick() {
          try {
 -            if (valid && !this.isSpectator() || !this.touchingUnloadedChunk()) { // Paper - don't tick dead players that are not in the world currently (pending respawn)
 +            if (valid && this.gameMode() != GameType.SPECTATOR || !this.touchingUnloadedChunk()) { // Paper - don't tick dead players that are not in the world currently (pending respawn) // kitpvp - Fake Spectator Utility
                  super.tick();
-             }
- 
-@@ -2413,7 +_,7 @@
+                 if (!this.containerMenu.stillValid(this)) {
+                     this.closeContainer(org.bukkit.event.inventory.InventoryCloseEvent.Reason.CANT_USE); // Paper - Inventory close reason
+@@ -2522,7 +_,7 @@
  
      @Override
-     public void attack(Entity targetEntity) {
+     public void attack(Entity target) {
 -        if (this.isSpectator()) {
 +        if (this.isSpectator() && !this.isFakeSpectator) { // kitpvp - Fake Spectator Utility
-             this.setCamera(targetEntity);
+             this.setCamera(target);
          } else {
-             super.attack(targetEntity);
+             super.attack(target);

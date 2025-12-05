@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
-@@ -3756,6 +_,11 @@
+@@ -3818,6 +_,11 @@
      }
  
      public void resetFallDistance() {

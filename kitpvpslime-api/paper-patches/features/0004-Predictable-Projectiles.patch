@@ -6,10 +6,10 @@ Subject: [PATCH] Predictable Projectiles
 Signed-off-by: notstevy <notstevy@ultrabuildmc.de>
 
 diff --git a/src/main/java/org/bukkit/GameRule.java b/src/main/java/org/bukkit/GameRule.java
-index 6f99ed5815d42f7daf7b92e8514d78eb31e21889..e00b0c9e1fbdd0d75d70d5818f4051ae8d0dc416 100644
+index e44bd8a89ebdca462667cbd7bca990b9b486c70f..ebeab3f19615ff58674729a75883c2fe074e77af 100644
 --- a/src/main/java/org/bukkit/GameRule.java
 +++ b/src/main/java/org/bukkit/GameRule.java
-@@ -316,6 +316,13 @@ public final class GameRule<T> implements net.kyori.adventure.translation.Transl
+@@ -335,6 +335,13 @@ public final class GameRule<T> implements net.kyori.adventure.translation.Transl
       */
      public static final GameRule<Boolean> PREDICTABLE_ENCHANTMENTS = new GameRule<>("predictableEnchantments", Boolean.class);
      // kitpvp end - Predictable Enchantments

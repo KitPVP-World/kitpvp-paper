@@ -1,7 +1,7 @@
 package world.kitpvp.slime.nametag;
 
 import net.kyori.adventure.text.Component;
-import net.minecraft.network.protocol.Packet;
+import net.minecraft.server.level.ServerEntity;
 import net.minecraft.world.entity.EntityAttachment;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.craftbukkit.entity.CraftEntity;
@@ -48,14 +48,15 @@ public class CustomName {
     }
 
     @ApiStatus.Internal
-    public void sendRiding(Consumer<Packet<?>> broadcast) {
-        if(this.hidden)
+    public void sendRiding(ServerEntity.Synchronizer broadcast) {
+        if (this.hidden)
             return;
-        broadcast.accept(this.interaction.getRiderPacket());
+        broadcast.sendToTrackingPlayersAndSelf(this.interaction.getRiderPacket());
     }
 
     /**
      * Sets the name provider to handle each player on its own
+     *
      * @param nameProvider
      */
     public void setNameHandler(Function<Player, Component> nameProvider) {
@@ -65,6 +66,7 @@ public class CustomName {
 
     /**
      * Sets the name provider to provide a uniform name to every viewer
+     *
      * @param name new custom name of targeting Player
      */
     public void setName(Component name) {
@@ -131,7 +133,7 @@ public class CustomName {
         }
 
         this.runOnTrackers((player) -> ((CraftPlayer) player).getHandle().connection
-            .send(this.interaction.syncDataPacket(player))
+                .send(this.interaction.syncDataPacket(player))
         );
     }
 

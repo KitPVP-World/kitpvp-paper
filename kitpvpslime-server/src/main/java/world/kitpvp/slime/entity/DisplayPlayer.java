@@ -20,6 +20,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Avatar;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -57,10 +58,10 @@ public class DisplayPlayer extends PathfinderMob {
         defaultServerPlayer.yo = this.yo;
         defaultServerPlayer.zo = this.zo;
         defaultServerPlayer.connection = new ServerGamePacketListenerImpl(
-            this.serverLevel().getServer(),
-            new net.minecraft.network.Connection(PacketFlow.SERVERBOUND),
-            defaultServerPlayer,
-            CommonListenerCookie.createInitial(defaultServerPlayer.getGameProfile(), false)
+                this.serverLevel().getServer(),
+                new net.minecraft.network.Connection(PacketFlow.SERVERBOUND),
+                defaultServerPlayer,
+                CommonListenerCookie.createInitial(defaultServerPlayer.getGameProfile(), false)
         );
         defaultServerPlayer.setAttributes(getAttributes());
         this.entityData.set(Player.DATA_PLAYER_MODE_CUSTOMISATION, (byte) 127);
@@ -76,38 +77,38 @@ public class DisplayPlayer extends PathfinderMob {
 
     public @NotNull ClientboundPlayerInfoUpdatePacket.Entry getInfoUpdateEntry(@NotNull ServerPlayer forPlayer) {
         var gameProfile = new GameProfile(
-            this.getUUID(),
-            this.name
+                this.getUUID(),
+                this.name,
+                forPlayer.getGameProfile().properties()
         );
-        gameProfile.getProperties().putAll(forPlayer.getGameProfile().getProperties());
 
         return new ClientboundPlayerInfoUpdatePacket.Entry(
-            gameProfile.getId(),
-            gameProfile,
-            true,
-            0,
-            GameType.SURVIVAL,
-            forPlayer.getDisplayName(),
-            true,
-            0,
-            null
+                gameProfile.id(),
+                gameProfile,
+                true,
+                0,
+                GameType.SURVIVAL,
+                forPlayer.getDisplayName(),
+                true,
+                0,
+                null
         );
     }
 
     @Override
     public @NotNull Packet<ClientGamePacketListener> getAddEntityPacket(ServerEntity entityTrackerEntry) {
         return new ClientboundAddEntityPacket( // Cloned from other constructor
-            this.getId(),
-            this.getUUID(),
-            this.trackingPosition().x(),
-            this.trackingPosition().y(),
-            this.trackingPosition().z(),
-            entityTrackerEntry.getLastSentXRot(),
-            entityTrackerEntry.getLastSentYRot(),
-            EntityType.PLAYER, // only parameter changed
-            0,
-            entityTrackerEntry.getLastSentMovement(),
-            entityTrackerEntry.getLastSentYHeadRot()
+                this.getId(),
+                this.getUUID(),
+                this.trackingPosition().x(),
+                this.trackingPosition().y(),
+                this.trackingPosition().z(),
+                entityTrackerEntry.getLastSentXRot(),
+                entityTrackerEntry.getLastSentYRot(),
+                EntityType.PLAYER, // only parameter changed
+                0,
+                entityTrackerEntry.getLastSentMovement(),
+                entityTrackerEntry.getLastSentYHeadRot()
         );
     }
 
@@ -193,11 +194,6 @@ public class DisplayPlayer extends PathfinderMob {
     }
 
     @Override
-    protected boolean shouldDropLoot() {
-        return false;
-    }
-
-    @Override
     protected @NotNull HoverEvent createHoverEvent() {
         return new HoverEvent.ShowEntity(new HoverEvent.EntityTooltipInfo(EntityType.PLAYER, this.getUUID(), this.getName()));
     }
@@ -248,12 +244,12 @@ public class DisplayPlayer extends PathfinderMob {
 
     @Override
     public void setLeftHanded(boolean leftHanded) {
-        this.entityData.set(Player.DATA_PLAYER_MAIN_HAND, (byte) (leftHanded ? 0 : 1));
+        this.entityData.set(Avatar.DATA_PLAYER_MAIN_HAND, (byte) (leftHanded ? 0 : 1));
     }
 
     @Override
     public boolean isLeftHanded() {
-        return this.entityData.get(Player.DATA_PLAYER_MAIN_HAND) == 0;
+        return this.entityData.get(Avatar.DATA_PLAYER_MAIN_HAND) == 0;
     }
 
     @Override

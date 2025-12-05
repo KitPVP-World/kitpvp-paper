@@ -1,14 +1,14 @@
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: notstevy <notstevy@ultrabuildmc.de>
 Date: Fri, 26 Sep 2025 16:42:43 +0200
-Subject: [PATCH] Predicatable Enchantments
+Subject: [PATCH] Predictable Enchantments
 
 Modifying enchantments (such as Unbreaking) to not use random, making pvp more deterministic
 
 Signed-off-by: notstevy <notstevy@ultrabuildmc.de>
 
 diff --git a/net/minecraft/world/item/enchantment/Enchantment.java b/net/minecraft/world/item/enchantment/Enchantment.java
-index 7a620eb92b1e672cedd72ec4d986c01eba337686..e2b32700536e8eba5d1186b027751d40084d6cc4 100644
+index f094446a47447423394df05403b82897a23613bd..5c2c08d43ac63f53dc5407c140ec571b4eaa273b 100644
 --- a/net/minecraft/world/item/enchantment/Enchantment.java
 +++ b/net/minecraft/world/item/enchantment/Enchantment.java
 @@ -212,7 +212,7 @@ public record Enchantment(Component description, Enchantment.EnchantmentDefiniti
@@ -22,7 +22,7 @@ index 7a620eb92b1e672cedd72ec4d986c01eba337686..e2b32700536e8eba5d1186b027751d40
      }
 @@ -366,7 +366,7 @@ public record Enchantment(Component description, Enchantment.EnchantmentDefiniti
          applyEffects(
-             this.getEffects(componentType),
+             this.getEffects(component),
              itemContext(level, enchantmentLevel, tool),
 -            enchantmentValueEffect -> value.setValue(enchantmentValueEffect.process(enchantmentLevel, level.getRandom(), value.getValue()))
 +            enchantmentValueEffect -> value.setValue(enchantmentValueEffect.process(enchantmentLevel, level.getRandom(), value.getValue(), level))  // kitpvp - Predicatable enchantments
@@ -31,7 +31,7 @@ index 7a620eb92b1e672cedd72ec4d986c01eba337686..e2b32700536e8eba5d1186b027751d40
  
 @@ -381,7 +381,7 @@ public record Enchantment(Component description, Enchantment.EnchantmentDefiniti
          applyEffects(
-             this.getEffects(componentType),
+             this.getEffects(component),
              entityContext(level, enchantmentLevel, entity, entity.position()),
 -            enchantmentValueEffect -> value.setValue(enchantmentValueEffect.process(enchantmentLevel, entity.getRandom(), value.floatValue()))
 +            enchantmentValueEffect -> value.setValue(enchantmentValueEffect.process(enchantmentLevel, entity.getRandom(), value.floatValue(), level)) // kitpvp - Predicatable enchantments
@@ -40,7 +40,7 @@ index 7a620eb92b1e672cedd72ec4d986c01eba337686..e2b32700536e8eba5d1186b027751d40
  
 @@ -397,7 +397,7 @@ public record Enchantment(Component description, Enchantment.EnchantmentDefiniti
          applyEffects(
-             this.getEffects(componentType),
+             this.getEffects(component),
              damageContext(level, enchantmentLevel, entity, damageSource),
 -            enchantmentValueEffect -> value.setValue(enchantmentValueEffect.process(enchantmentLevel, entity.getRandom(), value.floatValue()))
 +            enchantmentValueEffect -> value.setValue(enchantmentValueEffect.process(enchantmentLevel, entity.getRandom(), value.floatValue(), level)) // kitpvp - Predicatable enchantments
@@ -48,7 +48,7 @@ index 7a620eb92b1e672cedd72ec4d986c01eba337686..e2b32700536e8eba5d1186b027751d40
      }
  
 diff --git a/net/minecraft/world/item/enchantment/EnchantmentHelper.java b/net/minecraft/world/item/enchantment/EnchantmentHelper.java
-index 66234431b265e0596275ca468cd40f8da98c22e2..6dbba0a6a9a7bb047881578d3d5b856465a2a38c 100644
+index 699cd012894cf9c09751c118d26994360f07193b..4a6c4a02f5e4a31a63f73d4482c552ad9a223144 100644
 --- a/net/minecraft/world/item/enchantment/EnchantmentHelper.java
 +++ b/net/minecraft/world/item/enchantment/EnchantmentHelper.java
 @@ -335,7 +335,7 @@ public class EnchantmentHelper {
@@ -131,12 +131,12 @@ index 642f9b0e293d42ff8f043717f1dffdac5dd7e0dc..54f48ea7a4bac7ed08b61d70971c0486
  
          for (int i1 = 0; i1 < value; i1++) {
 diff --git a/net/minecraft/world/level/GameRules.java b/net/minecraft/world/level/GameRules.java
-index d5536dd40a1e9a2e05967652f690abbbca287852..ff5ac5d7aa0346c6598ed097cfb10b0e2991642e 100644
+index b159cae4d9c1274de14f3044c9d22a1231c639e5..4943f1981c1fe5f273ac89336e64abce5738af2c 100644
 --- a/net/minecraft/world/level/GameRules.java
 +++ b/net/minecraft/world/level/GameRules.java
-@@ -240,6 +240,11 @@ public class GameRules {
-             }
-         }))
+@@ -252,6 +252,11 @@ public class GameRules {
+     public static final GameRules.Key<GameRules.BooleanValue> RULE_SPAWNER_BLOCKS_ENABLED = register(
+         "spawnerBlocksEnabled", GameRules.Category.MISC, GameRules.BooleanValue.create(true)
      );
 +    // kitpvp start - Predicatable Enchantments
 +    public static final GameRules.Key<GameRules.BooleanValue> RULE_PREDICATBLE_ENCHANTMENTS = register(

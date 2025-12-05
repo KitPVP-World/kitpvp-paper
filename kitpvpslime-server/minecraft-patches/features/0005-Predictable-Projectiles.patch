@@ -6,10 +6,10 @@ Subject: [PATCH] Predictable Projectiles
 Signed-off-by: notstevy <notstevy@ultrabuildmc.de>
 
 diff --git a/net/minecraft/world/entity/projectile/Projectile.java b/net/minecraft/world/entity/projectile/Projectile.java
-index dae6619f4670c6f68dae7e4b10b0b6a8bbe6dc2e..a85f9745e61a5b05752beceacca34bc9cbbc0b04 100644
+index cdb73cab0a64f51d65a7420fdac44455c6c77a48..9f13754d27cb610336f8cadb915819a66702e732 100644
 --- a/net/minecraft/world/entity/projectile/Projectile.java
 +++ b/net/minecraft/world/entity/projectile/Projectile.java
-@@ -139,6 +139,12 @@ public abstract class Projectile extends Entity implements TraceableEntity {
+@@ -145,6 +145,12 @@ public abstract class Projectile extends Entity implements TraceableEntity {
      }
  
      public Vec3 getMovementToShoot(double x, double y, double z, float velocity, float inaccuracy) {
@@ -23,10 +23,10 @@ index dae6619f4670c6f68dae7e4b10b0b6a8bbe6dc2e..a85f9745e61a5b05752beceacca34bc9
              .normalize()
              .add(
 diff --git a/net/minecraft/world/level/GameRules.java b/net/minecraft/world/level/GameRules.java
-index ff5ac5d7aa0346c6598ed097cfb10b0e2991642e..4420ce80c8dff106c1f497c63161649eb8c37c06 100644
+index 4943f1981c1fe5f273ac89336e64abce5738af2c..6503e9c8af1340c3ea7338b3c2f96c9b1567fb21 100644
 --- a/net/minecraft/world/level/GameRules.java
 +++ b/net/minecraft/world/level/GameRules.java
-@@ -245,6 +245,11 @@ public class GameRules {
+@@ -257,6 +257,11 @@ public class GameRules {
          "predictableEnchantments", GameRules.Category.MISC, GameRules.BooleanValue.create(false)
      );
      // kitpvp end - Predicatable Enchantments

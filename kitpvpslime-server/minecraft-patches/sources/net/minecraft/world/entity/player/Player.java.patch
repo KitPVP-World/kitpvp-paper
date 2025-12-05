@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/player/Player.java
 +++ b/net/minecraft/world/entity/player/Player.java
-@@ -219,6 +_,7 @@
+@@ -181,6 +_,7 @@
      private int currentImpulseContextResetGraceTime = 0;
      public boolean affectsSpawning = true; // Paper - Affects Spawning API
      public net.kyori.adventure.util.TriState flyingFallDamage = net.kyori.adventure.util.TriState.NOT_SET; // Paper - flying fall damage
@@ -8,7 +8,7 @@
  
      // CraftBukkit start
      public boolean fauxSleeping;
-@@ -1940,7 +_,7 @@
+@@ -1724,7 +_,7 @@
  
      @Override
      public boolean isSpectator() {

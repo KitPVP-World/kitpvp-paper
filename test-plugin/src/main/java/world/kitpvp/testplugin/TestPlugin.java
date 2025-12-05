@@ -2,6 +2,7 @@ package world.kitpvp.testplugin;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import world.kitpvp.testplugin.command.NametagCommand;
@@ -21,6 +22,10 @@ public class TestPlugin extends JavaPlugin implements Listener {
         event.cancelRespawnScreen();
     }
 
+    @EventHandler
+    public void damageHandler(EntityDamageEvent event) {
+        System.out.println("Entity " + event.getEntity().getName() + " was damaged by " + event.getDamageSource().getCausingEntity());
+    }
 
 //    @EventHandler
 //    public void inventoryClickHandler(InventoryClickEvent event) {
