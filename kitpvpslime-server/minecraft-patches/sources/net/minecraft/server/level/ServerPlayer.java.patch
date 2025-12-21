@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -799,7 +_,7 @@
+@@ -796,7 +_,7 @@
  
      public void doTick() {
          try {
@@ -9,7 +9,7 @@
                  super.tick();
                  if (!this.containerMenu.stillValid(this)) {
                      this.closeContainer(org.bukkit.event.inventory.InventoryCloseEvent.Reason.CANT_USE); // Paper - Inventory close reason
-@@ -2522,7 +_,7 @@
+@@ -2557,7 +_,7 @@
  
      @Override
      public void attack(Entity target) {

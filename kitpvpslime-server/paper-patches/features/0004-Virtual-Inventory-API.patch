@@ -6,10 +6,10 @@ Subject: [PATCH] Virtual Inventory API
 Signed-off-by: notstevy <notstevy@ultrabuildmc.de>
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java
-index c6997597609affca32f034e71223ae0667d20504..b955d9b1a614e7e18ae9b933b929361255e54492 100644
+index 7cc076733211699d816df6479d25b50cb975b3e4..2000e83704919ac6092f7c6ce1329fb312b04b3d 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java
-@@ -496,6 +496,13 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
+@@ -488,6 +488,13 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
                  player.connection.send(new ClientboundOpenScreenPacket(container.containerId, windowType, io.papermc.paper.adventure.PaperAdventure.asVanilla(adventure$title)));
              }
          }

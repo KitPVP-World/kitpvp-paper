@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ServerLevel.java
 +++ b/net/minecraft/server/level/ServerLevel.java
-@@ -683,7 +_,11 @@
+@@ -689,7 +_,11 @@
              null, // Paper - rewrite chunk system
              () -> server.overworld().getDataStorage()
          );
@@ -11,5 +11,5 @@
 +        }
 +        // kitpvp end - optimize world loading
          this.portalForcer = new PortalForcer(this);
-         this.updateSkyBrightness();
-         this.prepareWeather();
+         if (this.canHaveWeather()) {
+             this.prepareWeather();

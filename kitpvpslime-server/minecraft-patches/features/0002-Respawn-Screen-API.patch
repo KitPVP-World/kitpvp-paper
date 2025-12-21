@@ -5,10 +5,10 @@ Subject: [PATCH] Respawn Screen API
 
 
 diff --git a/net/minecraft/server/level/ServerPlayer.java b/net/minecraft/server/level/ServerPlayer.java
-index 33f36bfd8a67b3255007f2f68cd7c302f8c3b745..88269f88c80ef7d9665684c8d7aa493f980991cc 100644
+index 275c478f2d5cb9641acca5cf165c966e239abd36..02466765c31b8cd499f3bb1a169176c97de79a42 100644
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -1184,7 +1184,8 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
+@@ -1181,7 +1181,8 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
              Component deathMessage = io.papermc.paper.adventure.PaperAdventure.asVanilla(apiDeathMessage); // Paper - Adventure
  
              // Paper - moved up to sendClientboundPlayerCombatKillPacket()
@@ -18,7 +18,7 @@ index 33f36bfd8a67b3255007f2f68cd7c302f8c3b745..88269f88c80ef7d9665684c8d7aa493f
              Team team = this.getTeam();
              if (team == null || team.getDeathMessageVisibility() == Team.Visibility.ALWAYS) {
                  this.server.getPlayerList().broadcastSystemMessage(deathMessage, false);
-@@ -1193,7 +1194,7 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
+@@ -1190,7 +1191,7 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
              } else if (team.getDeathMessageVisibility() == Team.Visibility.HIDE_FOR_OWN_TEAM) {
                  this.server.getPlayerList().broadcastSystemToAllExceptTeam(this, deathMessage);
              }
@@ -27,20 +27,20 @@ index 33f36bfd8a67b3255007f2f68cd7c302f8c3b745..88269f88c80ef7d9665684c8d7aa493f
              sendClientboundPlayerCombatKillPacket(event.getShowDeathMessages(), deathScreenMessage); // Paper - Expand PlayerDeathEvent
          }
  
-@@ -1247,7 +1248,74 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
+@@ -1244,7 +1245,74 @@ public class ServerPlayer extends Player implements ca.spottedleaf.moonrise.patc
          this.setSharedFlagOnFire(false);
          this.getCombatTracker().recheckStatus();
          this.setLastDeathLocation(Optional.of(GlobalPos.of(this.level().dimension(), this.blockPosition())));
--        this.setClientLoaded(false);
+-        this.connection.markClientUnloadedAfterDeath();
 +        // kitpvp start - Respawn Screen API
 +        if(!event.shouldCancelRespawnScreen()) {
-+            this.setClientLoaded(false);
++            this.connection.markClientUnloadedAfterDeath();
 +            return;
 +        }
 +        this.stopRiding(); // CraftBukkit
 +        ServerPlayer.RespawnResult result = this.findRespawnPositionAndUseSpawnBlock0(!keepInventory, TeleportTransition.DO_NOTHING, org.bukkit.event.player.PlayerRespawnEvent.RespawnReason.DEATH);
 +        if(result == null) {
-+            this.setClientLoaded(false);
++            this.connection.markClientUnloadedAfterDeath();
 +            return;
 +        }
 +        this.reset();
@@ -66,9 +66,9 @@ index 33f36bfd8a67b3255007f2f68cd7c302f8c3b745..88269f88c80ef7d9665684c8d7aa493f
 +                if (blockState.is(net.minecraft.world.level.block.Blocks.RESPAWN_ANCHOR)) {
 +                    this.connection
 +                            .send(
-+                                    new ClientboundSoundPacket(
++                                    new net.minecraft.network.protocol.game.ClientboundSoundPacket(
 +                                            net.minecraft.sounds.SoundEvents.RESPAWN_ANCHOR_DEPLETE,
-+                                            SoundSource.BLOCKS,
++                                            net.minecraft.sounds.SoundSource.BLOCKS,
 +                                            blockPos.getX(),
 +                                            blockPos.getY(),
 +                                            blockPos.getZ(),

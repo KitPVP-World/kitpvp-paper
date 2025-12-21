@@ -1,0 +1,20 @@
+--- a/src/test/java/org/bukkit/registry/PerRegistryTest.java
++++ b/src/test/java/org/bukkit/registry/PerRegistryTest.java
+@@ -64,11 +_,14 @@
+             assertNotNull(key); // Paper - improve Registry
+ 
+             this.assertSameMatchWithKeyMessage(registry, element, key.toString()); // namespace:key
+-            this.assertSameMatchWithKeyMessage(registry, element, key.getKey()); // key
+             this.assertSameMatchWithKeyMessage(registry, element, key.toString().replace('_', ' ')); // namespace:key with space
+-            this.assertSameMatchWithKeyMessage(registry, element, key.getKey().replace('_', ' ')); // key with space
+             this.assertSameMatchWithKeyMessage(registry, element, this.randomizeCase(key.toString())); // nAmeSPaCe:kEY
+-            this.assertSameMatchWithKeyMessage(registry, element, this.randomizeCase(key.getKey())); // kEy
++
++            if(key.namespace().equals(NamespacedKey.MINECRAFT)) {
++                this.assertSameMatchWithKeyMessage(registry, element, key.getKey()); // key
++                this.assertSameMatchWithKeyMessage(registry, element, key.getKey().replace('_', ' ')); // key with space
++                this.assertSameMatchWithKeyMessage(registry, element, this.randomizeCase(key.getKey())); // kEy
++            }
+         });
+     }
+ 

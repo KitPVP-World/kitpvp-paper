@@ -6,7 +6,7 @@ Subject: [PATCH] Bad Respawn Point Causing Entity
 Signed-off-by: notstevy <notstevy@ultrabuildmc.de>
 
 diff --git a/net/minecraft/world/damagesource/DamageSources.java b/net/minecraft/world/damagesource/DamageSources.java
-index cc206ecff2d95f0398ca424c178a336ad80cc396..c0f6224a742b6ef8837c69f5f38de1f63e75e7d3 100644
+index e45891d10dfab44d3aa584cc7db3fbc3c7654af5..0c43cf9d50b6e372f2abb2c4120a9c106727e7ee 100644
 --- a/net/minecraft/world/damagesource/DamageSources.java
 +++ b/net/minecraft/world/damagesource/DamageSources.java
 @@ -260,8 +260,10 @@ public class DamageSources {
@@ -23,10 +23,10 @@ index cc206ecff2d95f0398ca424c178a336ad80cc396..c0f6224a742b6ef8837c69f5f38de1f6
  
      public DamageSource outOfBorder() {
 diff --git a/net/minecraft/world/level/block/BedBlock.java b/net/minecraft/world/level/block/BedBlock.java
-index 63768a73c04060fbc4aceb734ba32bc203514017..c7120911506f1aae5b983026341a9559878d9ecf 100644
+index 7bfc62120cae4c5e83cb0d86b759b7ffb2336a95..cc2302a83c4fa09968057a3b3145b008caf6e021 100644
 --- a/net/minecraft/world/level/block/BedBlock.java
 +++ b/net/minecraft/world/level/block/BedBlock.java
-@@ -98,10 +98,10 @@ public class BedBlock extends HorizontalDirectionalBlock implements EntityBlock
+@@ -100,10 +100,10 @@ public class BedBlock extends HorizontalDirectionalBlock implements EntityBlock
                  }
  
                  Vec3 center = pos.getCenter();
@@ -34,21 +34,21 @@ index 63768a73c04060fbc4aceb734ba32bc203514017..c7120911506f1aae5b983026341a9559
 +                level.explode(null, level.damageSources().badRespawnPointExplosion(center, player), null, center, 5.0F, true, Level.ExplosionInteraction.BLOCK); // kitpvp - Bad Respawn Point Causing Entity
                  return InteractionResult.SUCCESS_SERVER;
              } else if (state.getValue(OCCUPIED)) {
--                if (!BedBlock.canSetSpawn(level)) return this.explodeBed(state, level, pos); // Paper - check explode first
-+                if (!BedBlock.canSetSpawn(level)) return this.explodeBed(state, level, pos, player); // Paper - check explode first // kitpvp - Bad Respawn Point Causing Entity
+-                if (bedRule.explodes()) return this.explodeBed(state, level, pos); // Paper - check explode first
++                if (bedRule.explodes()) return this.explodeBed(state, level, pos, player); // Paper - check explode first // kitpvp - Bad Respawn Point Causing Entity
                  if (!this.kickVillagerOutOfBed(level, pos)) {
                      player.displayClientMessage(Component.translatable("block.minecraft.bed.occupied"), true);
                  }
-@@ -122,7 +122,7 @@ public class BedBlock extends HorizontalDirectionalBlock implements EntityBlock
+@@ -127,7 +127,7 @@ public class BedBlock extends HorizontalDirectionalBlock implements EntityBlock
                          // Paper end - PlayerBedFailEnterEvent
-                     // CraftBukkit start - handling bed explosion from below here
-                     if (event.getWillExplode()) { // Paper - PlayerBedFailEnterEvent
--                        this.explodeBed(finalBlockState, level, finalBlockPos);
-+                        this.explodeBed(finalBlockState, level, finalBlockPos, player); // kitpvp - Bad Respawn Point Causing Entity
-                     } else
-                     // CraftBukkit end
-                     if (bedSleepingProblem.getMessage() != null) {
-@@ -137,7 +137,7 @@ public class BedBlock extends HorizontalDirectionalBlock implements EntityBlock
+                         // CraftBukkit start - handling bed explosion from below here
+                         if (event.getWillExplode()) { // Paper - PlayerBedFailEnterEvent
+-                            this.explodeBed(finalBlockState, level, finalBlockPos);
++                            this.explodeBed(finalBlockState, level, finalBlockPos, player); // kitpvp - Bad Respawn Point Causing Entity
+                         }
+                         // CraftBukkit end
+                         // Paper start - PlayerBedFailEnterEvent
+@@ -144,7 +144,7 @@ public class BedBlock extends HorizontalDirectionalBlock implements EntityBlock
      }
  
      // CraftBukkit start - Copied from the above method
@@ -57,38 +57,38 @@ index 63768a73c04060fbc4aceb734ba32bc203514017..c7120911506f1aae5b983026341a9559
          org.bukkit.block.BlockState blockState = org.bukkit.craftbukkit.block.CraftBlock.at(level, pos).getState(); // CraftBukkit - capture BlockState before remove block
          level.removeBlock(pos, false);
          BlockPos blockPos = pos.relative(state.getValue(FACING).getOpposite());
-@@ -146,7 +146,7 @@ public class BedBlock extends HorizontalDirectionalBlock implements EntityBlock
+@@ -153,7 +153,7 @@ public class BedBlock extends HorizontalDirectionalBlock implements EntityBlock
          }
  
          Vec3 center = pos.getCenter();
 -        level.explode(null, level.damageSources().badRespawnPointExplosion(center).causingBlockSnapshot(blockState), null, center, 5.0F, true, Level.ExplosionInteraction.BLOCK); // CraftBukkit - add state
 +        level.explode(null, level.damageSources().badRespawnPointExplosion(center, causingEntity).causingBlockSnapshot(blockState), null, center, 5.0F, true, Level.ExplosionInteraction.BLOCK); // CraftBukkit - add state // kitpvp - Bad Respawn Point Causing Entity
          return InteractionResult.SUCCESS_SERVER;
-      }
+     }
      // CraftBukkit end
 diff --git a/net/minecraft/world/level/block/RespawnAnchorBlock.java b/net/minecraft/world/level/block/RespawnAnchorBlock.java
-index fad87904eed0d7816c41eb426b5942341d12ed50..19882f2d843022b21553005d3767ac8dc30dc0da 100644
+index e90651ae6ab072c9fa9c179ae56329e0d816c77b..fe101689f2b2cbb2f1117d2e909b9ee91f37140b 100644
 --- a/net/minecraft/world/level/block/RespawnAnchorBlock.java
 +++ b/net/minecraft/world/level/block/RespawnAnchorBlock.java
-@@ -95,7 +95,7 @@ public class RespawnAnchorBlock extends Block {
+@@ -97,7 +97,7 @@ public class RespawnAnchorBlock extends Block {
              return InteractionResult.PASS;
-         } else if (!canSetSpawn(level)) {
-             if (!level.isClientSide()) {
--                this.explode(state, level, pos);
-+                this.explode(state, level, pos, player); // kitpvp - Bad Respawn Point Causing Entity
-             }
- 
-             return InteractionResult.SUCCESS;
-@@ -146,7 +146,7 @@ public class RespawnAnchorBlock extends Block {
+         } else if (level instanceof ServerLevel serverLevel) {
+             if (!canSetSpawn(serverLevel, pos)) {
+-                this.explode(state, serverLevel, pos);
++                this.explode(state, serverLevel, pos, player); // kitpvp - Bad Respawn Point Causing Entity
+                 return InteractionResult.SUCCESS_SERVER;
+             } else {
+                 if (player instanceof ServerPlayer serverPlayer) {
+@@ -151,7 +151,7 @@ public class RespawnAnchorBlock extends Block {
          }
      }
  
--    private void explode(BlockState state, Level level, final BlockPos pos2) {
-+    private void explode(BlockState state, Level level, final BlockPos pos2, final @Nullable Entity causingEntity) { // kitpvp - Bad Respawn Point Causing Entity
+-    private void explode(BlockState state, ServerLevel level, final BlockPos pos2) {
++    private void explode(BlockState state, ServerLevel level, final BlockPos pos2, final @Nullable Entity causingEntity) {  // kitpvp - Bad Respawn Point Causing Entity
          org.bukkit.block.BlockState blockState = org.bukkit.craftbukkit.block.CraftBlock.at(level, pos2).getState(); // CraftBukkit - capture BlockState before remove block
          level.removeBlock(pos2, false);
          boolean flag = Direction.Plane.HORIZONTAL.stream().map(pos2::relative).anyMatch(blockPos -> isWaterThatWouldFlow(blockPos, level));
-@@ -161,7 +161,7 @@ public class RespawnAnchorBlock extends Block {
+@@ -166,7 +166,7 @@ public class RespawnAnchorBlock extends Block {
          };
          Vec3 center = pos2.getCenter();
          level.explode(

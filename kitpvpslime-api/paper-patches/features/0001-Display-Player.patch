@@ -6,10 +6,10 @@ Subject: [PATCH] Display Player
 Porting changes from old fork
 
 diff --git a/src/main/java/org/bukkit/entity/EntityType.java b/src/main/java/org/bukkit/entity/EntityType.java
-index ce60b976bc0c2dd7b3e1f6d6402d13f206556eb4..d10a4c7394e708a4066359606091059bae739980 100644
+index e84da0628407cc6e87b9fcb1fd34adab551c7c60..42e039caf5aa6a3f14e86114c82846382a330eb7 100644
 --- a/src/main/java/org/bukkit/entity/EntityType.java
 +++ b/src/main/java/org/bukkit/entity/EntityType.java
-@@ -200,10 +200,13 @@ public enum EntityType implements Keyed, Translatable, net.kyori.adventure.trans
+@@ -204,10 +204,13 @@ public enum EntityType implements Keyed, Translatable, net.kyori.adventure.trans
      ZOMBIE_VILLAGER("zombie_villager", ZombieVillager.class, 27),
      ZOMBIFIED_PIGLIN("zombified_piglin", PigZombie.class, 57),
      // End generate - EntityType
@@ -24,7 +24,7 @@ index ce60b976bc0c2dd7b3e1f6d6402d13f206556eb4..d10a4c7394e708a4066359606091059b
  
      private final String name;
      private final Class<? extends Entity> clazz;
-@@ -238,6 +241,17 @@ public enum EntityType implements Keyed, Translatable, net.kyori.adventure.trans
+@@ -242,6 +245,17 @@ public enum EntityType implements Keyed, Translatable, net.kyori.adventure.trans
          this.key = (name == null) ? null : NamespacedKey.minecraft(name);
      }
  

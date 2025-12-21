@@ -6,15 +6,23 @@ Subject: [PATCH] Predictable Projectiles
 Signed-off-by: notstevy <notstevy@ultrabuildmc.de>
 
 diff --git a/net/minecraft/world/entity/projectile/Projectile.java b/net/minecraft/world/entity/projectile/Projectile.java
-index cdb73cab0a64f51d65a7420fdac44455c6c77a48..9f13754d27cb610336f8cadb915819a66702e732 100644
+index 6298e6de25f1dd9ff880a9ad2882dc7ccb2f100c..e4e7d23a2e738d6c0f77098304cd4726fcf236f5 100644
 --- a/net/minecraft/world/entity/projectile/Projectile.java
 +++ b/net/minecraft/world/entity/projectile/Projectile.java
-@@ -145,6 +145,12 @@ public abstract class Projectile extends Entity implements TraceableEntity {
+@@ -35,6 +35,7 @@ import net.minecraft.world.phys.EntityHitResult;
+ import net.minecraft.world.phys.HitResult;
+ import net.minecraft.world.phys.Vec3;
+ import org.jspecify.annotations.Nullable;
++import world.kitpvp.slime.server.KitPvPGameRulesImpl;
+ 
+ public abstract class Projectile extends Entity implements TraceableEntity {
+     private static final boolean DEFAULT_LEFT_OWNER = false;
+@@ -143,6 +144,12 @@ public abstract class Projectile extends Entity implements TraceableEntity {
      }
  
      public Vec3 getMovementToShoot(double x, double y, double z, float velocity, float inaccuracy) {
 +        // kitpvp start - Predictable Projectiles
-+        if(((ServerLevel) this.level()).getGameRules().getBoolean(GameRules.RULE_PREDICATBLE_PROJECTILES)) {
++        if(((ServerLevel) this.level()).getGameRules().get(KitPvPGameRulesImpl.PREDICTABLE_PROJECTILES)) {
 +            inaccuracy = 0;
 +        }
 +        // kitpvp end - Predictable Projectiles
@@ -22,19 +30,3 @@ index cdb73cab0a64f51d65a7420fdac44455c6c77a48..9f13754d27cb610336f8cadb915819a6
          return new Vec3(x, y, z)
              .normalize()
              .add(
-diff --git a/net/minecraft/world/level/GameRules.java b/net/minecraft/world/level/GameRules.java
-index 4943f1981c1fe5f273ac89336e64abce5738af2c..6503e9c8af1340c3ea7338b3c2f96c9b1567fb21 100644
---- a/net/minecraft/world/level/GameRules.java
-+++ b/net/minecraft/world/level/GameRules.java
-@@ -257,6 +257,11 @@ public class GameRules {
-         "predictableEnchantments", GameRules.Category.MISC, GameRules.BooleanValue.create(false)
-     );
-     // kitpvp end - Predicatable Enchantments
-+    // kitpvp start - Predicatable Projectiles
-+    public static final GameRules.Key<GameRules.BooleanValue> RULE_PREDICATBLE_PROJECTILES = register(
-+        "predictableProjectiles", GameRules.Category.MISC, GameRules.BooleanValue.create(false)
-+    );
-+    // kitpvp end - Predicatable Projectiles
-     private final Map<GameRules.Key<?>, GameRules.Value<?>> rules;
-     private final FeatureFlagSet enabledFeatures;
-     private final GameRules.Value<?>[] gameruleArray; // Paper - Perf: Use array for gamerule storage

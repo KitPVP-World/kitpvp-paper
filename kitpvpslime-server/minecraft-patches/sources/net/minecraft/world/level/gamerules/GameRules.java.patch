@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/level/gamerules/GameRules.java
++++ b/net/minecraft/world/level/gamerules/GameRules.java
+@@ -164,7 +_,7 @@
+         });
+     }
+ 
+-    private static GameRule<Boolean> registerBoolean(String name, GameRuleCategory category, boolean defaultValue) {
++    public static GameRule<Boolean> registerBoolean(String name, GameRuleCategory category, boolean defaultValue) { // kitpvp
+         return register(
+             name,
+             category,
+@@ -231,4 +_,6 @@
+     public interface VisitorCaller<T> {
+         void call(GameRuleTypeVisitor visitor, GameRule<T> rule);
+     }
++
++    static { world.kitpvp.slime.server.KitPvPGameRulesImpl.register(); }
+ }

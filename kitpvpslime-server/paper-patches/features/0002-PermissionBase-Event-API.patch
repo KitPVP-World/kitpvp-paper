@@ -5,11 +5,11 @@ Subject: [PATCH] PermissionBase Event API
 
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java
-index 8fba3cbac5d2d39e7db3d3261c68317dbc936736..c6997597609affca32f034e71223ae0667d20504 100644
+index 5a4e9853103153b31456190e3f95dc98642f3ec5..7cc076733211699d816df6479d25b50cb975b3e4 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java
-@@ -89,7 +89,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
-     private static final Logger LOGGER = LogUtils.getLogger();
+@@ -79,7 +79,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
+ 
      private CraftInventoryPlayer inventory;
      private final CraftInventory enderChest;
 -    protected final PermissibleBase perm = new PermissibleBase(this);
@@ -17,7 +17,7 @@ index 8fba3cbac5d2d39e7db3d3261c68317dbc936736..c6997597609affca32f034e71223ae06
      private boolean op;
      private GameMode mode;
  
-@@ -98,6 +98,11 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
+@@ -88,6 +88,11 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
          this.mode = server.getDefaultGameMode();
          this.inventory = new CraftInventoryPlayer(entity.getInventory());
          this.enderChest = new CraftInventory(entity.getEnderChestInventory());

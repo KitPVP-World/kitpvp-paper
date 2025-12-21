@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/DirectoryLock.java
 +++ b/net/minecraft/util/DirectoryLock.java
-@@ -42,7 +_,7 @@
+@@ -41,7 +_,7 @@
          }
      }
  

@@ -23,6 +23,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Avatar;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
@@ -34,14 +35,16 @@ import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@NullMarked
 public class DisplayPlayer extends PathfinderMob {
     private static final Logger LOGGER = LoggerFactory.getLogger(DisplayPlayer.class);
     private static final EquipmentSlot[] EQUIPMENT_SLOTS = EquipmentSlot.values();
-    private ServerPlayer defaultServerPlayer;
+    private @Nullable ServerPlayer defaultServerPlayer;
 
     private boolean aiDisabled;
     private boolean aggressive;
@@ -75,7 +78,7 @@ public class DisplayPlayer extends PathfinderMob {
         this.zo = z;
     }
 
-    public @NotNull ClientboundPlayerInfoUpdatePacket.Entry getInfoUpdateEntry(@NotNull ServerPlayer forPlayer) {
+    public ClientboundPlayerInfoUpdatePacket.Entry getInfoUpdateEntry(ServerPlayer forPlayer) {
         var gameProfile = new GameProfile(
                 this.getUUID(),
                 this.name,
@@ -96,8 +99,8 @@ public class DisplayPlayer extends PathfinderMob {
     }
 
     @Override
-    public @NotNull Packet<ClientGamePacketListener> getAddEntityPacket(ServerEntity entityTrackerEntry) {
-        return new ClientboundAddEntityPacket( // Cloned from other constructor
+    public Packet<ClientGamePacketListener> getAddEntityPacket(ServerEntity entityTrackerEntry) {
+        return new ClientboundAddEntityPacket( // Cloned from the other ClientboundAddEntityPacket constructor
                 this.getId(),
                 this.getUUID(),
                 this.trackingPosition().x(),
@@ -113,7 +116,7 @@ public class DisplayPlayer extends PathfinderMob {
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.@NotNull Builder builder) {
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
         this.getDefaultServerPlayer().defineSynchedData(builder);
     }
 
@@ -152,7 +155,7 @@ public class DisplayPlayer extends PathfinderMob {
 
 
     @Override
-    protected void readAdditionalSaveData(@NotNull ValueInput input) {
+    protected void readAdditionalSaveData(ValueInput input) {
         super.readAdditionalSaveData(input);
         input.getString("playerName").ifPresent(this::name);
         var defaultPlayer = this.getDefaultServerPlayer();
@@ -166,7 +169,7 @@ public class DisplayPlayer extends PathfinderMob {
 
 
     @Override
-    public void addAdditionalSaveData(@NotNull ValueOutput output) {
+    public void addAdditionalSaveData(ValueOutput output) {
         super.addAdditionalSaveData(output);
         var defaultPlayer = this.getDefaultServerPlayer();
 
@@ -177,7 +180,7 @@ public class DisplayPlayer extends PathfinderMob {
     }
 
     @Override
-    public boolean hurtServer(@NotNull ServerLevel level, @NotNull DamageSource damageSource, float amount) {
+    public boolean hurtServer(ServerLevel level, DamageSource damageSource, float amount) {
         if (super.hurtServer(level, damageSource, amount)) {
             if (this.level().getLevelData().getDifficulty() == Difficulty.PEACEFUL) {
                 LOGGER.warn("AI of Display Player is not able to function correctly because the server difficulty is set to peaceful.");
@@ -194,7 +197,7 @@ public class DisplayPlayer extends PathfinderMob {
     }
 
     @Override
-    protected @NotNull HoverEvent createHoverEvent() {
+    protected HoverEvent createHoverEvent() {
         return new HoverEvent.ShowEntity(new HoverEvent.EntityTooltipInfo(EntityType.PLAYER, this.getUUID(), this.getName()));
     }
 
@@ -208,27 +211,27 @@ public class DisplayPlayer extends PathfinderMob {
         return SoundEvents.PLAYER_DEATH;
     }
 
-    public @NotNull SoundEvent getSwimSound() {
+    public SoundEvent getSwimSound() {
         return SoundEvents.PLAYER_SWIM;
     }
 
     @Override
-    public @NotNull SoundEvent getSwimSplashSound() {
+    public SoundEvent getSwimSplashSound() {
         return SoundEvents.PLAYER_SPLASH;
     }
 
     @Override
-    public @NotNull SoundEvent getSwimHighSpeedSplashSound() {
+    public SoundEvent getSwimHighSpeedSplashSound() {
         return SoundEvents.PLAYER_SPLASH_HIGH_SPEED;
     }
 
     @Override
-    public @NotNull SoundSource getSoundSource() {
+    public SoundSource getSoundSource() {
         return SoundSource.PLAYERS;
     }
 
     @Override
-    public LivingEntity.@NotNull Fallsounds getFallSounds() {
+    public LivingEntity.Fallsounds getFallSounds() {
         return new LivingEntity.Fallsounds(SoundEvents.PLAYER_SMALL_FALL, SoundEvents.PLAYER_BIG_FALL);
     }
 
@@ -244,12 +247,12 @@ public class DisplayPlayer extends PathfinderMob {
 
     @Override
     public void setLeftHanded(boolean leftHanded) {
-        this.entityData.set(Avatar.DATA_PLAYER_MAIN_HAND, (byte) (leftHanded ? 0 : 1));
+        this.entityData.set(Avatar.DATA_PLAYER_MAIN_HAND, (leftHanded ? HumanoidArm.LEFT : HumanoidArm.RIGHT));
     }
 
     @Override
     public boolean isLeftHanded() {
-        return this.entityData.get(Avatar.DATA_PLAYER_MAIN_HAND) == 0;
+        return this.entityData.get(Avatar.DATA_PLAYER_MAIN_HAND) == HumanoidArm.LEFT;
     }
 
     @Override

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/storage/LevelStorageSource.java
 +++ b/net/minecraft/world/level/storage/LevelStorageSource.java
-@@ -352,10 +_,16 @@
+@@ -347,10 +_,16 @@
          }
      }
  
@@ -18,7 +18,7 @@
  
      public DirectoryValidator getWorldDirValidator() {
          return this.worldDirValidator;
-@@ -428,12 +_,18 @@
+@@ -423,12 +_,18 @@
          // CraftBukkit start
          public final ResourceKey<LevelStem> dimensionType;
  

@@ -6,18 +6,18 @@ Subject: [PATCH] CustomName Entity Attachment
 Signed-off-by: notstevy <notstevy@ultrabuildmc.de>
 
 diff --git a/net/minecraft/server/level/ServerEntity.java b/net/minecraft/server/level/ServerEntity.java
-index b861dce8221daa8ca1a1861de5fe7361ba878c4c..b26f39eec19d1414d29443d92a02066e83731d3d 100644
+index ff741f1543107a1b964266062663257bd7b82308..876fbb593d2e4eebe8343111c3d1b265a3432351 100644
 --- a/net/minecraft/server/level/ServerEntity.java
 +++ b/net/minecraft/server/level/ServerEntity.java
-@@ -100,6 +100,8 @@ public class ServerEntity {
+@@ -99,6 +99,8 @@ public class ServerEntity {
          if (((ca.spottedleaf.moonrise.patches.chunk_system.entity.ChunkSystemEntity)this.entity).moonrise$isHardColliding()) {
              this.teleportDelay = 9999;
          }
 +
 +        world.kitpvp.slime.nametag.CustomName customName = this.entity.customNameEntityOrNull(); // kitpvp - CustomName entity
          // Paper end - optimise collisions
+         this.entity.updateDataBeforeSync();
          List<Entity> passengers = this.entity.getPassengers();
-         if (!passengers.equals(this.lastPassengers)) {
 @@ -108,13 +110,30 @@ public class ServerEntity {
                      new ClientboundSetPassengersPacket(this.entity),
                      serverPlayer1 -> passengers.contains(serverPlayer1) == this.lastPassengers.contains(serverPlayer1)
@@ -76,18 +76,18 @@ index b861dce8221daa8ca1a1861de5fe7361ba878c4c..b26f39eec19d1414d29443d92a02066e
  
      public void sendPairingData(ServerPlayer player, Consumer<Packet<ClientGamePacketListener>> consumer) {
 diff --git a/net/minecraft/world/entity/Entity.java b/net/minecraft/world/entity/Entity.java
-index 2395ba239dc214a2194657d47dfaf69bd3f3e2b9..ed2f1c053cab122016512e26b998ed4f5c6ba75c 100644
+index 9580c446bdf30bdac8b37d63e569e352a9a4c462..7102352c2d813c235fa12a1487ae4d78c89bf9ee 100644
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
-@@ -391,6 +391,7 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
+@@ -392,6 +392,7 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
      private int sectionY = Integer.MIN_VALUE;
      private int sectionZ = Integer.MIN_VALUE;
      private boolean updatingSectionStatus;
-+    private @Nullable world.kitpvp.slime.nametag.CustomName customNameEntity; // kitpvp - CustomName entity
++    private world.kitpvp.slime.nametag.@Nullable CustomName customNameEntity; // kitpvp - CustomName entity
  
      @Override
      public final boolean moonrise$isHardColliding() {
-@@ -726,6 +727,7 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
+@@ -727,6 +728,7 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
      }
  
      public void onRemoval(Entity.RemovalReason reason) {
@@ -95,7 +95,7 @@ index 2395ba239dc214a2194657d47dfaf69bd3f3e2b9..ed2f1c053cab122016512e26b998ed4f
      }
  
      public void setPose(Pose pose) {
-@@ -3533,6 +3535,12 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
+@@ -3557,6 +3559,12 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
  
      public void setShiftKeyDown(boolean keyDown) {
          this.setSharedFlag(FLAG_SHIFT_KEY_DOWN, keyDown);
@@ -108,7 +108,7 @@ index 2395ba239dc214a2194657d47dfaf69bd3f3e2b9..ed2f1c053cab122016512e26b998ed4f
      }
  
      public boolean isShiftKeyDown() {
-@@ -5280,6 +5288,24 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
+@@ -5310,6 +5318,24 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
          this.applyImplicitComponents(stack.getComponents());
      }
  
@@ -119,7 +119,7 @@ index 2395ba239dc214a2194657d47dfaf69bd3f3e2b9..ed2f1c053cab122016512e26b998ed4f
 +        }
 +        return this.customNameEntity;
 +    }
-+    public @Nullable world.kitpvp.slime.nametag.CustomName customNameEntityOrNull() {
++    public world.kitpvp.slime.nametag.@Nullable CustomName customNameEntityOrNull() {
 +        return this.customNameEntity;
 +    }
 +    public void unregisterCustomNameEntity() {
@@ -130,6 +130,6 @@ index 2395ba239dc214a2194657d47dfaf69bd3f3e2b9..ed2f1c053cab122016512e26b998ed4f
 +    }
 +    // kitpvp end - CustomName entity
 +
-     @Nullable
      @Override
-     public <T> T get(DataComponentType<? extends T> component) {
+     public <T> @Nullable T get(DataComponentType<? extends T> component) {
+         if (component == DataComponents.CUSTOM_NAME) {
