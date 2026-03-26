@@ -6,10 +6,10 @@ Subject: [PATCH] Log4J-Discord-Log-Appender-Queue
 Allowing the core to read the warning messages
 
 diff --git a/src/main/resources/log4j2.xml b/src/main/resources/log4j2.xml
-index d2a75850af9c6ad2aca66a5f994f1b587d73eac4..d462305002665dfc53d37059bc34aa74afcceee2 100644
+index 4d881018248133d51661b45a087ebafdca62be8f..c7abc241a7d5b680d170661bc95dff40d442bce6 100644
 --- a/src/main/resources/log4j2.xml
 +++ b/src/main/resources/log4j2.xml
-@@ -29,6 +29,11 @@
+@@ -29,10 +29,16 @@
              </Policies>
              <DefaultRolloverStrategy max="1000"/>
          </RollingRandomAccessFile>
@@ -19,13 +19,10 @@ index d2a75850af9c6ad2aca66a5f994f1b587d73eac4..d462305002665dfc53d37059bc34aa74
 +        </Queue>
 +        <!-- kitpvp end -->
          <Async name="Async">
-             <AppenderRef ref="rewrite"/>
-         </Async>
-@@ -41,6 +46,7 @@
              <AppenderRef ref="File"/>
              <AppenderRef ref="TerminalConsole" level="info"/>
              <AppenderRef ref="ServerGuiConsole" level="info"/>
 +            <AppenderRef ref="DiscordAppender" level="warn"/> <!-- kitpvp -->
-         </Rewrite>
+         </Async>
      </Appenders>
      <Loggers>

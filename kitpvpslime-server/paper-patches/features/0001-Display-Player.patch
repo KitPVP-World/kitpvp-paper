@@ -5,7 +5,7 @@ Subject: [PATCH] Display Player
 
 
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntityTypes.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntityTypes.java
-index 3f9a42944e5ddfa3833ee4d549174368461c13cb..9f6296d0c235c268f3853d8f86894950fb86ff1f 100644
+index db1a81d0661305acdf22a9a8ff07ef12ae1d7003..f23e742ebba207c14c284fbcd878269332d60880 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntityTypes.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntityTypes.java
 @@ -489,6 +489,14 @@ public final class CraftEntityTypes {
@@ -24,10 +24,10 @@ index 3f9a42944e5ddfa3833ee4d549174368461c13cb..9f6296d0c235c268f3853d8f86894950
          // None spawn able
          register(new EntityTypeData<>(EntityType.FISHING_BOBBER, FishHook.class, CraftFishHook::new, null)); // Cannot spawn a fish hook
 diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-index 89c312eda1a72645b38546509d1a6e1c2726fec0..3834587bbdb5cd7ede706a231a82dc8dd4c6707f 100644
+index dbcf1950ff75031d5d95d6b175690b395594bad1..e0df94783cbd743f1c713bb176b4381da9f9b7b9 100644
 --- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
 +++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
-@@ -254,11 +254,21 @@ public class CraftPlayer extends CraftHumanEntity implements Player, PluginMessa
+@@ -252,11 +252,21 @@ public class CraftPlayer extends CraftHumanEntity implements Player, PluginMessa
          this.firstPlayed = System.currentTimeMillis();
      }
  

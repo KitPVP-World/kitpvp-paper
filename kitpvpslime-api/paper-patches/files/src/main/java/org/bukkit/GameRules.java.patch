@@ -1,6 +1,6 @@
 --- a/src/main/java/org/bukkit/GameRules.java
 +++ b/src/main/java/org/bukkit/GameRules.java
-@@ -132,6 +_,11 @@
+@@ -133,6 +_,11 @@
      public static final GameRule<Boolean> WATER_SOURCE_CONVERSION = getRule("water_source_conversion");
      // End generate - GameRules
  
@@ -9,6 +9,6 @@
 +    public static final GameRule<Boolean> PREDICTABLE_PROJECTILES = world.kitpvp.slime.api.KitPvPGameRules.PREDICTABLE_PROJECTILES;
 +    // kitpvp end - GameRules
 +
+     @SuppressWarnings("unchecked")
      private static <T> GameRule<T> getRule(@KeyPattern.Value String key) {
-         return (GameRule<T>) Registry.GAME_RULE.getOrThrow(NamespacedKey.minecraft(key));
-     }
+         return (GameRule<T>) Registry.GAME_RULE.getOrThrow(Key.key(Key.MINECRAFT_NAMESPACE, key));

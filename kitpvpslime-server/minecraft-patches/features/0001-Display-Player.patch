@@ -74,10 +74,10 @@ index abccad13c2bb3a33e98ad8eb6d7f08c0ef021811..6c6532bbc91d8fdf343499a7c27d15cf
      private final EntityType.EntityFactory<T> factory;
      private final MobCategory category;
 diff --git a/net/minecraft/world/entity/LivingEntity.java b/net/minecraft/world/entity/LivingEntity.java
-index 712e17a3e8c6ce165507ee929285f485a0b95b81..d1bde40b8b4503f8fd608be0e385147fb2f1b83b 100644
+index c1667ab922471615ccefc867518ae4498a1acef1..56621d7dfc369b69451efe40ab5d4891d4af8300 100644
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
-@@ -2791,6 +2791,13 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
+@@ -2803,6 +2803,13 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
          return this.attributes;
      }
  

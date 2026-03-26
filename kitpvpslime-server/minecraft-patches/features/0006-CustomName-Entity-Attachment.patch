@@ -76,7 +76,7 @@ index ff741f1543107a1b964266062663257bd7b82308..876fbb593d2e4eebe8343111c3d1b265
  
      public void sendPairingData(ServerPlayer player, Consumer<Packet<ClientGamePacketListener>> consumer) {
 diff --git a/net/minecraft/world/entity/Entity.java b/net/minecraft/world/entity/Entity.java
-index 9580c446bdf30bdac8b37d63e569e352a9a4c462..7102352c2d813c235fa12a1487ae4d78c89bf9ee 100644
+index cebe4bd7e475e193ba2ce82c8f9d3a6d1d5584a4..cd2bc73bd46fa30627dfa1e45f8c1d624e58e30e 100644
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
 @@ -392,6 +392,7 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
@@ -95,7 +95,7 @@ index 9580c446bdf30bdac8b37d63e569e352a9a4c462..7102352c2d813c235fa12a1487ae4d78
      }
  
      public void setPose(Pose pose) {
-@@ -3557,6 +3559,12 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
+@@ -3556,6 +3558,12 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
  
      public void setShiftKeyDown(boolean keyDown) {
          this.setSharedFlag(FLAG_SHIFT_KEY_DOWN, keyDown);
@@ -108,7 +108,7 @@ index 9580c446bdf30bdac8b37d63e569e352a9a4c462..7102352c2d813c235fa12a1487ae4d78
      }
  
      public boolean isShiftKeyDown() {
-@@ -5310,6 +5318,24 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
+@@ -5309,6 +5317,24 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
          this.applyImplicitComponents(stack.getComponents());
      }
  
