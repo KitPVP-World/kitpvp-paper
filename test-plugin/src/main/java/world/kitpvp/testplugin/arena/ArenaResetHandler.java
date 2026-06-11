@@ -31,20 +31,20 @@ public class ArenaResetHandler {
             int chunkX = pos.getX() >> 4;
             int chunkZ = pos.getZ() >> 4;
 
-            return (chunkX >= min.x && chunkX <= max.x)
-                || (chunkZ >= min.z && chunkZ <= max.z);
+            return (chunkX >= min.x() && chunkX <= max.x())
+                || (chunkZ >= min.z() && chunkZ <= max.z());
         };
 
         return CompletableFuture.supplyAsync(() -> {
             long startTime = System.currentTimeMillis();
 
-            int width = max.x - min.x + 1;
-            int length = max.z - min.z + 1;
+            int width = max.x() - min.x() + 1;
+            int length = max.z() - min.z() + 1;
             SlimeChunkLevel[] chunks = new SlimeChunkLevel[width * length];
 
             int index = 0;
-            for(int x = min.x; x <= max.x; x++) {
-                for(int z = min.z; z <= max.z; z++) {
+            for(int x = min.x(); x <= max.x(); x++) {
+                for(int z = min.z(); z <= max.z(); z++) {
                     chunks[index] = loadTemplateChunk(templateWorld, level, x, z);
                     index++;
                 }

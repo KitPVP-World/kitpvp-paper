@@ -6,7 +6,7 @@ Subject: [PATCH] Predictable Projectiles
 Signed-off-by: notstevy <notstevy@ultrabuildmc.de>
 
 diff --git a/net/minecraft/world/entity/projectile/Projectile.java b/net/minecraft/world/entity/projectile/Projectile.java
-index 6298e6de25f1dd9ff880a9ad2882dc7ccb2f100c..e4e7d23a2e738d6c0f77098304cd4726fcf236f5 100644
+index 9af4bf76974f05d9f752bbd4e8037560ec481cdf..9b25e6bef0a65dd8ec9128896bf718ec1355cae2 100644
 --- a/net/minecraft/world/entity/projectile/Projectile.java
 +++ b/net/minecraft/world/entity/projectile/Projectile.java
 @@ -35,6 +35,7 @@ import net.minecraft.world.phys.EntityHitResult;
@@ -17,16 +17,17 @@ index 6298e6de25f1dd9ff880a9ad2882dc7ccb2f100c..e4e7d23a2e738d6c0f77098304cd4726
  
  public abstract class Projectile extends Entity implements TraceableEntity {
      private static final boolean DEFAULT_LEFT_OWNER = false;
-@@ -143,6 +144,12 @@ public abstract class Projectile extends Entity implements TraceableEntity {
+@@ -129,7 +130,12 @@ public abstract class Projectile extends Entity implements TraceableEntity {
+         }
      }
  
-     public Vec3 getMovementToShoot(double x, double y, double z, float velocity, float inaccuracy) {
-+        // kitpvp start - Predictable Projectiles
+-    public Vec3 getMovementToShoot(final double xd, final double yd, final double zd, final float pow, final float uncertainty) {
++    // kitpvp start - Predictable Projectiles
++    public Vec3 getMovementToShoot(final double xd, final double yd, final double zd, final float pow, float uncertainty) {
 +        if(((ServerLevel) this.level()).getGameRules().get(KitPvPGameRulesImpl.PREDICTABLE_PROJECTILES)) {
-+            inaccuracy = 0;
++            uncertainty = 0;
 +        }
 +        // kitpvp end - Predictable Projectiles
-+
-         return new Vec3(x, y, z)
+         return new Vec3(xd, yd, zd)
              .normalize()
              .add(

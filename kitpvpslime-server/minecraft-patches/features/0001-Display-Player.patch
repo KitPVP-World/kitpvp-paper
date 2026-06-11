@@ -5,7 +5,7 @@ Subject: [PATCH] Display Player
 
 
 diff --git a/net/minecraft/network/syncher/SynchedEntityData.java b/net/minecraft/network/syncher/SynchedEntityData.java
-index 5d74c3e9938e5c6cc96f42b6df255e21aa925ed9..7307344490e6727cb93c03af5db06d6057876d1b 100644
+index 0075164bf057271d63a8b97473aa5c41c03eac91..aa16781268d295f9493611f0b884bc33c66f9a56 100644
 --- a/net/minecraft/network/syncher/SynchedEntityData.java
 +++ b/net/minecraft/network/syncher/SynchedEntityData.java
 @@ -37,6 +37,19 @@ public class SynchedEntityData {
@@ -25,11 +25,11 @@ index 5d74c3e9938e5c6cc96f42b6df255e21aa925ed9..7307344490e6727cb93c03af5db06d60
 +        }
 +        // kitpvp end
 +
-         int i = ID_REGISTRY.define(clazz);
-         if (i > 254) {
-             throw new IllegalArgumentException("Data value id is too big with " + i + "! (Max is 254)");
+         int id = ID_REGISTRY.define(clazz);
+         if (id > 254) {
+             throw new IllegalArgumentException("Data value id is too big with " + id + "! (Max is 254)");
 diff --git a/net/minecraft/server/level/ServerEntity.java b/net/minecraft/server/level/ServerEntity.java
-index 3a817c92147bb78c60238f3ddc1644b721aed7a2..ff741f1543107a1b964266062663257bd7b82308 100644
+index 5fad52157fc22755196ce9eaddaa2bc23c5bb86b..aed45d005c8baf16f7dd65ed451f7217dca04d1f 100644
 --- a/net/minecraft/server/level/ServerEntity.java
 +++ b/net/minecraft/server/level/ServerEntity.java
 @@ -321,6 +321,17 @@ public class ServerEntity {
@@ -38,7 +38,7 @@ index 3a817c92147bb78c60238f3ddc1644b721aed7a2..ff741f1543107a1b964266062663257b
  
 +        // kitpvp start - DisplayPlayer
 +        if(this.entity instanceof world.kitpvp.slime.entity.DisplayPlayer displayPlayer) {
-+            consumer.accept(
++            broadcast.accept(
 +                new net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket(
 +                    java.util.EnumSet.of(net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER),
 +                    displayPlayer.getInfoUpdateEntry(player)
@@ -47,14 +47,14 @@ index 3a817c92147bb78c60238f3ddc1644b721aed7a2..ff741f1543107a1b964266062663257b
 +        }
 +        // kitpvp end - DisplayPlayer
 +
-         Packet<ClientGamePacketListener> addEntityPacket = this.entity.getAddEntityPacket(this);
-         consumer.accept(addEntityPacket);
+         Packet<ClientGamePacketListener> packet = this.entity.getAddEntityPacket(this);
+         broadcast.accept(packet);
          if (this.trackedDataValues != null) {
 diff --git a/net/minecraft/world/entity/EntityType.java b/net/minecraft/world/entity/EntityType.java
-index abccad13c2bb3a33e98ad8eb6d7f08c0ef021811..6c6532bbc91d8fdf343499a7c27d15cfe4b4da69 100644
+index 1ee78f52205cbb0b254a28999f3707ccccbe998e..73c0df12d56b6de8c5b1339e6ab22c19cb77cf59 100644
 --- a/net/minecraft/world/entity/EntityType.java
 +++ b/net/minecraft/world/entity/EntityType.java
-@@ -1210,6 +1210,18 @@ public class EntityType<T extends Entity> implements FeatureElement, EntityTypeT
+@@ -1208,6 +1208,18 @@ public class EntityType<T extends Entity> implements EntityTypeTest<Entity, T>,
              .clientTrackingRange(4)
              .updateInterval(5)
      );
@@ -74,10 +74,10 @@ index abccad13c2bb3a33e98ad8eb6d7f08c0ef021811..6c6532bbc91d8fdf343499a7c27d15cf
      private final EntityType.EntityFactory<T> factory;
      private final MobCategory category;
 diff --git a/net/minecraft/world/entity/LivingEntity.java b/net/minecraft/world/entity/LivingEntity.java
-index c1667ab922471615ccefc867518ae4498a1acef1..56621d7dfc369b69451efe40ab5d4891d4af8300 100644
+index 92fd35ea8c99cfcdd8a2e96e6fb162219a5adf0b..00d3bdabf4c39136889733833c01cdd783a2670f 100644
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
-@@ -2803,6 +2803,13 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
+@@ -2846,6 +2846,13 @@ public abstract class LivingEntity extends Entity implements Attackable, Waypoin
          return this.attributes;
      }
  
@@ -92,7 +92,7 @@ index c1667ab922471615ccefc867518ae4498a1acef1..56621d7dfc369b69451efe40ab5d4891
          return this.getItemBySlot(EquipmentSlot.MAINHAND);
      }
 diff --git a/net/minecraft/world/entity/ai/attributes/DefaultAttributes.java b/net/minecraft/world/entity/ai/attributes/DefaultAttributes.java
-index 6cf01fe1aac41af171b444ac737816a06bd80d6f..0069797a6b3a988d2bf28e89d772dab57f1093f4 100644
+index 3b122f0bdfd8490297d173c05c1412c9fcfc886e..48098d1128ea5f1d20140b2f4c2278b2e05f5c9a 100644
 --- a/net/minecraft/world/entity/ai/attributes/DefaultAttributes.java
 +++ b/net/minecraft/world/entity/ai/attributes/DefaultAttributes.java
 @@ -148,6 +148,7 @@ public class DefaultAttributes {

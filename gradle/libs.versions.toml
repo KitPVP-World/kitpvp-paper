@@ -1,11 +1,11 @@
 [versions]
-adventure = "4.24.0"
-annotations = "26.0.1"
+adventure = "4.26.1"
+annotations = "1.0.0"
 blossom = "2.1.0"
 gradle-profiles = "0.54.0"
 kotlin = "1.9.25"
 lombok-plugin = "8.11"
-paperweight = "2.0.0-beta.19"
+paperweight = "2.0.0-SNAPSHOT"
 plugin-yml-paper = "0.6.0"
 shadow = "9.2.2"
 zstd = "1.5.6-8"
@@ -21,5 +21,5 @@ shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
 
 [libraries]
 adventure-nbt = { module = "net.kyori:adventure-nbt", version.ref = "adventure" }
-annotations = { module = "org.jetbrains:annotations", version.ref = "annotations" }
+annotations = { module = "org.jspecify:jspecify", version.ref = "annotations" }
 zstd = { module = "com.github.luben:zstd-jni", version.ref = "zstd" }

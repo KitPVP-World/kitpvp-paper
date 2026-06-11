@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -316,6 +_,8 @@
+@@ -332,6 +_,8 @@
              return false;
          }
  
@@ -9,7 +9,7 @@
          // CraftBukkit start
          this.server.loadPlugins();
          this.server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.STARTUP);
-@@ -326,7 +_,7 @@
+@@ -342,7 +_,7 @@
          String proxyFlavor = (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.velocity.enabled) ? "Velocity" : "BungeeCord";
          String proxyLink = (io.papermc.paper.configuration.GlobalConfiguration.get().proxies.velocity.enabled) ? "https://docs.papermc.io/velocity/security" : "http://www.spigotmc.org/wiki/firewall-guide/";
          // Paper end - Add Velocity IP Forwarding Support

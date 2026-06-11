@@ -1,27 +1,23 @@
 --- a/net/minecraft/server/level/ServerChunkCache.java
 +++ b/net/minecraft/server/level/ServerChunkCache.java
-@@ -202,17 +_,18 @@
-         this.mainThread = Thread.currentThread();
-         Path path = levelStorageAccess.getDimensionPath(level.dimension()).resolve("data");
+@@ -195,6 +_,7 @@
+         final ChunkStatusUpdateListener chunkStatusListener,
+         final Supplier<SavedDataStorage> overworldDataStorage
+         , final SavedDataStorage savedDataStorage // Paper - initialize SavedDataStorage earlier
++        , boolean createDataDirectory // kitpvp - optimize world loading
+     ) {
+         this.level = level;
+         this.mainThreadProcessor = new ServerChunkCache.MainThreadExecutor(level);
+@@ -202,7 +_,11 @@
+         Path dataFolder = levelStorage.getDimensionPath(level.dimension()).resolve("data");
  
--        try {
--            FileUtil.createDirectoriesSafe(path);
--        } catch (IOException var14) {
--            LOGGER.error("Failed to create dimension data storage directory", (Throwable)var14);
--        }
--
-+        // kitpvp start - optimize world loading
-         //ASP start - No dimension data storage
-         if(level instanceof com.infernalsuite.asp.level.SlimeLevelInstance) {
-             this.dataStorage = new com.infernalsuite.asp.level.ReadOnlyDimensionDataStorage(path, fixerUpper, level.registryAccess());
-         } else {
-             this.dataStorage = new DimensionDataStorage(path, fixerUpper, level.registryAccess());
-+            try {
-+                FileUtil.createDirectoriesSafe(path);
-+            } catch (IOException var14) {
-+                LOGGER.error("Failed to create dimension data storage directory", (Throwable)var14);
+         try {
+-            FileUtil.createDirectoriesSafe(dataFolder);
++            // kitpvp start - optimize world loading
++            if(createDataDirectory) {
++                FileUtil.createDirectoriesSafe(dataFolder);
 +            }
 +            // kitpvp end - optimize world loading
+         } catch (IOException e) {
+             LOGGER.error("Failed to create dimension data storage directory", e);
          }
-         //ASP end - No dimension data storage
-         this.ticketStorage = this.dataStorage.computeIfAbsent(TicketStorage.TYPE);

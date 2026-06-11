@@ -52,7 +52,7 @@ subprojects {
 
     extensions.configure<JavaPluginExtension> {
         toolchain {
-            languageVersion = JavaLanguageVersion.of(21)
+            languageVersion = JavaLanguageVersion.of(25)
         }
     }
 
@@ -67,7 +67,7 @@ subprojects {
     }
     tasks.withType<JavaCompile> {
         options.encoding = Charsets.UTF_8.name()
-        options.release = 21
+        options.release = 25
         options.isFork = true
         options.compilerArgs.addAll(listOf("-Xlint:-deprecation", "-Xlint:-removal"))
     }
@@ -87,10 +87,11 @@ subprojects {
 
     extensions.configure<PublishingExtension> {
         repositories {
-            maven("https://maven.kitpvp.world/public-snapshots/") {
-                name = "kitpvpWorldRepository"
+            maven("https://maven.ultrabuildmc.de/snapshots/") {
+                name = "ultrabuildRepository"
                 credentials(PasswordCredentials::class)
             }
+//            mavenLocal()
         }
     }
 }

@@ -1,0 +1,11 @@
+--- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
++++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
+@@ -2981,7 +_,7 @@
+     @Override
+     public void handleSpectateEntity(final ServerboundSpectateEntityPacket packet) {
+         PacketUtils.ensureRunningOnSameThread(packet, this, this.player.level());
+-        if (this.hasClientLoaded() && this.player.isSpectator()) {
++        if (this.hasClientLoaded() && this.player.isSpectator() && !this.player.isFakeSpectator) { // kitpvp - Fake Spectator Utility
+             this.player.resetLastActionTime();
+             ServerLevel level = this.player.level();
+             Entity target = level.getEntityOrPart(packet.entityId());

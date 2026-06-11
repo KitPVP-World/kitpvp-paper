@@ -1,6 +1,7 @@
 package world.kitpvp.testplugin.command;
 
 import com.infernalsuite.asp.api.AdvancedSlimePaperAPI;
+import com.infernalsuite.asp.api.world.SlimeChunk;
 import com.infernalsuite.asp.api.world.SlimeWorld;
 import com.infernalsuite.asp.level.chunk.SlimeChunkLevel;
 import com.mojang.brigadier.Command;
@@ -118,10 +119,32 @@ public class TestCommand {
                             throw new RuntimeException("Failed to reset chunks", throwable);
                         });
 
-                        int width = max.x - min.x + 1;
-                        int length = max.z - min.z + 1;
+                        int width = max.x() - min.x() + 1;
+                        int length = max.z() - min.z() + 1;
 
                         return width * length;
+                    }))
+                .then(Commands.literal("load_arena_world")
+                    .executes((context) -> {
+                        String templateWorldName = "kungfu";
+                        SlimeWorld templateWorld = AdvancedSlimePaperAPI.instance().getLoadedWorld(templateWorldName);
+                        if (templateWorld == null) {
+                            throw ERROR_INVALID_WORLD.create(Component.text(templateWorldName));
+                        }
+
+                        for(int chunkX = 0; chunkX < 32; chunkX++) {
+                            for(int chunkZ = 0; chunkZ < 32; chunkZ++) {
+                                SlimeChunk chunk = templateWorld.getChunk(chunkX, chunkZ);
+
+
+
+                            }
+                        }
+
+
+
+
+                        return 0;
                     }))
                 .then(Commands.literal("block")
                     .then(Commands.argument("pos", ArgumentTypes.blockPosition())
@@ -160,4 +183,9 @@ public class TestCommand {
                 .build()
         );
     }
+
+    private static boolean inSameRegionfile(ChunkPos first, ChunkPos second) {
+        return (first.x() & ~31) == (second.x() & ~31) && (first.z() & ~31) == (second.z() & ~31);
+    }
+
 }

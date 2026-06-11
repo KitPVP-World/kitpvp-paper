@@ -1,11 +1,10 @@
 --- a/net/minecraft/server/Main.java
 +++ b/net/minecraft/server/Main.java
-@@ -108,6 +_,8 @@
-             io.papermc.paper.plugin.PluginInitializerManager.load(optionSet); // Paper
+@@ -107,6 +_,7 @@
+             io.papermc.paper.plugin.PluginInitializerManager.load(options); // Paper
              Bootstrap.bootStrap();
              Bootstrap.validate();
-+            if(System.getProperties().contains("kitpvp.optimizeStartupOnly"))
-+                return;
++            if(System.getProperties().contains("kitpvp.optimizeStartupOnly")) return; // kitpvp
              Util.startTimerHackThread();
-             Path path1 = Paths.get("server.properties");
-             DedicatedServerSettings dedicatedServerSettings = new DedicatedServerSettings(optionSet); // CraftBukkit - CLI argument support
+             Path settingsFile = Paths.get("server.properties");
+             DedicatedServerSettings settings = new DedicatedServerSettings(options); // CraftBukkit - CLI argument support

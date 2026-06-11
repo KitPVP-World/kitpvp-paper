@@ -2,6 +2,7 @@ rootProject.name = "buildSrc"
 
 pluginManagement {
     repositories {
+        maven("https://repo.papermc.io/repository/maven-public/")
         mavenLocal()
         mavenCentral()
         gradlePluginPortal()

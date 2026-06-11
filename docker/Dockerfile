@@ -1,4 +1,4 @@
-FROM azul/zulu-openjdk:21-jre
+FROM azul/zulu-openjdk:25-jre
 
 # hook into docker BuildKit --platform support
 # see https://docs.docker.com/engine/reference/builder/#automatic-platform-args-in-the-global-scope
@@ -7,7 +7,7 @@ ARG TARGETARCH
 ARG TARGETVARIANT
 
 # the version was not set to the right one automatically
-ENV VERSION="1.21.7"
+ENV VERSION="26.1.2"
 ENV MINECRAFT_VERSION="${VERSION}"
 
 COPY data/scripts/install-packages.sh data/scripts/setup-users.sh /setup/
@@ -18,16 +18,16 @@ RUN /setup/setup-users.sh
 ARG APPS_REV=1
 ARG GITHUB_BASEURL=https://github.com
 
-ARG EASY_ADD_VERSION=0.8.11
+ARG EASY_ADD_VERSION=0.8.13
 ADD ${GITHUB_BASEURL}/itzg/easy-add/releases/download/${EASY_ADD_VERSION}/easy-add_${TARGETOS}_${TARGETARCH}${TARGETVARIANT} /usr/bin/easy-add
 RUN chmod +x /usr/bin/easy-add
 
-ARG MC_MONITOR_VERSION=0.15.4
+ARG MC_MONITOR_VERSION=0.16.6
 RUN easy-add --var os=${TARGETOS} --var arch=${TARGETARCH}${TARGETVARIANT} \
   --var version=${MC_MONITOR_VERSION} --var app=mc-monitor --file {{.app}} \
   --from ${GITHUB_BASEURL}/itzg/{{.app}}/releases/download/{{.version}}/{{.app}}_{{.version}}_{{.os}}_{{.arch}}.tar.gz
 
-ARG MC_HELPER_VERSION=1.46.0
+ARG MC_HELPER_VERSION=1.60.0
 ARG MC_HELPER_BASE_URL=${GITHUB_BASEURL}/itzg/mc-image-helper/releases/download/${MC_HELPER_VERSION}
 # used for cache busting local copy of mc-image-helper
 ARG MC_HELPER_REV=1
@@ -50,7 +50,7 @@ ADD data/data /data
 
 WORKDIR /server
 
-ARG OPENTELEMETRY_JAVAAGENT_VERSION=2.18.1
+ARG OPENTELEMETRY_JAVAAGENT_VERSION=2.28.1
 ADD --chown=minecraft:minecraft https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v${OPENTELEMETRY_JAVAAGENT_VERSION}/opentelemetry-javaagent.jar /server/opentelemetry-javaagent.jar
 
 STOPSIGNAL SIGTERM

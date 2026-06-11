@@ -1,14 +1,15 @@
 --- a/net/minecraft/world/entity/player/Player.java
 +++ b/net/minecraft/world/entity/player/Player.java
-@@ -179,6 +_,7 @@
-     private int currentImpulseContextResetGraceTime = 0;
-     public boolean affectsSpawning = true; // Paper - Affects Spawning API
-     public net.kyori.adventure.util.TriState flyingFallDamage = net.kyori.adventure.util.TriState.NOT_SET; // Paper - flying fall damage
-+    public boolean isFakeSpectator = false; // kitpvp - Fake Spectator Utility
- 
-     // CraftBukkit start
+@@ -178,6 +_,8 @@
      public boolean fauxSleeping;
-@@ -1812,7 +_,7 @@
+     public int oldLevel = -1;
+ 
++    public boolean isFakeSpectator = false; // kitpvp - Fake Spectator Utility
++
+     @Override
+     public org.bukkit.craftbukkit.entity.CraftHumanEntity getBukkitEntity() {
+         return (org.bukkit.craftbukkit.entity.CraftHumanEntity) super.getBukkitEntity();
+@@ -1796,7 +_,7 @@
  
      @Override
      public boolean isSpectator() {

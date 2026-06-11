@@ -6,10 +6,10 @@ Subject: [PATCH] CustomName Entity Attachment
 Signed-off-by: notstevy <notstevy@ultrabuildmc.de>
 
 diff --git a/net/minecraft/server/level/ServerEntity.java b/net/minecraft/server/level/ServerEntity.java
-index ff741f1543107a1b964266062663257bd7b82308..876fbb593d2e4eebe8343111c3d1b265a3432351 100644
+index aed45d005c8baf16f7dd65ed451f7217dca04d1f..dd6100c6f364bff706871fd33ae2990e3397fedd 100644
 --- a/net/minecraft/server/level/ServerEntity.java
 +++ b/net/minecraft/server/level/ServerEntity.java
-@@ -99,6 +99,8 @@ public class ServerEntity {
+@@ -101,6 +101,8 @@ public class ServerEntity {
          if (((ca.spottedleaf.moonrise.patches.chunk_system.entity.ChunkSystemEntity)this.entity).moonrise$isHardColliding()) {
              this.teleportDelay = 9999;
          }
@@ -18,9 +18,9 @@ index ff741f1543107a1b964266062663257bd7b82308..876fbb593d2e4eebe8343111c3d1b265
          // Paper end - optimise collisions
          this.entity.updateDataBeforeSync();
          List<Entity> passengers = this.entity.getPassengers();
-@@ -108,13 +110,30 @@ public class ServerEntity {
-                     new ClientboundSetPassengersPacket(this.entity),
-                     serverPlayer1 -> passengers.contains(serverPlayer1) == this.lastPassengers.contains(serverPlayer1)
+@@ -109,13 +111,30 @@ public class ServerEntity {
+                 .sendToTrackingPlayersFiltered(
+                     new ClientboundSetPassengersPacket(this.entity), player -> passengers.contains(player) == this.lastPassengers.contains(player)
                  );
 +            // kitpvp start - CustomName entity
 +            if(customName != null && !passengers.isEmpty()) {
@@ -47,10 +47,10 @@ index ff741f1543107a1b964266062663257bd7b82308..876fbb593d2e4eebe8343111c3d1b265
 +        }
 +        // kitpvp end - CustomName entity
  
-         if (!this.trackedPlayers.isEmpty() && this.entity instanceof ItemFrame itemFrame /*&& this.tickCount % 10 == 0*/) { // CraftBukkit - moved tickCount below // Paper - Perf: Only tick item frames if players can see it
-             ItemStack item = itemFrame.getItem();
+         if (!this.trackedPlayers.isEmpty() && this.entity instanceof ItemFrame frame /*&& this.tickCount % 10 == 0*/) { // CraftBukkit - moved tickCount below // Paper - Perf: Only tick item frames if players can see it
+             ItemStack itemStack = frame.getItem();
 @@ -303,6 +322,12 @@ public class ServerEntity {
-     public void removePairing(ServerPlayer player) {
+     public void removePairing(final ServerPlayer player) {
          this.entity.stopSeenByPlayer(player);
          player.connection.send(new ClientboundRemoveEntitiesPacket(this.entity.getId()));
 +        // kitpvp start - CustomName entity
@@ -61,10 +61,10 @@ index ff741f1543107a1b964266062663257bd7b82308..876fbb593d2e4eebe8343111c3d1b265
 +        // kitpvp end - CustomName entity
      }
  
-     public void addPairing(ServerPlayer player) {
+     public void addPairing(final ServerPlayer player) {
 @@ -310,6 +335,12 @@ public class ServerEntity {
-         this.sendPairingData(player, list::add);
-         player.connection.send(new ClientboundBundlePacket(list));
+         this.sendPairingData(player, packets::add);
+         player.connection.send(new ClientboundBundlePacket(packets));
          this.entity.startSeenByPlayer(player);
 +        // kitpvp start - CustomName entity
 +        world.kitpvp.slime.nametag.CustomName customName = this.entity.customNameEntityOrNull(); // kitpvp - CustomName entity
@@ -74,12 +74,12 @@ index ff741f1543107a1b964266062663257bd7b82308..876fbb593d2e4eebe8343111c3d1b265
 +        // kitpvp end - CustomName entity
      }
  
-     public void sendPairingData(ServerPlayer player, Consumer<Packet<ClientGamePacketListener>> consumer) {
+     public void sendPairingData(final ServerPlayer player, final Consumer<Packet<ClientGamePacketListener>> broadcast) {
 diff --git a/net/minecraft/world/entity/Entity.java b/net/minecraft/world/entity/Entity.java
-index cebe4bd7e475e193ba2ce82c8f9d3a6d1d5584a4..cd2bc73bd46fa30627dfa1e45f8c1d624e58e30e 100644
+index 0d407e76de7c9b17b09750f3c1a9447febf3702a..2f9e89364ad02079b6fffb5d5418338069306c80 100644
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
-@@ -392,6 +392,7 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
+@@ -406,6 +406,7 @@ public abstract class Entity
      private int sectionY = Integer.MIN_VALUE;
      private int sectionZ = Integer.MIN_VALUE;
      private boolean updatingSectionStatus;
@@ -87,28 +87,28 @@ index cebe4bd7e475e193ba2ce82c8f9d3a6d1d5584a4..cd2bc73bd46fa30627dfa1e45f8c1d62
  
      @Override
      public final boolean moonrise$isHardColliding() {
-@@ -727,6 +728,7 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
+@@ -746,6 +747,7 @@ public abstract class Entity
      }
  
-     public void onRemoval(Entity.RemovalReason reason) {
+     public void onRemoval(final Entity.RemovalReason reason) {
 +        this.unregisterCustomNameEntity(); // kitpvp - CustomName entity
      }
  
-     public void setPose(Pose pose) {
-@@ -3556,6 +3558,12 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
+     public void setPose(final Pose pose) {
+@@ -3582,6 +3584,12 @@ public abstract class Entity
  
-     public void setShiftKeyDown(boolean keyDown) {
-         this.setSharedFlag(FLAG_SHIFT_KEY_DOWN, keyDown);
+     public void setShiftKeyDown(final boolean shiftKeyDown) {
+         this.setSharedFlag(FLAG_SHIFT_KEY_DOWN, shiftKeyDown);
 +        // kitpvp start - CustomName entity
 +        world.kitpvp.slime.nametag.CustomName customName = this.customNameEntityOrNull(); // kitpvp - CustomName entity
 +        if(customName != null) {
-+            customName.setHidden(keyDown);
++            customName.setHidden(shiftKeyDown);
 +        }
 +        // kitpvp end - CustomName entity
      }
  
      public boolean isShiftKeyDown() {
-@@ -5309,6 +5317,24 @@ public abstract class Entity implements SyncedDataHolder, DebugValueSource, Name
+@@ -5243,6 +5251,24 @@ public abstract class Entity
          this.applyImplicitComponents(stack.getComponents());
      }
  
@@ -131,5 +131,5 @@ index cebe4bd7e475e193ba2ce82c8f9d3a6d1d5584a4..cd2bc73bd46fa30627dfa1e45f8c1d62
 +    // kitpvp end - CustomName entity
 +
      @Override
-     public <T> @Nullable T get(DataComponentType<? extends T> component) {
-         if (component == DataComponents.CUSTOM_NAME) {
+     public <T> @Nullable T get(final DataComponentType<? extends T> type) {
+         if (type == DataComponents.CUSTOM_NAME) {

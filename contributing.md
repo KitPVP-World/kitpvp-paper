@@ -10,5 +10,6 @@ https://github.com/PaperMC/Paper/blob/main/CONTRIBUTING.md
   - kitpvpslime-server (minecraft): `./gradlew fixupMinecraftSourcePatches rebuildMinecraftSourcePatches`
   - paper-api (file): `./gradlew fixupPaperApiFilePatches rebuildPaperApiFilePatches`
   - paper-server (file): `./gradlew fixupPaperServerFilePatches rebuildPaperServerFilePatches`
-  - paper-server (feature): `./gradlew rebuildPaperServerFeatherPatches`
+  - paper-server (feature): `./gradlew rebuildPaperServerFeaturePatches`
   - kitpvpslime-api (own api): no patching needed
+  - aspaper-server (file): `./gradlew fixupKitpvpSlimeServerFilePatches rebuildKitpvpSlimeServerFilePatches`
