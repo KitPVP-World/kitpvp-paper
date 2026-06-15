@@ -87,8 +87,8 @@ subprojects {
 
     extensions.configure<PublishingExtension> {
         repositories {
-            maven("https://maven.ultrabuildmc.de/snapshots/") {
-                name = "ultrabuildRepository"
+            maven("https://maven.kitpvp.world/public-snapshots/") {
+                name = "kitpvpWorldRepository"
                 credentials(PasswordCredentials::class)
             }
 //            mavenLocal()
